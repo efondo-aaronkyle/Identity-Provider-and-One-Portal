@@ -1,6 +1,2 @@
 @import "tailwindcss";
 @plugin "daisyui";
-
-body {
-  font-family: theme(fontFamily.sans);
-}
