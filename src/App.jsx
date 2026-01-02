@@ -9,15 +9,12 @@ export default function App() {
     <Router>
       <Routes>
         {/* Root redirect to Login */}
-        <Route path="/" element={<Navigate to="/login" replace />} />
+        <Route path="/" element={<Login />} />
 
-        {/* Login page */}
-        <Route path="/login" element={<Login />} />
-
-        {/* AddUser page */}
+        {/* IDP */}
         <Route path="/idp/add-user" element={<AddUser />} />
 
-        {/* OnePortal page */}
+        {/* One Portal */}
         <Route path="/portal" element={<OnePortalHome />} />
       </Routes>
     </Router>
