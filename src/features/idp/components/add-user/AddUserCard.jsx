@@ -1,10 +1,14 @@
-export default function AddUserCard({ icon, title, children }) {
+export default function AddUserCard({title, description, children }) {
   return (
     <div className="card bg-white w-full max-w-3xl shadow-xl">
       <div className="card-body space-y-6">
-        <div className="flex items-center gap-2">
-          {icon}
-          <h2 className="text-[#B91C1C] text-4xl font-bold">{title}</h2>
+        <div>
+          <h2 className="text-[#991b1b] text-[40px] font-bold leading-9 sm:leading-0 ">{title}</h2>
+          {description && (
+            <p className="text-[16px] mt-1 sm:mt-5 text-gray-600">
+              {description}
+            </p>
+          )}
         </div>
         {children}
       </div>
