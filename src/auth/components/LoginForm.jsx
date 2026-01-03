@@ -26,7 +26,7 @@ export default function LoginForm() {
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
               <label className="block font-medium mb-2 text-black text-base">Email Address <span className="text-red-500">*</span></label>
-              <label className="input flex items-center gap-2 bg-transparent border border-gray-300 text-gray-700 w-full focus-within:ring-1 focus-within:ring-red-300 focus-within:border-red-400">
+              <label className="input flex items-center rounded-lg gap-2 bg-transparent border border-gray-300 text-gray-700 w-full focus-within:ring-1 focus-within:ring-blue-200 focus-within:border-blue-200">
                 <span className="pr-3 border-r border-gray-300 text-gray-500">
                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="size-6">
                       <path d="M1.5 8.67v8.58a3 3 0 0 0 3 3h15a3 3 0 0 0 3-3V8.67l-8.928 5.493a3 3 0 0 1-3.144 0L1.5 8.67Z" />
@@ -39,13 +39,13 @@ export default function LoginForm() {
                   onChange={(e) => setEmail(e.target.value)}
                   required
                   placeholder="Enter your email address"
-                  className="grow bg-transparent focus:outline-none"
+                  className="grow bg-transparent border-none rounded-e-lg focus-within:ring-blue-200 focus-within:border-blue-200"
                 />
               </label>
             </div>
             <div>
               <label className="block font-medium mb-2 text-black text-base">Password <span className="text-red-500">*</span></label>
-              <label className="input flex items-center gap-2 bg-transparent border border-gray-300 text-gray-700 w-full focus-within:ring-1 focus-within:ring-red-300 focus-within:border-red-400">
+              <label className="input flex items-center rounded-lg gap-2 bg-transparent border border-gray-300 text-gray-700 w-full focus-within:ring-1 focus-within:ring-blue-200 focus-within:border-blue-200">
                 <span className="pr-3 border-r border-gray-300 text-gray-500">
                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="size-6">
                     <path fillRule="evenodd" d="M12 1.5a5.25 5.25 0 0 0-5.25 5.25v3a3 3 0 0 0-3 3v6.75a3 3 0 0 0 3 3h10.5a3 3 0 0 0 3-3v-6.75a3 3 0 0 0-3-3v-3c0-2.9-2.35-5.25-5.25-5.25Zm3.75 8.25v-3a3.75 3.75 0 1 0-7.5 0v3h7.5Z" clipRule="evenodd" />
@@ -57,11 +57,20 @@ export default function LoginForm() {
                   onChange={(e) => setPassword(e.target.value)}
                   required
                   placeholder="Enter your password"
-                  className="grow bg-transparent focus:outline-none"
+                  className="grow bg-transparent border-none rounded-e-lg focus-within:ring-blue-200 focus-within:border-blue-200"
                 />
               </label>
             </div>
-            <button className="btn border-none w-full bg-red-800 hover:bg-red-900 font-medium text-white">Login</button>
+            <div className="flex items-center justify-between mb-6 font-medium">
+              <label className="flex items-center gap-2 text-gray-700">
+                <input type="checkbox" className="checkbox border-gray-300 bg-transparent checked:bg-[#991b1b] checked:border-red-900 checked:text-white mr-1" />
+                <span className="text-[#991b1b] text-[.79rem] sm:text-base">Remember me</span>
+              </label>
+              <a href="#" className="text-[#991b1b] hover:underline text-[.79rem] sm:text-base">
+                Forgot your password?
+              </a>
+            </div>
+            <button className="btn w-full font-semibold bg-[#991b1b] text-white border-[#991b1b] hover:bg-[#ffd700] hover:border-[#ffd700] hover:text-[#991b1b]">Login</button>
           </form>
         </div>
       </div>

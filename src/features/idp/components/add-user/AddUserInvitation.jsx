@@ -36,7 +36,7 @@ export default function AddUserInvitation({ data, setData, onBack }) {
           name="inviteMode"
           value={data.inviteMode}
           onChange={handleChange}
-          className="select bg-white border border-gray-300 text-gray-700 w-full focus:outline-2 focus:ring-1 focus:border-blue-400"
+          className="select bg-white border rounded-lg border-gray-300 text-gray-700 w-full focus:outline-none focus:ring-1 focus:border-blue-200"
         >
           <option value="invite">Send an invitation to the user</option>
           <option value="temp">Set a temporary password</option>
@@ -53,7 +53,7 @@ export default function AddUserInvitation({ data, setData, onBack }) {
                 name="delivery"
                 value={data.delivery}
                 onChange={handleChange}
-                className="select bg-white border border-gray-300 text-gray-700 w-full focus:outline-2 focus:ring-1 focus:border-blue-400"
+                className="select bg-white border rounded-lg border-gray-300 text-gray-700 w-full focus:ring-0 focus:border-blue-200"
               >
                 <option value="email">Email</option>
                 <option value="sms">SMS</option>
@@ -75,9 +75,9 @@ export default function AddUserInvitation({ data, setData, onBack }) {
                         value={data.tempPassword}
                         onChange={handleChange}
                         placeholder="Temporary password"
-                        className="input bg-transparent border border-gray-300 text-gray-700 w-full focus:outline-2 focus:ring-1 focus:border-blue-400"
+                        className="input bg-transparent border rounded-lg border-gray-300 text-gray-700 w-full focus:ring-0 focus:border-blue-200"
                     />
-                    <button type="button" onClick={generatePassword} className="btn border-none bg-red-800 hover:bg-red-900">
+                    <button type="button" onClick={generatePassword} className="btn bg-[#991b1b] text-white border-[#991b1b] hover:bg-[#ffd700] hover:border-[#ffd700] hover:text-[#991b1b]">
                           Generate
                     </button>
                 </div>
@@ -121,10 +121,10 @@ export default function AddUserInvitation({ data, setData, onBack }) {
       </div>
 
       <div className="flex justify-end gap-2 pt-4">
-        <button type="button" onClick={onBack} className="btn border-none bg-red-800 hover:bg-red-900 text-white">
+        <button type="button" onClick={onBack} className="btn btn-outline text-[#991b1b] border-[#991b1b] hover:bg-[#ffd700] hover:border-[#ffd700] hover:text-[#991b1b]">
           Back
         </button>
-        <button type="button" className="btn border-none bg-green-600 text-white hover:bg-green-700" onClick={() => console.log("FINAL DATA:", data)}>
+        <button type="button" className="btn bg-[#991b1b] text-white border-[#991b1b] hover:bg-[#ffd700] hover:border-[#ffd700] hover:text-[#991b1b]" onClick={() => console.log("FINAL DATA:", data)}>
           Create User
         </button>
       </div>

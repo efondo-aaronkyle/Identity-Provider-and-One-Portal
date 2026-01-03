@@ -1,15 +1,27 @@
+import { useState } from "react";
 import Navbar from "../components/Navbar";
 import Sidebar from "../components/Sidebar";
 
 export default function IdpLayout({ children }) {
-  return (
-    <div>
-      <Navbar />
-      <Sidebar />
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
-      <main className="pt-20 pl-72 pr-6 bg-gray-100 min-h-screen">
-        {children}
-      </main>
+  return (
+    <div className="flex min-h-screen bg-white">
+      {sidebarOpen && (
+        <div
+          className="fixed inset-0 bg-black/40 z-40 lg:hidden"
+          onClick={() => setSidebarOpen(false)}
+        />
+      )}
+
+      {/* Sidebar */}
+      <Sidebar isOpen={sidebarOpen} toggleSidebar={() => setSidebarOpen(prev => !prev)} />
+
+      {/* Main content */}
+      <div className="flex-1 flex flex-col ml-14 lg:ml-0 transition-all duration-300">
+        <Navbar sidebarOpen={sidebarOpen} toggleSidebar={() => setSidebarOpen(prev => !prev)} />
+        <main className="p-6">{children}</main>
+      </div>
     </div>
   );
 }
