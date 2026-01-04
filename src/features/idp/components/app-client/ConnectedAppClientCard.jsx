@@ -8,8 +8,8 @@ export default function ConnectedAppClientCard({ clients, totalResults, itemsPer
     
     return (
         <AppClientCard title="Connected App Clients">
-            <div className="grid grid-cols-1 md:grid    -cols-2 gap-4 mb-4">
-                <label className="input rounded-lg flex items-center gap-2 bg-transparent border border-gray-300 text-gray-700 w-full focus-within:ring-1 focus-within:ring-red-500 focus-within:border-red-500">
+            <div className="flex flex-col gap-3 mb-4 sm:flex-row sm:items-center sm:justify-between">
+                <label className="input max-w-xl rounded-xl flex items-center gap-2 bg-transparent border border-gray-300 text-gray-700 w-full focus-within:ring-1 focus-within:ring-red-500 focus-within:border-red-500">
                     <svg className="h-[1em] opacity-50" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
                         <g strokeLinejoin="round" strokeLinecap="round" strokeWidth="2.5" fill="none" stroke="currentColor" className="w-6">
                         <circle cx="11" cy="11" r="8"></circle>
@@ -18,7 +18,7 @@ export default function ConnectedAppClientCard({ clients, totalResults, itemsPer
                     </svg>
                     <input type="search" value={search} placeholder="Search by name or client ID..." className="grow bg-transparent" onChange={(e) => setSearch(e.target.value)} />
                 </label>
-                <div className="flex items-center justify-end text-sm text-gray-600">
+                <div className="flex items-center justify-center lg:justify-end text-sm text-gray-600">
                     Showing <span className="mx-1">{start}</span> to
                     <span className="mx-1">{end}</span> of
                     <span className="mx-1">{totalResults}</span> results
