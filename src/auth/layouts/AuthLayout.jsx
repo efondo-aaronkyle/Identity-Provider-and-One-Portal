@@ -3,7 +3,7 @@ import LoginFooter from "../components/LoginFooter";
 
 export default function AuthLayout({ children }) {
   return (
-    <div>
+    <div className="font-[Poppins]">
       <LoginHeader />
       <main className="hero min-h-screen" style={{ backgroundImage: "url(/assets/images/PUPTbg1.jpg)" }}>
         {children}

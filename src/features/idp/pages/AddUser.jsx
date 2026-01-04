@@ -22,17 +22,24 @@ export default function AddUser() {
     tempPassword: "",
   });
 
+  const title = step === 1 ? "Add User" : "Invitation & Access";
+  const description =
+    step === 1
+      ? "Enter basic user information to create an account."
+      : "Set invitation method and access credentials.";
+
   return (
     <IdpLayout>
-      <div className="flex justify-center mt-8">
-        <AddUserCard
-          title={step === 1 ? "Add User" : "Invitation & Access"}
-          description={
-            step === 1 
-            ? "Enter basic user information to create an account." 
-            : "Set invitation method and access credentials."
-          }
-        >
+      <div className="flex flex-col items-center gap-6 px-3 sm:px-6">
+        <div className="max-w-3xl w-full mx-auto">
+          <h1 className="text-[#991b1b] text-2xl sm:text-4xl font-bold">
+            {title}
+          </h1>
+          <p className="text-sm text-gray-600">
+            {description}
+          </p>
+        </div>
+        <AddUserCard>
           <FadeWrapper isVisible={step === 1} keyId="step1">
             <AddUserDetails data={data} setData={setData} onNext={() => setStep(2)} />
           </FadeWrapper>
@@ -42,6 +49,6 @@ export default function AddUser() {
           </FadeWrapper>
         </AddUserCard>
       </div>
-    </IdpLayout>
+  </IdpLayout>
   );
 }
