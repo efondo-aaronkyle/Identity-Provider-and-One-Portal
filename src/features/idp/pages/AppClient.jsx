@@ -4,6 +4,7 @@ import CreateAppClientCard from "../components/app-client/CreateAppClientCard";
 import ConnectedAppClientCard from "../components/app-client/ConnectedAppClientCard";
 import AppClientModal from "../components/app-client/AppClientModal";
 import SuccessAlert from "../../../components/SuccessAlert";
+import DeleteConfirmModal from "../../../components/DeleteConfirmAlert";
 
 const ITEMS_PER_PAGE = 10;
 
@@ -29,6 +30,9 @@ export default function AppClient() {
 
     const [showSuccess, setShowSuccess] = useState(false);
     const [successMessage, setSuccessMessage] = useState("");
+
+    const [showDeleteAlert, setShowDeleteAlert] = useState(false);
+    const [deleteTarget, setDeleteTarget] = useState(null);
 
     const filtered = useMemo(() => {
         return clients.filter(
@@ -63,12 +67,17 @@ export default function AppClient() {
     };
 
     const deleteClient = (id) => {
-        if (!confirm("Delete this app client?")) return;
-        setClients((prev) => prev.filter((c) => c.clientId !== id));
+        setDeleteTarget(id);
+        setShowDeleteAlert(true);
+    };
+
+    const confirmDelete = () => {
+        setClients((prev) => prev.filter((c) => c.clientId !== deleteTarget));
+        setShowDeleteAlert(false);
+        setDeleteTarget(null);
 
         setSuccessMessage("App client successfully deleted!");
         setShowSuccess(true);
-
         setTimeout(() => setShowSuccess(false), 3000);
     };
 
@@ -97,7 +106,7 @@ export default function AppClient() {
         setSuccessMessage("App client successfully created!");
     } else if (mode === "edit") {
         setClients((prev) =>
-        prev.map((c) => (c.clientId === data.clientId ? data : c))
+            prev.map((c) => (c.clientId === data.clientId ? data : c))
         );
         setSuccessMessage("App client successfully updated!");
     }
@@ -138,6 +147,15 @@ export default function AppClient() {
                     onSubmit={saveClient}
                 />
             </div>
+
+            {showDeleteAlert && (
+                <DeleteConfirmModal open={showDeleteAlert} message="Delete this app client?" onCancel={() => {
+                        setShowDeleteAlert(false);
+                        setDeleteTarget(null);
+                    }}
+                    onConfirm={confirmDelete}
+                />
+            )}
             {showSuccess && (
                 <SuccessAlert message={successMessage} onClose={() => setShowSuccess(false)} />
             )}
