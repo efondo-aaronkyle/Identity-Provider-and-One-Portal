@@ -61,12 +61,12 @@ export default function LoginForm() {
                 />
               </label>
             </div>
-            <div className="flex items-center justify-between mb-10 font-medium">
+            <div className="flex items-center justify-between mb-10 mt-10 font-medium">
               <label className="flex items-center gap-2 text-gray-700">
                 <input type="checkbox" className="checkbox border-gray-300 bg-transparent checked:bg-[#991b1b] checked:border-red-900 checked:text-white mr-1" />
-                <span className="text-[#991b1b] text-[.79rem] sm:text-base">Remember me</span>
+                <span className="text-[#991b1b] text-[.7rem] sm:text-sm">Remember me</span>
               </label>
-              <a href="#" className="text-[#991b1b] hover:underline text-[.79rem] sm:text-base">
+              <a href="#" className="link link-hover text-[#991b1b] text-[.7rem] sm:text-sm">
                 Forgot your password?
               </a>
             </div>
