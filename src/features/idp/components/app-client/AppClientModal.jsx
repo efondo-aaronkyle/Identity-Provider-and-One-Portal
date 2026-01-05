@@ -54,24 +54,27 @@ export default function AppClientModal({ open, mode, client, onClose, onSubmit }
         </button>
 
         {/* Modal title */}
-        <h3 className="text-sm sm:text-xl font-bold text-[#991b1b] mb-5">
+        <h3 className="text-sm sm:text-2xl font-bold text-[#991b1b] mb-5">
           {mode === "create" ? "Create App Client" : mode === "edit" ? "Edit App Client" : "View App Client"}
         </h3>
 
         {/* Form fields */}
         <div className="space-y-4 flex-1">
           {(mode === "view" || mode === "edit") && (
-            <input type="text" value={client?.clientId} placeholder="Client ID" readOnly className="w-full px-3 py-2 rounded-md border bg-gray-100 text-gray-700 border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#991b1b]"/>
+            <input type="text" value={client?.clientId} placeholder="Client ID" readOnly className="w-full px-3 py-2 rounded-md border bg-gray-100 text-gray-700 border-gray-300"/>
           )}
           
-          <input type="text" value={name} onChange={(e) => setName(e.target.value)} name="client_name" placeholder="Client name (e.g., My Web App)" required className="w-full px-3 py-2 rounded-md border bg-transparent text-gray-700 border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#991b1b]" disabled={mode === "view"}/>
+          <input type="text" value={name} onChange={(e) => setName(e.target.value)} name="client_name" placeholder="Client name (e.g., My Web App)" required className={`w-full px-3 py-2 rounded-lg border border-gray-300 ${
+              mode === "view" ? "bg-gray-100 text-gray-700" : "bg-transparent text-gray-700 focus:ring-2 focus:ring-[#991b1b]"
+            }`} disabled={mode === "view"}/>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <textarea value={callbacks} onChange={(e) => setCallbacks(e.target.value)} name="callback_urls" rows="3" placeholder="Callback URLs (comma-separated)" className="w-full px-3 py-2 rounded-md border bg-transparent text-gray-700 border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#991b1b] resize-none max-h-40 overflow-y-auto" disabled={mode === "view"}/>
-            <textarea value={logouts} onChange={(e) => setLogouts(e.target.value)} name="logout_urls" rows="3" placeholder="Sign out URLs (comma-separated)" className="w-full px-3 py-2 rounded-md border bg-transparent text-gray-700 border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#991b1b] resize-none max-h-40 overflow-y-auto" disabled={mode === "view"}/>
+            <textarea value={callbacks} onChange={(e) => setCallbacks(e.target.value)} name="callback_urls" rows="3" placeholder="Callback URLs (comma-separated)" className={`w-full px-3 py-2 rounded-md border border-gray-300 resize-none max-h-40 overflow-y-auto foucs:outline-none ${
+              mode === "view" ? "bg-gray-100 text-gray-700" : "bg-transparent text-gray-700 focus:ring-2 focus:ring-[#991b1b]"}`} disabled={mode === "view"}/>
+            <textarea value={logouts} onChange={(e) => setLogouts(e.target.value)} name="logout_urls" rows="3" placeholder="Sign out URLs (comma-separated)" className={`w-full px-3 py-2 rounded-md border border-gray-300 resize-none max-h-40 overflow-y-auto foucs:outline-none ${
+              mode === "view" ? "bg-gray-100 text-gray-700" : "bg-transparent text-gray-700 focus:ring-2 focus:ring-[#991b1b]"}`}  disabled={mode === "view"}/>
           </div>
 
-          {/* Allowed scopes */}
           <div className="mb-5">
             <span className="block text-sm font-medium text-gray-700">Allowed scopes</span>
             <div className="mt-2 grid grid-cols-2 gap-3 sm:grid-cols-4">
