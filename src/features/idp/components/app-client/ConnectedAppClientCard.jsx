@@ -1,11 +1,9 @@
 import AppClientCard from "./AppClientCard";
 import Pagination from "./Pagination";
 import ConnectedAppClientTable from "./ConnectedAppClientTable";
+import ResultsCount from "../../../../components/ResultsCount";
 
 export default function ConnectedAppClientCard({ clients, totalResults, itemsPerPage, search, setSearch, page, totalPages, onPageChange, onView, onEdit, onDelete }) {
-    const start = totalResults === 0 ? 0 : (page - 1) * itemsPerPage + 1;
-    const end = totalResults === 0 ? 0 : Math.min(page * itemsPerPage, totalResults);
-    
     return (
         <AppClientCard title="Connected App Clients">
             <div className="flex flex-col gap-3 mb-4 sm:flex-row sm:items-center sm:justify-between">
@@ -18,11 +16,7 @@ export default function ConnectedAppClientCard({ clients, totalResults, itemsPer
                     </svg>
                     <input type="search" value={search} placeholder="Search by name or client ID..." className="grow bg-transparent" onChange={(e) => setSearch(e.target.value)} />
                 </label>
-                <div className="flex items-center justify-center lg:justify-end text-sm text-gray-600">
-                    Showing <span className="mx-1">{start}</span> to
-                    <span className="mx-1">{end}</span> of
-                    <span className="mx-1">{totalResults}</span> results
-                </div>
+                <ResultsCount page={page} itemsPerPage={itemsPerPage} totalResults={totalResults} />
             </div>
             <ConnectedAppClientTable clients={clients} onView={onView} onEdit={onEdit} onDelete={onDelete} />
             <Pagination currentPage={page} totalPages={totalPages} onPageChange={onPageChange} />
