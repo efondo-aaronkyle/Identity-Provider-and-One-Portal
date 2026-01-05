@@ -1,6 +1,6 @@
 import FadeWrapper from "../../../../components/FadeWrapper";
 
-export default function AddUserInvitation({ data, setData, onBack }) {
+export default function AddUserInvitation({ data, setData, onBack, onSubmit }) {
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     setData({ ...data, [name]: type === "checkbox" ? checked : value });
@@ -16,13 +16,8 @@ export default function AddUserInvitation({ data, setData, onBack }) {
     setData({ ...data, tempPassword: pwd });
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log("FINAL DATA:", data);
-  };
-
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
+    <form onSubmit={(e) => e.preventDefault()} className="space-y-6">
 
       <div>
         <label className="font-medium text-black text-base">
@@ -124,7 +119,7 @@ export default function AddUserInvitation({ data, setData, onBack }) {
         <button type="button" onClick={onBack} className="btn btn-outline text-[#991b1b] border-[#991b1b] hover:bg-[#ffd700] hover:border-[#ffd700] hover:text-[#991b1b]">
           Back
         </button>
-        <button type="button" className="btn bg-[#991b1b] text-white border-[#991b1b] hover:bg-[#ffd700] hover:border-[#ffd700] hover:text-[#991b1b]" onClick={() => console.log("FINAL DATA:", data)}>
+        <button type="button" className="btn bg-[#991b1b] text-white border-[#991b1b] hover:bg-[#ffd700] hover:border-[#ffd700] hover:text-[#991b1b]" onClick={onSubmit}>
           Create User
         </button>
       </div>

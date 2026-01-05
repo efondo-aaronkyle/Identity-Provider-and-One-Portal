@@ -1,9 +1,9 @@
-import { act, useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import OnePortalLayout from "../layouts/OnePortalLayout";
 import PortalHero from "../components/PortalHero";
 import PortalToolbar from "../components/PortalToolbar";
 import SystemGrid from "../components/SystemGrid";
-import Pagination from "../components/Pagination";
+import Pagination from "../../../components/Pagination";
 import { systems } from "../data/systems";
 
 export default function OnePortalHome() {
@@ -16,6 +16,20 @@ export default function OnePortalHome() {
         setCurrentPage(1);
     }, [searchQuery, activeCategory]);
 
+    const filteredSystems = useMemo(() => {
+        return systems.filter((system) => {
+            const matchesCategory =
+                activeCategory === "All" || system.category === activeCategory;
+
+            const matchesSearch = system.title
+                .toLowerCase()
+                .includes(searchQuery.toLowerCase());
+
+            return matchesCategory && matchesSearch;
+        });
+    }, [searchQuery, activeCategory]);
+
+    const totalPages = Math.max(1, Math.ceil(filteredSystems.length / CARDS_PER_PAGE));
     return (
         <OnePortalLayout>
             <PortalHero />
@@ -35,12 +49,7 @@ export default function OnePortalHome() {
                 />
 
                 <Pagination 
-                    totalPages={Math.ceil(
-                        systems.filter((system) =>
-                            (activeCategory === "All" || system.category === activeCategory) &&
-                            system.title.toLowerCase().includes(searchQuery.toLowerCase())
-                        ).length / CARDS_PER_PAGE
-                    )}
+                    totalPages={totalPages}
                     currentPage={currentPage}
                     onPageChange={setCurrentPage}
                 />
