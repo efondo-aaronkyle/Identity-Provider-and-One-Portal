@@ -31,7 +31,7 @@ export default function AddUser() {
   return (
     <IdpLayout>
       <div className="flex flex-col items-center gap-6 px-3 sm:px-6">
-        <div className="max-w-3xl w-full mx-auto">
+        <div className="max-w-md md:max-w-lg lg:max-w-6xl w-full mx-auto">
           <h1 className="text-[#991b1b] text-2xl sm:text-4xl font-bold">
             {title}
           </h1>

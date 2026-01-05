@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import IdpLayout from "../layouts/IdpLayout";
 import CreateAppClientCard from "../components/app-client/CreateAppClientCard";
 import ConnectedAppClientCard from "../components/app-client/ConnectedAppClientCard";
@@ -28,11 +28,20 @@ export default function AppClient() {
     const [mode, setMode] = useState("create");
     const [activeClient, setActiveClient] = useState(null);
 
-    const [showSuccess, setShowSuccess] = useState(false);
     const [successMessage, setSuccessMessage] = useState("");
 
     const [showDeleteAlert, setShowDeleteAlert] = useState(false);
     const [deleteTarget, setDeleteTarget] = useState(null);
+
+    useEffect(() => {
+        if (!successMessage) return;
+
+        const timer = setTimeout(() => {
+            setSuccessMessage("");
+        }, 3000);
+
+        return () => clearTimeout(timer);
+    }, [successMessage]);
 
     const filtered = useMemo(() => {
         return clients.filter(
@@ -77,8 +86,6 @@ export default function AppClient() {
         setDeleteTarget(null);
 
         setSuccessMessage("App client successfully deleted!");
-        setShowSuccess(true);
-        setTimeout(() => setShowSuccess(false), 3000);
     };
 
     const generateClientId = (name) => {
@@ -93,34 +100,31 @@ export default function AppClient() {
     };
 
     const saveClient = (data) => {
-    if (mode === "create") {
-        setClients((prev) => [
-        {
-            ...data,
-            clientId: generateClientId(data.name),
-            created: new Date().toISOString().slice(0, 10),
-            lastUsed: "-",
-        },
-        ...prev,
-        ]);
-        setSuccessMessage("App client successfully created!");
-    } else if (mode === "edit") {
-        setClients((prev) =>
-            prev.map((c) => (c.clientId === data.clientId ? data : c))
-        );
-        setSuccessMessage("App client successfully updated!");
-    }
-    setModalOpen(false);
-    setShowSuccess(true);
-
-    setTimeout(() => setShowSuccess(false), 3000);
+        if (mode === "create") {
+            setClients((prev) => [
+            {
+                ...data,
+                clientId: generateClientId(data.name),
+                created: new Date().toISOString().slice(0, 10),
+                lastUsed: "-",
+            },
+            ...prev,
+            ]);
+            setSuccessMessage("App client successfully created!");
+        } else if (mode === "edit") {
+            setClients((prev) =>
+                prev.map((c) => (c.clientId === data.clientId ? data : c))
+            );
+            setSuccessMessage("App client successfully updated!");
+        }
+        setModalOpen(false);
     };
 
 
     return (
         <IdpLayout>
             <div className="flex flex-col items-center gap-6 px-3 sm:px-6">
-                <div className="max-w-md md:max-w-lg lg:max-w-4xl w-full mx-auto">
+                <div className="max-w-md md:max-w-lg lg:max-w-6xl w-full mx-auto">
                     <h1 className="text-[#991b1b] text-2xl sm:text-4xl font-bold">App Client</h1>
                     <p className="text-sm text-gray-600">Manage application clients and settings</p>
                 </div>
@@ -148,17 +152,14 @@ export default function AppClient() {
                 />
             </div>
 
-            {showDeleteAlert && (
-                <DeleteConfirmModal open={showDeleteAlert} message="Delete this app client?" onCancel={() => {
-                        setShowDeleteAlert(false);
-                        setDeleteTarget(null);
-                    }}
-                    onConfirm={confirmDelete}
-                />
-            )}
-            {showSuccess && (
-                <SuccessAlert message={successMessage} onClose={() => setShowSuccess(false)} />
-            )}
+            <DeleteConfirmModal open={showDeleteAlert} message="Delete this app client?" onCancel={() => {
+                    setShowDeleteAlert(false);
+                    setDeleteTarget(null);
+                }}
+                onConfirm={confirmDelete}
+            />
+
+            <SuccessAlert message={successMessage} onClose={() => setSuccessMessage("")} />
         </IdpLayout>
     );
 }
