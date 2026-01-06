@@ -1,4 +1,3 @@
-// src/App.jsx
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Login from "./auth/pages/Login";
 import OnePortalHome from "./features/one-portal/pages/OnePortalHome";
@@ -16,8 +15,8 @@ export default function App() {
 
         {/* IDP */}
         <Route path="/idp/add-user" element={<AddUser />} />
-        <Route path="idp/app-client" element={<AppClient/>} />
-        <Route path="idp/user-pool" element={<UserPool/>} />
+        <Route path="/idp/app-client" element={<AppClient/>} />
+        <Route path="/idp/user-pool" element={<UserPool/>} />
 
         {/* One Portal */}
         <Route path="/portal" element={<OnePortalHome />} />
