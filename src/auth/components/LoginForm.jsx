@@ -25,7 +25,11 @@ export default function LoginForm() {
         <div className="card bg-white w-full shadow-xl">
           <div className="card-body space-y-6">
             <img src="/assets/images/PUPlogo.png" alt="PUP IDP Logo" className="h-24 object-contain mx-auto block drop-shadow-lg mb-1"/>
-            <h2 className="text-red-800 text-4xl font-bold text-center">Login</h2>
+            <div>
+              <h2 className="text-[#991b1b] mb-0  leading-none text-2xl font-bold text-center">Welcome Back!</h2>
+              <p className="text-gray-500 text-base font-semibold text-center">Sign in to access PUPT systems</p>
+            </div>
+            
             <form onSubmit={handleSubmit} className="space-y-6">
               <div>
                 <label className="block font-medium mb-2 text-black text-base">Email Address <span className="text-red-500">*</span></label>
@@ -76,7 +80,7 @@ export default function LoginForm() {
                   Forgot your password?
                 </a>
               </div>
-              <button className="btn w-full font-semibold bg-[#991b1b] text-white border-[#991b1b] hover:bg-[#ffd700] hover:border-[#ffd700] hover:text-[#991b1b]">Login</button>
+              <button className="btn w-full font-bold text-base rounded-xl bg-[#991b1b] text-white border-[#991b1b] hover:bg-[#ffd700] hover:border-[#ffd700] hover:text-[#991b1b]">LOGIN</button>
             </form>
           </div>
         </div>
