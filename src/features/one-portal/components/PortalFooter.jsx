@@ -8,24 +8,24 @@ export default function PortalFooter() {
           <div className="flex flex-col md:flex-row items-center md:items-center space-y-3 md:space-y-0 md:space-x-3 mb-4">
             <div>
               <img
-                src="/assets/images/PUPIDP-logo.png"
-                alt="PUP IDP Logo"
+                src="/assets/images/PUPlogo.png"
+                alt="PUP Logo"
                 className="h-16 w-16 object-contain"
               />
             </div>
             <div className="flex flex-col text-center md:text-left">
-              <h2 className="text-[1.6em] font-bold">PUPT IDP 2025</h2>
-              <p className="text-sm text-[#facc15] font-bold">Identity Provider System</p>
+              <h2 className="text-[1.6em] font-bold">PUPT ONE PORTAL 2026</h2>
+              <p className="text-sm text-[#facc15] font-bold">One Portal System</p>
             </div>
           </div>
           <p className="text-base text-justify mb-6 w-75 sm:w-150">
-            Polytechnic University of the Philippines Taguig Identity Provider System (PUPT IDP) — 
-            a centralized authentication platform designed to provide secure, accessible, and unified digital identity management 
-            across all PUPT systems.
+            Polytechnic University of the Philippines Taguig One Portal System (PUPT One Portal) — 
+            a centralized system that provides students, faculty, and staff with seamless access to various services 
+            and resources offered by the campus. It aims to enhance the overall user experience by integrating multiple services.
           </p>
           <p className="text-[.85rem] w-100">
-            © 2025 <span className="font-bold">Polytechnic University of the Philippines</span><br />
-            All rights reserved. PUPT IDP Management System.
+            © 2026 <span className="font-bold">Polytechnic University of the Philippines</span><br />
+            All rights reserved. PUPT One Portal Management System
           </p>
         </aside>
 
