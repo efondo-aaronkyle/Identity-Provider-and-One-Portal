@@ -1,6 +1,7 @@
 import { useState } from "react";
 import Navbar from "../components/Navbar";
 import Sidebar from "../components/Sidebar";
+import Footer from "../components/Footer";
 
 export default function IdpLayout({ children }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -21,6 +22,7 @@ export default function IdpLayout({ children }) {
       <div className="flex-1 flex flex-col ml-14 lg:ml-0 transition-all duration-300">
         <Navbar sidebarOpen={sidebarOpen} toggleSidebar={() => setSidebarOpen(prev => !prev)} />
         <main className="p-6">{children}</main>
+        <Footer sidebarOpen={sidebarOpen} toggleSidebar={() => setSidebarOpen(prev => !prev)} />
       </div>
     </div>
   );
