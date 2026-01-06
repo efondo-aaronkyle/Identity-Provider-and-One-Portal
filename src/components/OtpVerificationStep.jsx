@@ -69,7 +69,7 @@ export default function OtpVerificationStep({ otp, setOtp, timer, canResend, onR
                                     value={digit}
                                     onChange={(e) => handleChange(idx, e.target.value)}
                                     onKeyDown={(e) => handleKeyDown(idx, e)}
-                                    className="w-12 h-12 text-center text-xl font-bold border-2 border-gray-300 rounded-lg focus:border-[#991b1b] focus:ring-1 focus:ring-[#991b1b] outline-none"
+                                    className="w-12 h-12 text-center text-xl font-bold border-2 border-gray-300 text-gray-700 rounded-lg focus:border-[#991b1b] focus:ring-1 focus:ring-[#991b1b] outline-none"
                                     maxLength={1}
                                 />
                             ))}

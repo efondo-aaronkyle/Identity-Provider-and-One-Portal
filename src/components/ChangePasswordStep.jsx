@@ -71,7 +71,7 @@ export default function ChangePasswordStep({ form, setForm, onNext, onClose }) {
                                             ? "Enter new password"
                                             : "Confirm new password"
                                     } 
-                                    className="input input-bordered w-full pr-10 bg-transparent h-12 border-gray-300 rounded-lg text-base" onChange={handleChange} required />
+                                    className="input input-bordered w-full pr-10 bg-transparent h-12 border-gray-200 rounded-lg text-gray-700 text-base" onChange={handleChange} required />
                                 <button type="button" className="absolute right-3 top-3 text-gray-500 hover:text-gray-700" onClick={() => toggleShowPassword(field)}>
                                     {showPassword[field] ? (
                                         <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 cursor-pointer" fill="none" viewBox="0 0 24 24" stroke="currentColor">
