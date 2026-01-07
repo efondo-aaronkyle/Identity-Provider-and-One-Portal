@@ -1,7 +1,8 @@
 import { useState } from "react";
 
-export default function ChangePasswordStep({ form, setForm, onNext, onClose }) {
+export default function ChangePasswordStep({ form, setForm, onNext, onClose, showCurrentPassword = true }) {
     const [showPassword, setShowPassword] = useState({
+        currentPassord: false,
         newPassword: false,
         confirmPassword: false,
     });
@@ -33,7 +34,11 @@ export default function ChangePasswordStep({ form, setForm, onNext, onClose }) {
         if (!valid) return;
         onNext();
     };
-   
+
+    const fields = showCurrentPassword
+        ? ["currentPassword", "newPassword", "confirmPassword"]
+        : ["newPassword", "confirmPassword"];
+
     return (
         <div className="custom-scrollbar">
             <div className="bg-linear-to-r from-red-800 to-red-600 p-6 text-white">
@@ -52,7 +57,7 @@ export default function ChangePasswordStep({ form, setForm, onNext, onClose }) {
             </div>
             <div className="p-6 bg-white">
                 <form className="space-y-4">
-                    {["currentPassword", "newPassword", "confirmPassword"].map((field) => (
+                    {fields.map((field) => (
                         <div className="space-y-2" key={field}>
                             <label className="block text-sm font-semibold text-gray-700">
                                 {field === "currentPassword"
