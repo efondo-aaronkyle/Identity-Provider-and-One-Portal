@@ -11,7 +11,7 @@ export default function LoginForm() {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (password === "admin123") {
-      navigate("/idp/add-user");
+      navigate("/idp/user-pool");
     } else if (password === "user123") {
       navigate("/portal");
     } else {
