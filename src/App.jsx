@@ -5,6 +5,7 @@ import Profile from "./features/one-portal/pages/Profile";
 import AddUser from "./features/idp/pages/AddUser";
 import AppClient from "./features/idp/pages/AppClient";
 import UserPool from "./features/idp/pages/UserPool";
+import Roles from "./features/idp/pages/Roles";
 
 export default function App() {
   return (
@@ -17,6 +18,7 @@ export default function App() {
         <Route path="/idp/add-user" element={<AddUser />} />
         <Route path="/idp/app-client" element={<AppClient/>} />
         <Route path="/idp/user-pool" element={<UserPool/>} />
+        <Route path="/idp/role" element={<Roles />} />
 
         {/* One Portal */}
         <Route path="/portal" element={<OnePortalHome />} />
