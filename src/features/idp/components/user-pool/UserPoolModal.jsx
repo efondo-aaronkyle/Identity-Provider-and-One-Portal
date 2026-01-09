@@ -32,92 +32,95 @@ export default function UserPoolModal({ open, mode, user, onClose, onSubmit }) {
 
   return (
     <dialog className="modal modal-open">
-      <form
-        onSubmit={handleSubmit}
-        className="modal-box bg-white w-full max-w-xl rounded-xl max-h-[80vh] flex flex-col overflow-y-auto"
-      >
-        {/* Close */}
-        <button
-          type="button"
-          className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
-          onClick={onClose}
-        >
-          ✕
-        </button>
-
-        {/* Title */}
-        <h3 className="text-sm sm:text-2xl font-bold text-[#991b1b] mb-5">
-          {mode === "edit" ? "Edit User" : "View User"}
-        </h3>
-
-        {/* Fields */}
-        <div className="space-y-4 flex-1">
-          <input
-            type="text"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            disabled={mode === "view"}
-            className={`w-full px-3 py-2 rounded-lg border ${
-              mode === "view" ? "bg-gray-100 text-gray-700" : "bg-transparent text-gray-700 focus:ring-2 focus:ring-[#991b1b]"
-            }`}
-            placeholder="Username"
-          />
-
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            disabled={mode === "view"}
-            className={`w-full px-3 py-2 rounded-lg border ${
-              mode === "view" ? "bg-gray-100 text-gray-700" : "bg-transparent text-gray-700 focus:ring-2 focus:ring-[#991b1b]"
-            }`}
-            placeholder="Email"
-          />
-
-          <input
-            type="text"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            disabled={mode === "view"}
-            className={`w-full px-3 py-2 rounded-lg border ${
-              mode === "view" ? "bg-gray-100 text-gray-700" : "bg-transparent text-gray-700 focus:ring-2 focus:ring-[#991b1b]"
-            }`}
-            placeholder="Full Name"
-          />
-
-          <select
-            value={status}
-            onChange={(e) => setStatus(e.target.value)}
-            disabled={mode === "view"}
-            className={`w-full px-3 py-2 rounded-lg border ${
-              mode === "view" ? "bg-gray-100 text-gray-700" : "bg-transparent text-gray-700 focus:ring-2 focus:ring-[#991b1b]"
-            }`}
-          >
-            <option value="ACTIVE">ACTIVE</option>
-            <option value="INACTIVE">INACTIVE</option>
-          </select>
+      <div className="modal-box max-w-xl max-h-[85vh] p-0 overflow-hidden flex flex-col">
+        <div className="bg-linear-to-r from-[#991b1b] to-red-600 p-6 text-white shrink-0">
+          <div className="flex items-center justify-between">
+            <div>
+              <h3 className="text-2xl font-bold">
+                {mode === "edit" ? "Edit User" : "View User"}
+              </h3>
+              <p className="text-white/90 mt-1">
+                {mode === "edit" ? "Update user account information" : "User account details"}
+              </p>
+            </div>
+            <button className="btn btn-sm btn-circle btn-ghost text-white hover:bg-white/20" onClick={onClose}>
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
         </div>
+        <form id="user-pool-form" onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-6 bg-white space-y-4">
+          <div className="space-y-0.5">
+            <label className="block text-sm font-semibold text-gray-700">
+              Username
+            </label>
+            <input type="text" value={username} onChange={(e) => setUsername(e.target.value)}
+              disabled={mode === "view"}
+              className={`w-full px-3 py-2 rounded-lg border ${
+                mode === "view" ? "bg-gray-100 text-gray-700" : "bg-transparent text-gray-700 focus:ring-2 focus:ring-[#991b1b]"
+              }`}
+              placeholder="Username"
+            />
+          </div>
+          
+          <div className="space-y-0.5">
+            <label className="block text-sm font-semibold text-gray-700">
+              Email
+            </label>
+            <input type="email" value={email} onChange={(e) => setEmail(e.target.value)}
+              disabled={mode === "view"}
+              className={`w-full px-3 py-2 rounded-lg border ${
+                mode === "view" ? "bg-gray-100 text-gray-700" : "bg-transparent text-gray-700 focus:ring-2 focus:ring-[#991b1b]"
+              }`}
+              placeholder="Email"
+            />
+          </div>
+          
+          <div className="space-y-0.5">
+            <label className="block text-sm font-semibold text-gray-700">
+              Fullname
+            </label>
+            <input type="text" value={name} onChange={(e) => setName(e.target.value)}
+              disabled={mode === "view"}
+              className={`w-full px-3 py-2 rounded-lg border ${
+                mode === "view" ? "bg-gray-100 text-gray-700" : "bg-transparent text-gray-700 focus:ring-2 focus:ring-[#991b1b]"
+              }`}
+              placeholder="Full Name"
+            />
+          </div>
+          
+          <div className="space-y-0.5">
+            <label className="block text-sm font-semibold text-gray-700">
+              Status
+            </label>
+            <select value={status} onChange={(e) => setStatus(e.target.value)}
+              disabled={mode === "view"}
+              className={`w-full px-3 py-2 rounded-lg border ${
+                mode === "view" ? "bg-gray-100 text-gray-700" : "bg-transparent text-gray-700 focus:ring-2 focus:ring-[#991b1b]"
+              }`}
+            >
+              <option value="ACTIVE">ACTIVE</option>
+              <option value="INACTIVE">INACTIVE</option>
+            </select>
+          </div>
+        </form>
 
         {/* Actions */}
-        <div className="flex justify-end gap-3 mt-6">
-          <button
-            type="button"
-            className="btn btn-outline text-[#991b1b] border-[#991b1b] hover:bg-[#ffd700] hover:border-[#ffd700] hover:text-[#991b1b]"
-            onClick={onClose}
-          >
-            Close
-          </button>
-
-          {mode === "edit" && (
-            <button
-              type="submit"
-              className="btn bg-[#991b1b] text-white border-[#991b1b] hover:bg-[#ffd700] hover:border-[#ffd700] hover:text-[#991b1b]"
-            >
-              Save
+        <div className="p-6 bg-gray-50 border-t border-gray-200 shrink-0">
+          <div className="flex justify-end gap-3">
+            <button type="button" className="btn h-12 rounded-lg btn-outline text-[#991b1b] border-[#991b1b] hover:bg-[#ffd700] hover:border-[#ffd700] hover:text-[#991b1b]" onClick={onClose}>
+              Close
             </button>
-          )}
+
+            {mode === "edit" && (
+              <button type="submit" form="user-pool-form" className="btn h-12 rounded-lg bg-[#991b1b] text-white border-[#991b1b] hover:bg-[#ffd700] hover:border-[#ffd700] hover:text-[#991b1b]">
+                Save
+              </button>
+            )}
+          </div>
         </div>
-      </form>
+      </div>
     </dialog>
   );
 }
