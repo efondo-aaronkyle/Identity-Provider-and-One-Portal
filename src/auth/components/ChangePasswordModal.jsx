@@ -7,7 +7,6 @@ import SuccessAlert from "../../components/SuccessAlert";
 export default function ChangePasswordModal({ isOpen, onClose }) {
     const [step, setStep] = useState(1);
     const [form, setForm] = useState({
-        currentPassword: "",
         newPassword: "",
         confirmPassword: "",
     });
@@ -40,7 +39,6 @@ export default function ChangePasswordModal({ isOpen, onClose }) {
         if (!isOpen) {
             setStep(1);
             setForm({
-                currentPassword: "",
                 newPassword: "",
                 confirmPassword: "",
             });
@@ -80,6 +78,7 @@ export default function ChangePasswordModal({ isOpen, onClose }) {
                             setForm={setForm}
                             onClose={onClose}
                             onNext={() => setStep(2)}
+                            showCurrentPassword={false}
                         />
                     )}
                     {step === 2 && (

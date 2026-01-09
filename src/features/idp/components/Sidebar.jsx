@@ -31,7 +31,7 @@ export default function Sidebar({ isOpen, toggleSidebar }) {
       <div className="h-24 px-3 flex items-center">
         <div className="flex items-center justify-between w-full">
           <div className="flex flex-col items-start overflow-hidden">
-            <h1 className={`text-white text-3xl font-bold transition-all duration-300 ${isOpen ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-4"}`}>PUPIDP</h1>
+            <h1 className={`text-white text-3xl font-bold transition-all duration-300 ${isOpen ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-4"}`}>PUPTIDP</h1>
             <span className={`inline-flex bg-[#ffd700] text-black mt-1 px-2 rounded-md text-xs transition-all duration-300 ${isOpen ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-4"}`}>ver.2026</span>
           </div>
           <button type="button" className="p-2 rounded-full hover:bg-red-900 text-white shrink-0" onClick={toggleSidebar}>

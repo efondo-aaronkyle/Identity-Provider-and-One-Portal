@@ -9,12 +9,10 @@ export default function LoginForm() {
   const handleSubmit = async (e) => {
       e.preventDefault();
       
-      // Vite environment variables
       const API_BASE = import.meta.env.VITE_API_BASE_URL;
       const CLIENT_ID = import.meta.env.VITE_CLIENT_ID;
 
       try {
-        // FIX: Use backticks (`) for template literals
         const response = await fetch(`${API_BASE}/auth/login`, {
           method: "POST",
           headers: {
