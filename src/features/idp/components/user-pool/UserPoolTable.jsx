@@ -9,6 +9,7 @@ export default function UserPoolTable({ users = [], onView, onEdit, onDisable })
                         <th className="text-white">Username</th>
                         <th className="text-white">Email</th>
                         <th className="text-white">Name</th>
+                        <th className="text-white">Role</th>
                         <th className="text-white">Status</th>
                         <th className="text-white">Created</th>
                         <th className="text-white">Last Sign-in</th>
@@ -26,6 +27,7 @@ export default function UserPoolTable({ users = [], onView, onEdit, onDisable })
                             <td className="text-[#991b1b]">{u.username}</td>
                             <td className="text-[#991b1b]">{u.email}</td>
                             <td className="text-[#991b1b]">{u.name}</td>
+                            <td className="text-[#991b1b]">{u.role}</td>
                             <td><span className={`badge badge-sm ${
                                         u.status === "ACTIVE" ? "badge-success" : "badge-ghost"
                                     }`}>{u.status}</span></td>

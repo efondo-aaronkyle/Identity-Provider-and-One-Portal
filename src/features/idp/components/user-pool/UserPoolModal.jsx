@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
+import { initialRoles } from "../../data/RolesData";
 
 export default function UserPoolModal({ open, mode, user, onClose, onSubmit }) {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
   const [status, setStatus] = useState("ACTIVE");
+  const [roleId, setRoleId] = useState("");
 
   useEffect(() => {
     if (!user) return;
@@ -13,7 +15,9 @@ export default function UserPoolModal({ open, mode, user, onClose, onSubmit }) {
     setEmail(user.email || "");
     setName(user.name || "");
     setStatus(user.status || "ACTIVE");
-  }, [user, mode]);
+    const r = initialRoles.find(r => r.role_name === user.role);
+    setRoleId(r?.id?.toString() || "");
+  }, [user]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -25,6 +29,8 @@ export default function UserPoolModal({ open, mode, user, onClose, onSubmit }) {
       email,
       name,
       status,
+      roleId,
+      role: initialRoles.find(r => r.id.toString() === roleId)?.role_name || "USER",
     });
   };
 
@@ -89,6 +95,25 @@ export default function UserPoolModal({ open, mode, user, onClose, onSubmit }) {
               placeholder="Full Name"
             />
           </div>
+
+          <div className="space-y-0.5">
+            <label className="block text-sm font-semibold text-gray-700">
+              Role
+            </label>
+            <select name="roleId" value={roleId} onChange={(e) => setRoleId(e.target.value)} disabled={mode === "view"}
+              className={`select border rounded-lg w-full border-gray-700 text-gray-700 ${
+                mode === "view" ? "bg-gray-100 cursor-not-allowed" : "bg-white focus:ring-2 focus:ring-[#991b1b]"
+              }`}
+              required
+            >
+              <option value="" className="text-gray-300">Select a role</option>
+              {initialRoles.map((role) => (
+                <option key={role.id} value={role.id}>
+                  {role.role_name}
+                </option>
+              ))}
+            </select>
+          </div>
           
           <div className="space-y-0.5">
             <label className="block text-sm font-semibold text-gray-700">
@@ -96,8 +121,8 @@ export default function UserPoolModal({ open, mode, user, onClose, onSubmit }) {
             </label>
             <select value={status} onChange={(e) => setStatus(e.target.value)}
               disabled={mode === "view"}
-              className={`w-full px-3 py-2 rounded-lg border ${
-                mode === "view" ? "bg-gray-100 text-gray-700" : "bg-transparent text-gray-700 focus:ring-2 focus:ring-[#991b1b]"
+              className={`select border rounded-lg w-full border-gray-700 text-gray-700 ${
+                mode === "view" ? "bg-gray-100 cursor-not-allowed" : "bg-white focus:ring-2 focus:ring-[#991b1b]"
               }`}
             >
               <option value="ACTIVE">ACTIVE</option>

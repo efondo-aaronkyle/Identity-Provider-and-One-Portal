@@ -1,4 +1,5 @@
 import FadeWrapper from "../../../../components/FadeWrapper";
+import { initialRoles } from "../../data/RolesData";
 
 export default function AddUserInvitation({ data, setData, onBack, onSubmit }) {
   const handleChange = (e) => {
@@ -17,8 +18,30 @@ export default function AddUserInvitation({ data, setData, onBack, onSubmit }) {
   };
 
   return (
-    <form onSubmit={(e) => e.preventDefault()} className="space-y-6">
-
+    <form onSubmit={(e) => { e.preventDefault();
+            if(!data.roleId) {
+              alert("Please select a role");
+              return;
+            }
+            onSubmit();
+        }} className="space-y-6">
+      <div>
+        <label className="block font-medium text-black text-base">
+          Role<span className="text-red-500"> *</span>
+        </label>
+        <p className="text-xs text-gray-500 italic mb-2">
+          Choose a role for the user
+        </p>
+        <select name="roleId" value={data.roleId || ""} onChange={(e) => setData({...data, roleId: e.target.value })} 
+          className="select bg-white border rounded-lg border-gray-300 text-gray-700 w-full focus:ring-0 focus:border-blue-200" required>
+            <option value="" className="text-gray-300">Select a role</option>
+            {initialRoles.map((role) => (
+              <option key={role.id} value={role.id}>
+                {role.role_name}
+              </option>
+            ))}
+          </select>
+      </div>
       <div>
         <label className="font-medium text-black text-base">
           Invitation method
@@ -119,7 +142,7 @@ export default function AddUserInvitation({ data, setData, onBack, onSubmit }) {
         <button type="button" onClick={onBack} className="btn btn-outline text-[#991b1b] border-[#991b1b] hover:bg-[#ffd700] hover:border-[#ffd700] hover:text-[#991b1b]">
           Back
         </button>
-        <button type="button" className="btn bg-[#991b1b] text-white border-[#991b1b] hover:bg-[#ffd700] hover:border-[#ffd700] hover:text-[#991b1b]" onClick={onSubmit}>
+        <button type="submit" className="btn bg-[#991b1b] text-white border-[#991b1b] hover:bg-[#ffd700] hover:border-[#ffd700] hover:text-[#991b1b]">
           Create User
         </button>
       </div>

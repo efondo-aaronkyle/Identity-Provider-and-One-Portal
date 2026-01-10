@@ -5,19 +5,13 @@ import RolesListCard from "../components/role/RolesListCard";
 import RoleModal from "../components/role/RoleModal";
 import SuccessAlert from "../../../components/SuccessAlert";
 import DeleteConfirmModal from "../../../components/DeleteConfirmAlert";
+import { initialRoles } from "../data/RolesData";
 
 const ITEMS_PER_PAGE = 10;
 
 
 export default function Roles() {
-    const [roles, setRoles] = useState([
-        {
-            id: 1,
-            role_name: "dental:admin",
-            description: "Admin responsible for managing inventory, staff access, system settings, and operational records",
-            created_at: "2024-06-22",
-        },
-    ]);
+    const [roles, setRoles] = useState(initialRoles);
 
     const [search, setSearch] = useState("");
     const [page, setPage] = useState(1);

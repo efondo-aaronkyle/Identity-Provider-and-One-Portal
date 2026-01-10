@@ -5,6 +5,7 @@ import AddUserCard from "../components/add-user/AddUserCard";
 import AddUserDetails from "../components/add-user/AddUserDetails";
 import AddUserInvitation from "../components/add-user/AddUserInvitation";
 import FadeWrapper from "../../../components/FadeWrapper";
+import { initialRoles } from "../data/RolesData";
 
 export default function AddUser() {
   const navigate = useNavigate();
@@ -22,6 +23,7 @@ export default function AddUser() {
     emailVerified: false,
     phoneVerified: false,
     tempPassword: "",
+    roleId: "",
   });
 
   const title = step === 1 ? "Add User" : "Invitation & Access";
@@ -31,12 +33,17 @@ export default function AddUser() {
       : "Set invitation method and access credentials.";
 
   const handleCreateUser = () => {
+    if (!data.roleId) {
+      alert("Please select a role");
+      return;
+    }
+
     const newUser = {
       id: `usr_${Date.now()}`, // temporary ID
       username: data.username || `user${Date.now()}`,
       email: data.email,
       name: `${data.givenName} ${data.middleName ? data.middleName + " " : ""}${data.surname}`,
-      role: "USER",
+      role: initialRoles.find((r) => r.id.toString() === data.roleId)?.role_name || "USER",
       status: "ACTIVE",
       emailVerified: data.emailVerified,
       createdAt: new Date().toISOString().split("T")[0],
