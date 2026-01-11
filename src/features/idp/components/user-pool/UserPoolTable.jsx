@@ -6,6 +6,7 @@ export default function UserPoolTable({ users = [], onView, onEdit, onDisable })
             <table className="table w-full">
                 <thead>
                     <tr className="bg-[#991b1b]">
+                        <th className="text-white">ID</th>
                         <th className="text-white">Username</th>
                         <th className="text-white">Email</th>
                         <th className="text-white">Name</th>
@@ -22,9 +23,10 @@ export default function UserPoolTable({ users = [], onView, onEdit, onDisable })
                     )}
                     {users.map((u) => (
                         <TableRowFade key={u.id}>
+                            <td className="text-[#991b1b]">{u.id}</td>
                             <td className="text-[#991b1b]">{u.username}</td>
                             <td className="text-[#991b1b]">{u.email}</td>
-                            <td className="text-[#991b1b]">{u.name}</td>
+                            <td className="text-[#991b1b]">{`${u.givenName} ${u.middleName ? u.middleName + " " : ""}${u.surname}`}</td>
                             <td><span className={`badge badge-sm ${
                                         u.status === "ACTIVE" ? "badge-success" : "badge-ghost"
                                     }`}>{u.status}</span></td>

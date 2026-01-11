@@ -5,7 +5,6 @@ import { initialRoles } from "../../data/RolesData";
 export default function UserPoolModal({ open, mode, user, onClose, onSubmit }) {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
-  const [name, setName] = useState("");
   const [status, setStatus] = useState("ACTIVE");
   const [selectedUser, setSelectedUser] = useState(null);
 
@@ -27,7 +26,6 @@ export default function UserPoolModal({ open, mode, user, onClose, onSubmit }) {
 
     setUsername(user.username || "");
     setEmail(user.email || "");
-    setName(user.name || "");
     setStatus(user.status || "ACTIVE");
   }, [user]);
 
@@ -39,14 +37,24 @@ export default function UserPoolModal({ open, mode, user, onClose, onSubmit }) {
       return;
     }
 
+    if (!selectedUser?.roleIds || selectedUser.roleIds.length === 0) {
+      alert("Please select at least one role");
+      return;
+    }
+
+    const fullName = `${selectedUser.givenName} ${selectedUser.middleName ? selectedUser.middleName + " " : ""}${selectedUser.surname}`;
+
     onSubmit({
       ...user,
       username,
       email,
-      name,
+      name: fullName,
       status,
       roleIds: selectedUser?.roleIds || [],
       roles: selectedUser?.roles || [],
+      givenName: selectedUser?.givenName,
+      middleName: selectedUser?.middleName,
+      surname: selectedUser?.surname,
     });
   };
 
@@ -73,22 +81,35 @@ export default function UserPoolModal({ open, mode, user, onClose, onSubmit }) {
           </div>
         </div>
         <form id="user-pool-form" onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-6 bg-white space-y-4">
+          {(mode === "view" || mode === "edit") && (
+            <div className="space-y-0.5">
+              <label className="block text-sm font-semibold text-gray-700">
+                User ID
+              </label>
+              <input type="text" value={selectedUser?.id || ""} placeholder="User ID" readOnly className="w-full px-3 py-2 rounded-md border bg-gray-100 text-gray-700 border-gray-300"/>
+            </div>
+          )}
+          
           <div className="space-y-0.5">
             <label className="block text-sm font-semibold text-gray-700">
               Username
             </label>
-            <input type="text" value={username} onChange={(e) => setUsername(e.target.value)}
-              disabled={mode === "view"}
-              className={`w-full px-3 py-2 rounded-lg border ${
-                mode === "view" ? "bg-gray-100 text-gray-700" : "bg-transparent text-gray-700 focus:ring-2 focus:ring-[#991b1b]"
-              }`}
-              placeholder="Username"
-            />
+            <label className={`input flex items-center rounded-lg border gap-2 w-full ${
+              mode === "view"  
+              ? "bg-gray-100 text-gray-700 border-gray-700" 
+              : "bg-transparent border-gray-700 text-gray-700 focus-within:ring-1 focus-within:ring-[#991b1b] focus-within:border-[#991b1b]"}`}>
+              <input type="text" value={username} onChange={(e) => setUsername(e.target.value)}
+                placeholder="Username"
+                disabled={mode === "view"}
+                className="grow bg-transparent"
+              />
+              <span className="badge badge-neutral badge-xs">Optional</span>
+            </label>
           </div>
-          
+
           <div className="space-y-0.5">
             <label className="block text-sm font-semibold text-gray-700">
-              Email
+              Email <span className="text-red-500">*</span>
             </label>
             <input type="email" value={email} onChange={(e) => setEmail(e.target.value)}
               disabled={mode === "view"}
@@ -96,30 +117,63 @@ export default function UserPoolModal({ open, mode, user, onClose, onSubmit }) {
                 mode === "view" ? "bg-gray-100 text-gray-700" : "bg-transparent text-gray-700 focus:ring-2 focus:ring-[#991b1b]"
               }`}
               placeholder="Email"
+              required
             />
           </div>
-          
+
           <div className="space-y-0.5">
             <label className="block text-sm font-semibold text-gray-700">
-              Fullname
+              First Name <span className="text-red-500">*</span>
             </label>
-            <input type="text" value={name} onChange={(e) => setName(e.target.value)}
+            <input type="text" value={selectedUser?.givenName || ""} onChange={(e) => setSelectedUser({...selectedUser, givenName: e.target.value})}
               disabled={mode === "view"}
               className={`w-full px-3 py-2 rounded-lg border ${
                 mode === "view" ? "bg-gray-100 text-gray-700" : "bg-transparent text-gray-700 focus:ring-2 focus:ring-[#991b1b]"
               }`}
-              placeholder="Full Name"
+              placeholder="First Name"
+              required
+            />
+          </div>
+
+          <div className="space-y-0.5">
+            <label className="block font-medium mb-1 text-black text-base">
+              Middle Name
+            </label>
+            <label className={`input flex items-center rounded-lg border gap-2 w-full ${
+              mode === "view"  
+              ? "bg-gray-100 text-gray-700 border-gray-700" 
+              : "bg-transparent border-gray-700 text-gray-700 focus-within:ring-1 focus-within:ring-[#991b1b] focus-within:border-[#991b1b]"}`}>
+              <input type="text" name="middleName" value={selectedUser?.middleName || ""} onChange={(e) => setSelectedUser({...selectedUser, middleName: e.target.value})}
+                placeholder="Enter middle name"
+                disabled={mode === "view"}
+                className="grow bg-transparent"
+              />
+              <span className="badge badge-neutral badge-xs">Optional</span>
+            </label>
+          </div>
+
+          <div className="space-y-0.5">
+            <label className="block text-sm font-semibold text-gray-700">
+              Last Name <span className="text-red-500">*</span>
+            </label>
+            <input type="text" value={selectedUser?.surname || ""} onChange={(e) => setSelectedUser({...selectedUser, surname: e.target.value})}
+              disabled={mode === "view"}
+              className={`w-full px-3 py-2 rounded-lg border ${
+                mode === "view" ? "bg-gray-100 text-gray-700" : "bg-transparent text-gray-700 focus:ring-2 focus:ring-[#991b1b]"
+              }`}
+              placeholder="Last Name"
+              required
             />
           </div>
 
           <div className="space-y-0.5">
             <label className="block text-sm font-semibold text-gray-700">
-              Role
+              Role <span className="text-red-500">*</span>
             </label>
 
             <div className={`rounded-lg border ${
                 mode === "view" 
-                  ? "bg-gray-100 text-gray-700 p-2 min-h-[42px]" 
+                  ? "bg-gray-100 text-gray-700 p-2 min-h-10.5" 
                   : "bg-transparent text-gray-700 focus:ring-2 focus:ring-[#991b1b]"
               }`}>
               
@@ -148,6 +202,7 @@ export default function UserPoolModal({ open, mode, user, onClose, onSubmit }) {
                     })
                   }
                   placeholder="Select roles"
+                  required
                 />
               )}
             </div>
@@ -155,7 +210,7 @@ export default function UserPoolModal({ open, mode, user, onClose, onSubmit }) {
           
           <div className="space-y-0.5">
             <label className="block text-sm font-semibold text-gray-700">
-              Status
+              Status <span className="text-red-500">*</span>
             </label>
             <select value={status} onChange={(e) => setStatus(e.target.value)}
               disabled={mode === "view"}
