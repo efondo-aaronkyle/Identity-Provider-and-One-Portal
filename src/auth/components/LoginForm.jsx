@@ -1,22 +1,41 @@
-import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import ChangePasswordModal from "./ChangePasswordModal";
 
 export default function LoginForm() {
-  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isForgotOpen, setForgotOpen] = useState(false);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (password === "admin123") {
-      navigate("/idp/user-pool");
-    } else if (password === "user123") {
-      navigate("/portal");
-    } else {
-      alert("Invalid credentials");
-    }
+  const handleSubmit = async (e) => {
+      e.preventDefault();
+      
+      const API_BASE = import.meta.env.VITE_API_BASE_URL;
+      const CLIENT_ID = import.meta.env.VITE_CLIENT_ID;
+
+      try {
+        const response = await fetch(`${API_BASE}/auth/login`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ 
+            email: email, 
+            password: password,
+            client_id: CLIENT_ID,
+            redirect_uri: import.meta.env.VITE_REDIRECT_URI 
+          }),
+        });
+
+        const data = await response.json();
+        console.log("Token Exchange Response:", data);
+
+        if (data.redirect_to) {
+            window.location.href = data.redirect_to;
+        }
+      } catch (error) {
+        console.error("Login Error:", error);
+        alert("Could not connect to the server. Check if the Go backend is running on :8080");
+      }
   };
 
   return (

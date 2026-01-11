@@ -5,6 +5,7 @@ import Profile from "./features/one-portal/pages/Profile";
 import AddUser from "./features/idp/pages/AddUser";
 import AppClient from "./features/idp/pages/AppClient";
 import UserPool from "./features/idp/pages/UserPool";
+import AuthCallback from "./auth/pages/Callback";
 import Roles from "./features/idp/pages/Roles";
 
 export default function App() {
@@ -13,6 +14,7 @@ export default function App() {
       <Routes>
         {/* Root redirect to Login */}
         <Route path="/" element={<Login />} />
+        <Route path="/callback" element={<AuthCallback />} />
 
         {/* IDP */}
         <Route path="/idp/add-user" element={<AddUser />} />
