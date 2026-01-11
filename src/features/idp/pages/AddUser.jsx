@@ -42,11 +42,18 @@ export default function AddUser() {
       .filter(r => data.roleIds.includes(r.id))
       .map(r => r.role_name);
 
+    const users = JSON.parse(localStorage.getItem("userPoolData")) || []; // optional: if you're storing users
+    const allIds = users.length > 0 ? users.map(u => parseInt(u.id)) : [];
+    const maxId = allIds.length > 0 ? Math.max(...allIds) : 15;
+    const newId = (maxId + 1).toString();
+
     const newUser = {
-      id: `usr_${Date.now()}`, // temporary ID
-      username: data.username || `user${Date.now()}`,
+      id: newId, // temporary ID
+      username: data.username || "",
       email: data.email,
-      name: `${data.givenName} ${data.middleName ? data.middleName + " " : ""}${data.surname}`,
+      givenName: data.givenName,
+      middleName: data.middleName,
+      surname: data.surname,
       roleIds: data.roleIds,
       roles: selectedRoles,
       status: "ACTIVE",
