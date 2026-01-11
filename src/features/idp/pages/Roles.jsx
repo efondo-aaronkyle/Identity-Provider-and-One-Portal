@@ -90,7 +90,16 @@ export default function Roles() {
             setSuccessMessage("Role successfully created!");
         } else if(mode === "edit") {
             setRoles((prev) => 
-                prev.map((r) => (r.id === data.id ? data : r))
+                prev.map((r) => { 
+                    if (r.id === data.id) {
+                        return {
+                            ...r,
+                            ...data,
+                            id: r.id,
+                        };
+                    }
+                    return r;
+                })
             );
             setSuccessMessage("Role successfully updated!");
         }
