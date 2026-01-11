@@ -9,23 +9,81 @@ export default function RoleModal({ open, mode, role, onClose, onSubmit }) {
             setRoleName("");
             setDescription("");
         } else if(mode === "edit" || mode === "view") {
-            setRoleName(role?.role_name || "");
+            setRoleName(role?.roleName || "");
             setDescription(role?.description || "");
         }
     }, [mode, role, open]);
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         if (mode === "view") return onClose();
+        if (mode === "create") {
+            const roleData = {
+                roleName: roleName,
+                description: description,
+            };
 
-        onSubmit({
-            id: role?.id || Date.now(),
-            role_name: roleName,
-            description,
-            created_at: role?.created_at || new Date().toISOString().slice(0, 10),
-        });
-        setRoleName("");
-        setDescription("");
+            try {
+                const response = await fetch('http://localhost:8080/api/v1/admin/roles', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    },
+                    body: JSON.stringify(roleData),
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.error || 'Failed to create role');
+                }
+
+                const newRole = await response.json();
+                
+                onSubmit(newRole); 
+                
+                setRoleName("");
+                setDescription("");
+                onClose(); 
+                
+            } catch (err) {
+                console.error("Error creating role:", err.message);
+            }
+        }
+        if (mode === "edit") {
+            const roleData = {
+                roleName: roleName,
+                description: description,
+            };
+
+            try {
+                const id = role?.id;
+                const response = await fetch(`http://localhost:8080/api/v1/admin/roles/${id}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    },
+                    body: JSON.stringify(roleData),
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.error || 'Failed to edit role');
+                }
+
+                const editRole = await response.json();
+                
+                onSubmit(editRole); 
+                
+                setRoleName("");
+                setDescription("");
+                onClose(); 
+                
+            } catch (err) {
+                console.error("Error editiing role:", err.message);
+            }
+        }
     };
 
     if (!open) return null;
@@ -62,7 +120,7 @@ export default function RoleModal({ open, mode, role, onClose, onSubmit }) {
                             <label className="block text-sm font-semibold text-gray-700">
                                 Role Name
                             </label>
-                            <input type="text" value={role?.roleName} onChange={(e) => setRoleName(e.target.value)} name="roleName" placeholder="Role name (e.g., Admin)" required className={`w-full px-3 py-2 rounded-lg border border-gray-300 ${
+                            <input type="text" value={roleName} onChange={(e) => setRoleName(e.target.value)} name="roleName" placeholder="Role name (e.g., Admin)" required className={`w-full px-3 py-2 rounded-lg border border-gray-300 ${
                                 mode === "view" ? "bg-gray-100 text-gray-700" : "bg-transparent text-gray-700 focus:ring-2 focus:ring-[#991b1b]"
                             }`} disabled={mode === "view"}/>
                         </div>

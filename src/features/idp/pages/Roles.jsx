@@ -87,28 +87,43 @@ export default function Roles() {
         setShowDeleteAlert(true);
     };
 
-    const confirmDelete = () => {
-        setRoles((prev) => prev.filter((r) => r.id !== deleteTarget));
-        setShowDeleteAlert(false);
-        setDeleteTarget(null);
-        setSuccessMessage("Role successfully deleted!");
+    const confirmDelete = async () => {
+        const token = localStorage.getItem('token');
+
+        try {
+            const response = await fetch(`http://localhost:8080/api/v1/admin/roles/${deleteTarget}`, {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.error || 'Failed to delete role');
+            }
+
+            // Only update the UI if the backend successfully deleted the record
+            setRoles((prev) => prev.filter((r) => r.id !== deleteTarget));
+            setShowDeleteAlert(false);
+            setDeleteTarget(null);
+            setSuccessMessage("Role successfully deleted!");
+
+        } catch (err) {
+            console.error("Delete error:", err.message);
+            // Add an error message state if you want to show the user it failed
+        }
     };
 
     const saveRole = (data) => {
-        if(mode === "create") {
-            const nextId = roles.length > 0 ? Math.max(...roles.map(r => r.id)) + 1 : 1;
-            setRoles((prev) => [
-                {
-                    ...data,
-                    id: nextId,
-                    created_at: new Date().toISOString().slice(0,10),
-                },
-                ...prev,
-            ]);
+        if (mode === "create") {
+            // data should already have the correct ID from the Go backend response
+            setRoles((prev) => [data, ...prev]);
             setSuccessMessage("Role successfully created!");
-        } else if(mode === "edit") {
+        } else if (mode === "edit") {
             setRoles((prev) => 
-                prev.map((r) => (r.id === data.id ? data : r))
+                prev.map((r) => (Number(r.id) === Number(data.id) ? data : r))
             );
             setSuccessMessage("Role successfully updated!");
         }
