@@ -1,4 +1,5 @@
 import FadeWrapper from "../../../../components/FadeWrapper";
+import MultiSelect from "./MultiSelect";
 import { initialRoles } from "../../data/RolesData";
 
 export default function AddUserInvitation({ data, setData, onBack, onSubmit }) {
@@ -17,10 +18,14 @@ export default function AddUserInvitation({ data, setData, onBack, onSubmit }) {
     setData({ ...data, tempPassword: pwd });
   };
 
+  const handleRoleChange = (selectedRoleIds) => {
+    setData({ ...data, roleIds: selectedRoleIds });
+  };
+
   return (
     <form onSubmit={(e) => { e.preventDefault();
-            if(!data.roleId) {
-              alert("Please select a role");
+            if(!data.roleIds || data.roleIds.length === 0) {
+              alert("Please select at least one role");
               return;
             }
             onSubmit();
@@ -32,15 +37,12 @@ export default function AddUserInvitation({ data, setData, onBack, onSubmit }) {
         <p className="text-xs text-gray-500 italic mb-2">
           Choose a role for the user
         </p>
-        <select name="roleId" value={data.roleId || ""} onChange={(e) => setData({...data, roleId: e.target.value })} 
-          className="select bg-white border rounded-lg border-gray-300 text-gray-700 w-full focus:ring-0 focus:border-blue-200" required>
-            <option value="" className="text-gray-300">Select a role</option>
-            {initialRoles.map((role) => (
-              <option key={role.id} value={role.id}>
-                {role.role_name}
-              </option>
-            ))}
-          </select>
+        <MultiSelect
+          options={initialRoles}
+          selectedValues={data.roleIds || []}
+          onChange={handleRoleChange}
+          placeholder="Select entity groups"
+        />
       </div>
       <div>
         <label className="font-medium text-black text-base">

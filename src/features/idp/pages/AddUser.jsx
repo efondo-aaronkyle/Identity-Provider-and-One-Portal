@@ -23,7 +23,7 @@ export default function AddUser() {
     emailVerified: false,
     phoneVerified: false,
     tempPassword: "",
-    roleId: "",
+    roleIds: [],
   });
 
   const title = step === 1 ? "Add User" : "Invitation & Access";
@@ -33,21 +33,25 @@ export default function AddUser() {
       : "Set invitation method and access credentials.";
 
   const handleCreateUser = () => {
-    if (!data.roleId) {
-      alert("Please select a role");
+    if (!data.roleIds || data.roleIds.length === 0) {
+      alert("Please select at least one role");
       return;
     }
+
+    const selectedRoles = initialRoles
+      .filter(r => data.roleIds.includes(r.id))
+      .map(r => r.role_name);
 
     const newUser = {
       id: `usr_${Date.now()}`, // temporary ID
       username: data.username || `user${Date.now()}`,
       email: data.email,
       name: `${data.givenName} ${data.middleName ? data.middleName + " " : ""}${data.surname}`,
-      role: initialRoles.find((r) => r.id.toString() === data.roleId)?.role_name || "USER",
+      roleIds: data.roleIds,
+      roles: selectedRoles,
       status: "ACTIVE",
       emailVerified: data.emailVerified,
       createdAt: new Date().toISOString().split("T")[0],
-      lastSignIn: "-",
     };
     navigate("/idp/user-pool", {
       state: {
