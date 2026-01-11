@@ -1,10 +1,26 @@
 import { useEffect, useState } from "react";
+import MultiSelect from "../add-user/MultiSelect";
+import { initialRoles } from "../../data/RolesData";
 
 export default function UserPoolModal({ open, mode, user, onClose, onSubmit }) {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
   const [status, setStatus] = useState("ACTIVE");
+  const [selectedUser, setSelectedUser] = useState(null);
+
+  useEffect(() => {
+    if (!user) return;
+
+    setSelectedUser({
+      ...user,
+      roleIds:
+        user.roleIds ??
+        initialRoles
+          .filter(r => user.roles?.includes(r.role_name))
+          .map(r => r.id),
+    });
+  }, [user]);
 
   useEffect(() => {
     if (!user) return;
@@ -13,11 +29,15 @@ export default function UserPoolModal({ open, mode, user, onClose, onSubmit }) {
     setEmail(user.email || "");
     setName(user.name || "");
     setStatus(user.status || "ACTIVE");
-  }, [user, mode]);
+  }, [user]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (mode === "view") return onClose();
+
+    if (mode === "view") {
+      onClose();
+      return;
+    }
 
     onSubmit({
       ...user,
@@ -25,6 +45,8 @@ export default function UserPoolModal({ open, mode, user, onClose, onSubmit }) {
       email,
       name,
       status,
+      roleIds: selectedUser?.roleIds || [],
+      roles: selectedUser?.roles || [],
     });
   };
 
@@ -89,6 +111,47 @@ export default function UserPoolModal({ open, mode, user, onClose, onSubmit }) {
               placeholder="Full Name"
             />
           </div>
+
+          <div className="space-y-0.5">
+            <label className="block text-sm font-semibold text-gray-700">
+              Role
+            </label>
+
+            <div className={`rounded-lg border ${
+                mode === "view" 
+                  ? "bg-gray-100 text-gray-700 p-2 min-h-[42px]" 
+                  : "bg-transparent text-gray-700 focus:ring-2 focus:ring-[#991b1b]"
+              }`}>
+              
+              {mode === "view" ? (
+                <div className="flex flex-wrap gap-1">
+                  {selectedUser?.roles.map((role, i) => (
+                    <span
+                      key={i}
+                      className="bg-red-50 text-red-600 border border-red-200 px-2 py-0.5 rounded text-xs font-medium"
+                    >
+                      {role}
+                    </span>
+                  ))}
+                </div>
+              ) : (
+                <MultiSelect
+                  options={initialRoles}
+                  selectedValues={selectedUser?.roleIds || []}
+                  onChange={(ids) =>
+                    setSelectedUser({
+                      ...selectedUser,
+                      roleIds: ids,
+                      roles: initialRoles
+                        .filter(r => ids.includes(r.id))
+                        .map(r => r.role_name),
+                    })
+                  }
+                  placeholder="Select roles"
+                />
+              )}
+            </div>
+          </div>
           
           <div className="space-y-0.5">
             <label className="block text-sm font-semibold text-gray-700">
@@ -96,8 +159,8 @@ export default function UserPoolModal({ open, mode, user, onClose, onSubmit }) {
             </label>
             <select value={status} onChange={(e) => setStatus(e.target.value)}
               disabled={mode === "view"}
-              className={`w-full px-3 py-2 rounded-lg border ${
-                mode === "view" ? "bg-gray-100 text-gray-700" : "bg-transparent text-gray-700 focus:ring-2 focus:ring-[#991b1b]"
+              className={`select border rounded-lg w-full border-gray-700 text-gray-700 ${
+                mode === "view" ? "bg-gray-100 cursor-not-allowed" : "bg-white focus:ring-2 focus:ring-[#991b1b]"
               }`}
             >
               <option value="ACTIVE">ACTIVE</option>

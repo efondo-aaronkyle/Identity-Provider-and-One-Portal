@@ -1,4 +1,6 @@
 import FadeWrapper from "../../../../components/FadeWrapper";
+import MultiSelect from "./MultiSelect";
+import { initialRoles } from "../../data/RolesData";
 
 export default function AddUserInvitation({ data, setData, onBack, onSubmit }) {
   const handleChange = (e) => {
@@ -16,9 +18,32 @@ export default function AddUserInvitation({ data, setData, onBack, onSubmit }) {
     setData({ ...data, tempPassword: pwd });
   };
 
-  return (
-    <form onSubmit={(e) => e.preventDefault()} className="space-y-6">
+  const handleRoleChange = (selectedRoleIds) => {
+    setData({ ...data, roleIds: selectedRoleIds });
+  };
 
+  return (
+    <form onSubmit={(e) => { e.preventDefault();
+            if(!data.roleIds || data.roleIds.length === 0) {
+              alert("Please select at least one role");
+              return;
+            }
+            onSubmit();
+        }} className="space-y-6">
+      <div>
+        <label className="block font-medium text-black text-base">
+          Role<span className="text-red-500"> *</span>
+        </label>
+        <p className="text-xs text-gray-500 italic mb-2">
+          Choose a role for the user
+        </p>
+        <MultiSelect
+          options={initialRoles}
+          selectedValues={data.roleIds || []}
+          onChange={handleRoleChange}
+          placeholder="Select entity groups"
+        />
+      </div>
       <div>
         <label className="font-medium text-black text-base">
           Invitation method
@@ -119,7 +144,7 @@ export default function AddUserInvitation({ data, setData, onBack, onSubmit }) {
         <button type="button" onClick={onBack} className="btn btn-outline text-[#991b1b] border-[#991b1b] hover:bg-[#ffd700] hover:border-[#ffd700] hover:text-[#991b1b]">
           Back
         </button>
-        <button type="button" className="btn bg-[#991b1b] text-white border-[#991b1b] hover:bg-[#ffd700] hover:border-[#ffd700] hover:text-[#991b1b]" onClick={onSubmit}>
+        <button type="submit" className="btn bg-[#991b1b] text-white border-[#991b1b] hover:bg-[#ffd700] hover:border-[#ffd700] hover:text-[#991b1b]">
           Create User
         </button>
       </div>
