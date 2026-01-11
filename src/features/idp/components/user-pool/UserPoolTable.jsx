@@ -23,7 +23,7 @@ export default function UserPoolTable({ users = [], onView, onEdit, onDisable })
                     )}
                     {users.map((u) => (
                         <TableRowFade key={u.id}>
-                            <td className="text-[#991b1b]">{u.id}</td>
+                            <td className="text-[#991b1b]">{u.id ? `${u.id.substring(0, 8)}...` : 'N/A'}</td>
                             <td className="text-[#991b1b]">{u.username}</td>
                             <td className="text-[#991b1b]">{u.email}</td>
                             <td className="text-[#991b1b]">{`${u.name}`}</td>
