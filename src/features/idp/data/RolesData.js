@@ -1,23 +1,6 @@
-export const initialRoles = [
-  {
-    id: 3,
-    role_name: "dental:admin",
-    description:
-      "Admin responsible for managing inventory, staff access, system settings, and operational records",
-    created_at: "2024-06-22",
-  },
-  {
-    id: 2,
-    role_name: "ojt:student",
-    description:
-      "Admin responsible for managing inventory, staff access, system settings, and operational records",
-    created_at: "2024-06-22",
-  },
-  {
-    id: 1,
-    role_name: "registrar:admin",
-    description:
-      "Administrative officer responsible for verifying student records, managing enrollment data, and issuing certifications",
-    created_at: "2024-06-22",
-  },
-];
+export const getRoles = async () => {
+    const response = await fetch('http://localhost:8080/api/v1/roles');
+    if (!response.ok) throw new Error('Failed to fetch');
+    const data = await response.json();
+    return data.roles; 
+};

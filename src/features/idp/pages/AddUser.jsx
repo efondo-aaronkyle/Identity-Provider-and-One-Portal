@@ -5,7 +5,7 @@ import AddUserCard from "../components/add-user/AddUserCard";
 import AddUserDetails from "../components/add-user/AddUserDetails";
 import AddUserInvitation from "../components/add-user/AddUserInvitation";
 import FadeWrapper from "../../../components/FadeWrapper";
-import { initialRoles } from "../data/RolesData";
+import { getRoles } from "../data/RolesData";
 
 export default function AddUser() {
   const navigate = useNavigate();
@@ -38,7 +38,7 @@ export default function AddUser() {
       return;
     }
 
-    const selectedRoles = initialRoles
+    const selectedRoles = getRoles
       .filter(r => data.roleIds.includes(r.id))
       .map(r => r.role_name);
 

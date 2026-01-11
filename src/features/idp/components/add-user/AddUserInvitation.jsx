@@ -1,6 +1,6 @@
 import FadeWrapper from "../../../../components/FadeWrapper";
 import MultiSelect from "./MultiSelect";
-import { initialRoles } from "../../data/RolesData";
+import { getRoles } from "../../data/RolesData";
 
 export default function AddUserInvitation({ data, setData, onBack, onSubmit }) {
   const handleChange = (e) => {
@@ -38,7 +38,7 @@ export default function AddUserInvitation({ data, setData, onBack, onSubmit }) {
           Choose a role for the user
         </p>
         <MultiSelect
-          options={initialRoles}
+          options={getRoles}
           selectedValues={data.roleIds || []}
           onChange={handleRoleChange}
           placeholder="Select entity groups"

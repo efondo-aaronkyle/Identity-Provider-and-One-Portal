@@ -62,7 +62,7 @@ export default function RoleModal({ open, mode, role, onClose, onSubmit }) {
                             <label className="block text-sm font-semibold text-gray-700">
                                 Role Name
                             </label>
-                            <input type="text" value={roleName} onChange={(e) => setRoleName(e.target.value)} name="role_name" placeholder="Role name (e.g., Admin)" required className={`w-full px-3 py-2 rounded-lg border border-gray-300 ${
+                            <input type="text" value={role?.roleName} onChange={(e) => setRoleName(e.target.value)} name="roleName" placeholder="Role name (e.g., Admin)" required className={`w-full px-3 py-2 rounded-lg border border-gray-300 ${
                                 mode === "view" ? "bg-gray-100 text-gray-700" : "bg-transparent text-gray-700 focus:ring-2 focus:ring-[#991b1b]"
                             }`} disabled={mode === "view"}/>
                         </div>

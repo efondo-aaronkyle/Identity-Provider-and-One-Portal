@@ -5,13 +5,13 @@ import RolesListCard from "../components/role/RolesListCard";
 import RoleModal from "../components/role/RoleModal";
 import SuccessAlert from "../../../components/SuccessAlert";
 import DeleteConfirmModal from "../../../components/DeleteConfirmAlert";
-import { initialRoles } from "../data/RolesData";
+import { getRoles } from "../data/RolesData";
 
 const ITEMS_PER_PAGE = 10;
 
 
 export default function Roles() {
-    const [roles, setRoles] = useState(initialRoles);
+    const [roles, setRoles] = useState([]);
 
     const [search, setSearch] = useState("");
     const [page, setPage] = useState(1);
@@ -23,6 +23,23 @@ export default function Roles() {
     const [successMessage, setSuccessMessage] = useState("");
     const [showDeleteAlert, setShowDeleteAlert] = useState(false);
     const [deleteTarget, setDeleteTarget] = useState(null);
+
+    const [loading, setLoading] = useState(true);
+    
+    useEffect(() => {
+        const loadRoles = async () => {
+            try {
+                setLoading(true);
+                const data = await getRoles();
+                setRoles(data || []); 
+            } catch (err) {
+                console.error("Failed to load roles:", err);
+            } finally {
+                setLoading(false);
+            }
+        };
+        loadRoles();
+    }, []);
     
 
     useEffect(() => {
@@ -37,7 +54,7 @@ export default function Roles() {
 
     const filtered = useMemo(() => {
         return roles.filter((r) => 
-            r.role_name.toLowerCase().includes(search.toLowerCase())
+            r.roleName.toLowerCase().includes(search.toLowerCase())
         );
     }, [roles, search]);
 

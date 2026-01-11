@@ -25,9 +25,9 @@ export default function RolesListTable({ roles, onView, onEdit, onDelete }) {
                     {roles.map((r) => (
                         <TableRowFade key={r.id}>
                             <td className="text-[#991b1b]">{r.id}</td>
-                            <td className="text-[#991b1b]">{r.role_name}</td>
+                            <td className="text-[#991b1b]">{r.roleName}</td>
                             <td className="text-[#991b1b]">{r.description}</td>
-                            <td className="text-[#991b1b]">{r.created_at}</td>
+                            <td className="text-[#991b1b]">{r.createdAt}</td>
                             <td className="flex gap-2">
                                 <button className="btn btn-ghost btn-xs p-1 hover:bg-[#991b1b] transition-colors" onClick={() => onView(r)}>
                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="h-3 sm:h-5 text-[#991b1b] hover:text-[#ffd700] transition-colors">

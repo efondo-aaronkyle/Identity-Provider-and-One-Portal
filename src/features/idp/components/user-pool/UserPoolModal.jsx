@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import MultiSelect from "../add-user/MultiSelect";
-import { initialRoles } from "../../data/RolesData";
+import { getRoles } from "../../data/RolesData";
 
 export default function UserPoolModal({ open, mode, user, onClose, onSubmit }) {
   const [username, setUsername] = useState("");
@@ -15,7 +15,7 @@ export default function UserPoolModal({ open, mode, user, onClose, onSubmit }) {
       ...user,
       roleIds:
         user.roleIds ??
-        initialRoles
+        getRoles
           .filter(r => user.roles?.includes(r.role_name))
           .map(r => r.id),
     });
@@ -190,13 +190,13 @@ export default function UserPoolModal({ open, mode, user, onClose, onSubmit }) {
                 </div>
               ) : (
                 <MultiSelect
-                  options={initialRoles}
+                  options={getRoles}
                   selectedValues={selectedUser?.roleIds || []}
                   onChange={(ids) =>
                     setSelectedUser({
                       ...selectedUser,
                       roleIds: ids,
-                      roles: initialRoles
+                      roles: getRoles
                         .filter(r => ids.includes(r.id))
                         .map(r => r.role_name),
                     })
