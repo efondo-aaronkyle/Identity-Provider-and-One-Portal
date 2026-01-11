@@ -26,7 +26,7 @@ export default function UserPoolTable({ users = [], onView, onEdit, onDisable })
                             <td className="text-[#991b1b]">{u.id}</td>
                             <td className="text-[#991b1b]">{u.username}</td>
                             <td className="text-[#991b1b]">{u.email}</td>
-                            <td className="text-[#991b1b]">{`${u.givenName} ${u.middleName ? u.middleName + " " : ""}${u.surname}`}</td>
+                            <td className="text-[#991b1b]">{`${u.name}`}</td>
                             <td><span className={`badge badge-sm ${
                                         u.status === "ACTIVE" ? "badge-success" : "badge-ghost"
                                     }`}>{u.status}</span></td>

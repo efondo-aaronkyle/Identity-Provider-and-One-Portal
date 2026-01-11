@@ -42,7 +42,7 @@ export default function UserPoolModal({ open, mode, user, onClose, onSubmit }) {
       return;
     }
 
-    const fullName = `${selectedUser.givenName} ${selectedUser.middleName ? selectedUser.middleName + " " : ""}${selectedUser.surname}`;
+    const fullName = `${selectedUser.name}`;
 
     onSubmit({
       ...user,
@@ -52,9 +52,9 @@ export default function UserPoolModal({ open, mode, user, onClose, onSubmit }) {
       status,
       roleIds: selectedUser?.roleIds || [],
       roles: selectedUser?.roles || [],
-      givenName: selectedUser?.givenName,
+      firstName: selectedUser?.firstName,
       middleName: selectedUser?.middleName,
-      surname: selectedUser?.surname,
+      surname: selectedUser?.lastName,
     });
   };
 
@@ -125,7 +125,7 @@ export default function UserPoolModal({ open, mode, user, onClose, onSubmit }) {
             <label className="block text-sm font-semibold text-gray-700">
               First Name <span className="text-red-500">*</span>
             </label>
-            <input type="text" value={selectedUser?.givenName || ""} onChange={(e) => setSelectedUser({...selectedUser, givenName: e.target.value})}
+            <input type="text" value={selectedUser?.firstName || ""} onChange={(e) => setSelectedUser({...selectedUser, firstName: e.target.value})}
               disabled={mode === "view"}
               className={`w-full px-3 py-2 rounded-lg border ${
                 mode === "view" ? "bg-gray-100 text-gray-700" : "bg-transparent text-gray-700 focus:ring-2 focus:ring-[#991b1b]"
@@ -156,7 +156,7 @@ export default function UserPoolModal({ open, mode, user, onClose, onSubmit }) {
             <label className="block text-sm font-semibold text-gray-700">
               Last Name <span className="text-red-500">*</span>
             </label>
-            <input type="text" value={selectedUser?.surname || ""} onChange={(e) => setSelectedUser({...selectedUser, surname: e.target.value})}
+            <input type="text" value={selectedUser?.lastName || ""} onChange={(e) => setSelectedUser({...selectedUser, surname: e.target.value})}
               disabled={mode === "view"}
               className={`w-full px-3 py-2 rounded-lg border ${
                 mode === "view" ? "bg-gray-100 text-gray-700" : "bg-transparent text-gray-700 focus:ring-2 focus:ring-[#991b1b]"

@@ -17,7 +17,7 @@ export default function UserPool() {
     const location = useLocation();
     const navigate = useNavigate();
     const hasConsumedRouterState = useRef(false);
-    const [users, setUsers] = useState(userPoolData);
+    const [users, setUsers] = useState([]);
     const [search, setSearch] = useState("");
     const [status, setStatus] = useState("");
     const [page, setPage] = useState(1); 
@@ -27,6 +27,22 @@ export default function UserPool() {
     const [openDelete, setOpenDelete] = useState(false);
     const [userToDelete, setUserToDelete] = useState(null);
     const [successMessage, setSuccessMessage] = useState("");
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const loadUsers = async () => {
+            try {
+                setLoading(true);
+                const data = await userPoolData();
+                setUsers(data || []); 
+            } catch (err) {
+                console.error("Failed to load users:", err);
+            } finally {
+                setLoading(false);
+            }
+        };
+        loadUsers();
+    }, []);
 
     useEffect(() => {
         if (location.state?.newUser && !hasConsumedRouterState.current) {

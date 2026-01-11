@@ -71,8 +71,8 @@ export default function AddUserDetails({ data, setData, onNext }) {
         <label className="block font-medium mb-1 text-black text-base">First Name <span className="text-red-500">*</span></label>
         <input
           type="text"
-          name="givenName"
-          value={data.givenName}
+          name="firstName"
+          value={data.firstName}
           onChange={handleChange}
           required
           placeholder="Enter firstname"
@@ -99,8 +99,8 @@ export default function AddUserDetails({ data, setData, onNext }) {
         <label className="block font-medium mb-1 text-black text-base">Last Name <span className="text-red-500">*</span></label>
         <input
           type="text"
-          name="surname"
-          value={data.surname}
+          name="lastName"
+          value={data.lastName}
           onChange={handleChange}
           required
           placeholder="Enter lastname"
