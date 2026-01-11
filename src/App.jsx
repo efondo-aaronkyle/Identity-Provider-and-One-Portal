@@ -5,8 +5,8 @@ import Profile from "./features/one-portal/pages/Profile";
 import AddUser from "./features/idp/pages/AddUser";
 import AppClient from "./features/idp/pages/AppClient";
 import UserPool from "./features/idp/pages/UserPool";
-import AuthCallback from "./auth/pages/Callback";
 import Roles from "./features/idp/pages/Roles";
+import AuthCallback from "./auth/pages/Callback";
 
 export default function App() {
   return (
