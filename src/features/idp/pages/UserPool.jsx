@@ -38,15 +38,24 @@ export default function UserPool() {
         }
     }, [location.state, navigate, location.pathname]);
 
-    const filteredUsers = users.filter((u) => {
-        const matchesSearch = 
-            u.username.toLowerCase().includes(search.toLowerCase()) ||
-            u.email.toLowerCase().includes(search.toLowerCase()) ||
-            u.name.toLowerCase().includes(search.toLowerCase());
-        
-        const matchesStatus = status ? u.status === status : true;
+    const normalize = (str = "") =>
+    str.toLowerCase().replace(/\s+/g, " ").trim();
 
-        return matchesSearch && matchesStatus;
+    const filteredUsers = users.filter((u) => {
+    const fullName = normalize(
+        `${u.givenName || ""} ${u.middleName || ""} ${u.surname || ""}`
+    );
+
+    const searchValue = normalize(search);
+
+    const matchesSearch =
+        normalize(u.username).includes(searchValue) ||
+        normalize(u.email).includes(searchValue) ||
+        fullName.includes(searchValue);
+
+    const matchesStatus = status ? u.status === status : true;
+
+    return matchesSearch && matchesStatus;
     });
 
     const totalResults = filteredUsers.length;
