@@ -5,7 +5,7 @@ import { initialRoles } from "../../data/RolesData";
 export default function UserPoolModal({ open, mode, user, onClose, onSubmit }) {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
-  const [status, setStatus] = useState("ACTIVE");
+  const [status, setStatus] = useState("active");
   const [selectedUser, setSelectedUser] = useState(null);
 
   useEffect(() => {
@@ -26,7 +26,7 @@ export default function UserPoolModal({ open, mode, user, onClose, onSubmit }) {
 
     setUsername(user.username || "");
     setEmail(user.email || "");
-    setStatus(user.status || "ACTIVE");
+    setStatus((user.status || "active").toLowerCase());
   }, [user]);
 
   const handleSubmit = (e) => {
@@ -218,8 +218,8 @@ export default function UserPoolModal({ open, mode, user, onClose, onSubmit }) {
                 mode === "view" ? "bg-gray-100 cursor-not-allowed" : "bg-white focus:ring-2 focus:ring-[#991b1b]"
               }`}
             >
-              <option value="ACTIVE">ACTIVE</option>
-              <option value="INACTIVE">INACTIVE</option>
+              <option value="active">Active</option>
+              <option value="inactive">Inactive</option>
             </select>
           </div>
         </form>

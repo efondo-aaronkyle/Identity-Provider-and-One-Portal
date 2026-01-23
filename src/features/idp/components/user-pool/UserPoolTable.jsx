@@ -28,7 +28,7 @@ export default function UserPoolTable({ users = [], onView, onEdit, onDisable })
                             <td className="text-[#991b1b]">{u.email}</td>
                             <td className="text-[#991b1b]">{`${u.givenName} ${u.middleName ? u.middleName + " " : ""}${u.surname}`}</td>
                             <td><span className={`badge badge-sm ${
-                                        u.status === "ACTIVE" ? "badge-success" : "badge-ghost"
+                                        u.status === "active" ? "badge-success" : "badge-ghost"
                                     }`}>{u.status}</span></td>
                             <td className="text-[#991b1b]">{u.createdAt}</td>
                             <td className="flex gap-2">

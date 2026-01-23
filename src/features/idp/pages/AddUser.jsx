@@ -56,7 +56,7 @@ export default function AddUser() {
       surname: data.surname,
       roleIds: data.roleIds,
       roles: selectedRoles,
-      status: "ACTIVE",
+      status: "active",
       emailVerified: data.emailVerified,
       createdAt: new Date().toISOString().split("T")[0],
     };
