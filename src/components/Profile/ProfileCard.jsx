@@ -4,19 +4,12 @@ import ChangePasswordModal from "./ChangePasswordModal";
 import ProfileDetails from "./ProfileDetails";
 import EmailStatus from "./EmailStatus";
 import ActionButtons from "./ActionButtons";
-import SuccessAlert from "../../../../components/SuccessAlert";
+import SuccessAlert from "../SuccessAlert";
 
-export default function ProfileCard({ addAuditLog }) {
+export default function ProfileCard({ profile, addAuditLog, allowEmailEdit = false }) {
     const [isEditOpen, setEditOpen] = useState(false);
     const [isPasswordOpen, setPasswordOpen] = useState(false);
-    const [currentProfile, setCurrentProfile] = useState({
-        firstName: "Juan",
-        middleName: "Miguel",
-        lastName: "Dela Cruz Santos",
-        username: "juan.delacruz",
-        profilePicture: "/assets/images/profile-pic.jpg",
-    });
-
+    const [currentProfile, setCurrentProfile] = useState(profile);
     const [toastMessage, setToastMessage] = useState("");
 
     const handleProfileUpdate = (updatedProfile) => {
@@ -29,29 +22,24 @@ export default function ProfileCard({ addAuditLog }) {
         <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
             <div className="bg-linear-to-r from-[#991b1b] to-red-600 p-6 text-white">
                 <div className="flex flex-col md:flex-row items-center gap-6">
-                    <div className="relative">
-                        <div className="w-32 h-32 rounded-full border-4 border-white/30 overflow-hidden bg-white">
-                            <img src={currentProfile.profilePicture || "/assets/images/profile-pic.jpg"} alt="Profile Picture" className="w-full h-full object-cover" onError={(e) => e.currentTarget.src = 'https://via.placeholder.com/128/991b1b/FFFFFF?text=PUPT'}/>
-                        </div>
-                    </div>
                     <div className="flex-1 text-center md:text-left">
                         <h2 className="text-2xl font-bold">
                             {`${currentProfile.firstName} ${currentProfile.middleName ? currentProfile.middleName + " " : ""}${currentProfile.lastName}`}
                         </h2>
-                        <p className="text-white/90 mt-1">@{currentProfile.username}</p>
                         <div className="flex flex-wrap items-center justify-center md:justify-start gap-4 mt-4">
-                            <div className="badge badge-md rounded-xl text-base bg-white/20 border-0 text-white px-4 py-2" id="statusBadge">
-                                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            <span className="badge badge-md rounded-xl text-sm md:text-base bg-white/20 border-0 text-white px-4 py-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4">
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
                                 </svg>
-                                Active
-                            </div>
-                            <div className="badge badge-md rounded-xl text-base bg-white/20 border-0 text-white px-4 py-2" id="roleBadge">
-                                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                                @{currentProfile.username}
+                            </span>
+
+                            <span className="badge badge-md rounded-xl text-xs md:text-base bg-white/20 border-0 text-white px-4 py-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4">
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75" />
                                 </svg>
-                                Student
-                            </div>
+                                {currentProfile.email}
+                            </span>
                         </div>
                     </div>
                 </div>
@@ -59,7 +47,7 @@ export default function ProfileCard({ addAuditLog }) {
 
             <div className="p-8">
                 <ProfileDetails profile={currentProfile}/>
-                <EmailStatus />
+                <EmailStatus allowEmailEdit={allowEmailEdit}/>
                 <ActionButtons 
                     openEdit={() => setEditOpen(true)}
                     openPassword={() => setPasswordOpen(true)}
@@ -71,6 +59,7 @@ export default function ProfileCard({ addAuditLog }) {
                 profileData={currentProfile} 
                 updateProfile={handleProfileUpdate}
                 addAuditLog={addAuditLog} 
+                allowEmailEdit={allowEmailEdit}
             />
             <ChangePasswordModal 
                 isOpen={isPasswordOpen} 

@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from "react";
-import { formatTimestamp } from "../../../../utils/formatTimestamp";
+import { formatTimestamp } from "../../utils/formatTimestamp";
 
-export default function EditProfileModal({ open, close, profileData, updateProfile, addAuditLog }) {
+export default function EditProfileModal({ open, close, profileData, updateProfile, addAuditLog, allowEmailEdit = false }) {
   const [profile, setProfile] = useState({
     firstName: "",
     middleName: "",
     lastName: "",
     username: "",
-    profilePicture: "",
+    email: "",
   });
   const [previewImage, setPreviewImage] = useState(""); // separate preview
   const [errors, setErrors] = useState([]); 
@@ -19,7 +19,6 @@ export default function EditProfileModal({ open, close, profileData, updateProfi
       setSuccess(false);
       if (profileData) {
         setProfile(profileData);
-        setPreviewImage(profileData.profilePicture || "https://via.placeholder.com/128/991b1b/FFFFFF?text=PUPT");
       }
     }
   }, [open, profileData]);
@@ -34,18 +33,6 @@ export default function EditProfileModal({ open, close, profileData, updateProfi
 
   const handleChange = (e) => {
     const { name, value, files } = e.target;
-    if (files?.[0]) {
-      const file = files[0];
-      const objectUrl = URL.createObjectURL(file);
-
-      setPreviewImage(objectUrl); 
-      setProfile((prev) => ({
-        ...prev,
-        profilePicture: file,
-      }));
-      return;
-    }
-
     setProfile((prev) => ({ ...prev, [name]: value }));
   };
 
@@ -56,6 +43,7 @@ export default function EditProfileModal({ open, close, profileData, updateProfi
     if (!profile.firstName) validationErrors.push("First name is required.");
     if (!profile.lastName) validationErrors.push("Last name is required.");
     if (!profile.username) validationErrors.push("Username is required.");
+    if (allowEmailEdit && !profile.email) validationErrors.push("Email is required.");
 
     if (validationErrors.length > 0) {
       setErrors(validationErrors);
@@ -103,21 +91,6 @@ export default function EditProfileModal({ open, close, profileData, updateProfi
 
         <div className="flex-1 overflow-y-auto p-6 bg-white">
           <form className="space-y-6">
-            <div className="flex flex-col items-center mb-6">
-              <div className="relative mb-4">
-                <div className="w-32 h-32 rounded-full border-4 border-red-100 overflow-hidden bg-white shadow-lg">
-                  <img src={previewImage} alt="Profile" className="w-full h-full object-cover"/>
-                </div>
-                <label htmlFor="profilePicture" className="absolute bottom-0 right-0 bg-[#991b1b] text-white p-2 rounded-full cursor-pointer hover:bg-red-700 transition">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
-                  </svg>
-                </label>
-                <input type="file" id="profilePicture" name="profilePicture" accept="image/*" className="hidden" onChange={handleChange}/>
-              </div>
-              <p className="text-sm text-gray-500">Click the camera icon to change profile picture</p>
-            </div>
 
             {/* Personal Information */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -154,6 +127,16 @@ export default function EditProfileModal({ open, close, profileData, updateProfi
               <input type="text" name="username" placeholder="username" value={profile.username} onChange={handleChange} className="input input-bordered w-full h-12 rounded-lg bg-transparent border-gray-300 text-base" required maxLength={255}/>
               <p className="text-xs text-gray-500">Must be unique</p>
             </div>
+            {/* Email*/}
+            {allowEmailEdit && (
+              <div className="space-y-2">
+                <label className="block text-sm font-semibold text-gray-700">
+                  Email Address <span className="text-red-500">*</span>
+                </label>
+                <input type="email" name="email" placeholder="Enter email" value={profile.email} onChange={handleChange} className="input input-bordered w-full h-12 rounded-lg bg-transparent border-gray-300 text-base" required/>
+                <p className="text-xs text-gray-500">Must be an active email account</p>
+              </div>
+            )}
             {/* Validation Errors */}
             {errors.length > 0 && (
               <div className="p-4 bg-red-50 border border-red-200 rounded-lg">

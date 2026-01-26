@@ -18,6 +18,7 @@ export default function AppClient() {
         callbacks: "puptas.com",
         logouts: "",
         scopes: ["openid", "profile"],
+        image: "/assets/images/connected-systems-button.png",
         },
     ]);
 

@@ -6,13 +6,14 @@ export default function UserPoolTable({ users = [], onView, onEdit, onDisable })
             <table className="table w-full">
                 <thead>
                     <tr className="bg-[#991b1b]">
-                        <th className="text-white">ID</th>
-                        <th className="text-white">Username</th>
-                        <th className="text-white">Email</th>
-                        <th className="text-white">Name</th>
-                        <th className="text-white">Status</th>
-                        <th className="text-white">Created</th>
-                        <th className="text-white">Actions</th>
+                        <th className="text-white text-center">ID</th>
+                        <th className="text-white text-center">Username</th>
+                        <th className="text-white text-center">Email</th>
+                        <th className="text-white text-center">Name</th>
+                        <th className="text-white text-center">Roles</th>
+                        <th className="text-white text-center">Status</th>
+                        <th className="text-white text-center">Created</th>
+                        <th className="text-white text-center">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -23,15 +24,22 @@ export default function UserPoolTable({ users = [], onView, onEdit, onDisable })
                     )}
                     {users.map((u) => (
                         <TableRowFade key={u.id}>
-                            <td className="text-[#991b1b]">{u.id}</td>
-                            <td className="text-[#991b1b]">{u.username}</td>
-                            <td className="text-[#991b1b]">{u.email}</td>
-                            <td className="text-[#991b1b]">{`${u.givenName} ${u.middleName ? u.middleName + " " : ""}${u.surname}`}</td>
-                            <td><span className={`badge badge-sm ${
-                                        u.status === "ACTIVE" ? "badge-success" : "badge-ghost"
+                            <td className="text-[#991b1b] text-center">{u.id}</td>
+                            <td className="text-[#991b1b] text-center">{u.username}</td>
+                            <td className="text-[#991b1b] text-center">{u.email}</td>
+                            <td className="text-[#991b1b] text-center">{`${u.givenName} ${u.middleName ? u.middleName + " " : ""}${u.surname}`}</td>
+                            <td className="text-[#991b1b] text-center">
+                                {u.roles?.map((role, idx) => (
+                                    <span key={idx} className="badge badge-outline bg-[#991b1b] text-white badge-sm mr-1">
+                                        {role}
+                                    </span>
+                                ))}
+                            </td>
+                            <td className="flex justify-center"><span className={`flex justify-center badge badge-sm ${
+                                        u.status === "active" ? "badge-success" : "badge-ghost"
                                     }`}>{u.status}</span></td>
-                            <td className="text-[#991b1b]">{u.createdAt}</td>
-                            <td className="flex gap-2">
+                            <td className="text-[#991b1b] text-center">{u.createdAt}</td>
+                            <td className="flex gap-2 justify-center">
                                 <button className="btn btn-ghost btn-xs p-1 hover:bg-[#991b1b] transition-colors" onClick={() => onView(u)}>
                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="h-3 sm:h-5 text-[#991b1b] hover:text-[#ffd700] transition-colors">
                                         <path strokeLinecap="round" strokeLinejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z" />

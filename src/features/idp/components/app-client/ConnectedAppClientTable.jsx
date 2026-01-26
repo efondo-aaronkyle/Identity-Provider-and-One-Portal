@@ -7,11 +7,12 @@ export default function ConnectedAppClientTable({ clients, onView, onEdit, onDel
                 {/* head */}
                 <thead>
                     <tr className="bg-[#991b1b]">
-                    <th className="text-white">Name</th>
-                    <th className="text-white">Client ID</th>
-                    <th className="text-white">Created</th>
-                    <th className="text-white">Last Used</th>
-                    <th className="text-white">Actions</th>
+                    <th className="text-white w-16 text-center">Logo</th>
+                    <th className="text-white text-center">Name</th>
+                    <th className="text-white text-center">Client ID</th>
+                    <th className="text-white text-center">Created</th>
+                    <th className="text-white text-center">Last Used</th>
+                    <th className="text-white text-center">Actions</th>
                     </tr>
                 </thead>
 
@@ -24,11 +25,24 @@ export default function ConnectedAppClientTable({ clients, onView, onEdit, onDel
                     )}
                     {clients.map((c) => (
                         <TableRowFade key={c.clientId}>
-                            <td className="text-[#991b1b]">{c.name}</td>
-                            <td className="text-[#991b1b]">{c.clientId}</td>
-                            <td className="text-[#991b1b]">{c.created}</td>
-                            <td className="text-[#991b1b]">{c.lastUsed}</td>
-                            <td className="flex gap-2">
+                            <td className="text-center">
+                                <div className="avatar">
+                                    <div className="mask mask-squircle w-10 h-10 bg-gray-100 border border-gray-200">
+                                        {c.image ? (
+                                            <img src={c.image} alt={c.name} className="object-cover" />
+                                        ) : (
+                                            <div className="flex items-center justify-center h-full text-[#991b1b] font-bold text-xs">
+                                                {c.name.substring(0, 2).toUpperCase()}
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+                            </td>
+                            <td className="text-[#991b1b] text-center">{c.name}</td>
+                            <td className="text-[#991b1b] text-center">{c.clientId}</td>
+                            <td className="text-[#991b1b] text-center">{c.created}</td>
+                            <td className="text-[#991b1b] text-center">{c.lastUsed}</td>
+                            <td className="flex gap-2 justify-center">
                                 <button className="btn btn-ghost btn-xs p-1 hover:bg-[#991b1b] transition-colors" onClick={() => onView(c)}>
                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="h-3 sm:h-5 text-[#991b1b] hover:text-[#ffd700] transition-colors">
                                         <path strokeLinecap="round" strokeLinejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z" />

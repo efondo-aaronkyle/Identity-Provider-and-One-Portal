@@ -20,8 +20,8 @@ export default function UserPoolFilters({ search, setSearch, status, setStatus})
                 <label className="block font-semibold mb-1 text-black text-base">Status</label>
                 <select value={status} onChange={(e) => setStatus(e.target.value)} className="w-full px-4 py-2 border text-gray-400 border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#991b1b]">
                     <option className="text-gray-600" value="">All Status</option>
-                    <option className="text-gray-600" value="ACTIVE">ACTIVE</option>
-                    <option className="text-gray-600" value="INACTIVE">INACTIVE</option>
+                    <option className="text-gray-600" value="active">Active</option>
+                    <option className="text-gray-600" value="inactive">Inactive</option>
                 </select>
             </div>
         </div>
