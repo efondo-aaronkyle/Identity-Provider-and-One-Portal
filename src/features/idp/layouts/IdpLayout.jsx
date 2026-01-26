@@ -7,7 +7,7 @@ export default function IdpLayout({ children }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
-    <div className="flex min-h-screen bg-white font-[Poppins]">
+    <div className="flex min-h-screen bg-gray-200 text-gray-800 font-[Poppins]">
       {sidebarOpen && (
         <div
           className="fixed inset-0 bg-black/40 z-40 lg:hidden"

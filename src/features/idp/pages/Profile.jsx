@@ -1,5 +1,5 @@
 import { useState } from "react";
-import OnePortalLayout from "../layouts/OnePortalLayout";
+import OnePortalLayout from "../layouts/IdpLayout";
 import ProfileCard from "../../../components/Profile/ProfileCard";
 import AuditLogs from "../../../components/Profile/AuditLogs";
 
@@ -24,16 +24,16 @@ export default function Profile() {
                         <h1 className="text-3xl font-bold text-gray-800">User Profile Information</h1>
                         <p className="text-gray-600 mt-2">View and manage your account details</p>    
                     </div>    
-                    <ProfileCard 
+                    <ProfileCard  
                         profile={{
-                            firstName: "Juan",
-                            middleName: "Miguel",
-                            lastName: "Dela Cruz",
-                            username: "juan.delacruz",
-                            email: "juan.delacruz@iskolarngbayan.pup.edu.ph",
-                        }}
+                            firstName: "John",
+                            middleName: "Jose",
+                            lastName: "Doe",
+                            username: "john.doe",
+                            email: "john.doe@iskolarngbayan.pup.edu.ph",
+                        }} 
                         addAuditLog={handleAddAuditLog} 
-                        allowEmailEdit={false}
+                        allowEmailEdit={true}
                     />
                     <AuditLogs logs={logs} />
                 </div> 

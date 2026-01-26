@@ -48,6 +48,17 @@ export default function Sidebar({ isOpen, toggleSidebar }) {
           </button>
         </div>
       </div>
+      <button onClick={() => navigate("/idp/profile")} className="flex items-center w-full px-2 py-3 rounded-lg transition-all hover:bg-red-900">
+        <div className="w-14 flex justify-center">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="ml-[.5em] w-7 h-7 text-white">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
+          </svg>
+        </div>
+        <div className={`flex flex-col text-left transition-opacity duration-300 ${isOpen ? "opacity-100" : "opacity-0"}`}>
+          <span className="text-white font-semibold">John Doe</span>
+          <span className="text-xs text-yellow-300">SuperAdmin</span>
+        </div>
+      </button>
 
       <ul className="p-2 space-y-1">
         {menuItems.map((item, idx) => (

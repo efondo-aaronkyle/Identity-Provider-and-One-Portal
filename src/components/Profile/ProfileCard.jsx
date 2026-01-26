@@ -4,19 +4,12 @@ import ChangePasswordModal from "./ChangePasswordModal";
 import ProfileDetails from "./ProfileDetails";
 import EmailStatus from "./EmailStatus";
 import ActionButtons from "./ActionButtons";
-import SuccessAlert from "../../../../components/SuccessAlert";
+import SuccessAlert from "../SuccessAlert";
 
-export default function ProfileCard({ addAuditLog }) {
+export default function ProfileCard({ profile, addAuditLog, allowEmailEdit = false }) {
     const [isEditOpen, setEditOpen] = useState(false);
     const [isPasswordOpen, setPasswordOpen] = useState(false);
-    const [currentProfile, setCurrentProfile] = useState({
-        firstName: "Juan",
-        middleName: "Miguel",
-        lastName: "Dela Cruz Santos",
-        username: "juan.delacruz",
-        email: "juan.delacruz@iskolarngbayan.pup.edu.ph",
-    });
-
+    const [currentProfile, setCurrentProfile] = useState(profile);
     const [toastMessage, setToastMessage] = useState("");
 
     const handleProfileUpdate = (updatedProfile) => {
@@ -54,7 +47,7 @@ export default function ProfileCard({ addAuditLog }) {
 
             <div className="p-8">
                 <ProfileDetails profile={currentProfile}/>
-                <EmailStatus />
+                <EmailStatus allowEmailEdit={allowEmailEdit}/>
                 <ActionButtons 
                     openEdit={() => setEditOpen(true)}
                     openPassword={() => setPasswordOpen(true)}
@@ -66,6 +59,7 @@ export default function ProfileCard({ addAuditLog }) {
                 profileData={currentProfile} 
                 updateProfile={handleProfileUpdate}
                 addAuditLog={addAuditLog} 
+                allowEmailEdit={allowEmailEdit}
             />
             <ChangePasswordModal 
                 isOpen={isPasswordOpen} 

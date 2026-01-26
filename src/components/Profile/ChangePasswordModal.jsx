@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
-import ChangePasswordStep from "../../../../components/ChangePasswordStep";
-import OtpVerificationStep from "../../../../components/OtpVerificationStep";
-import SuccessStep from "../../../../components/SuccessStep";
+import ChangePasswordStep from "../ChangePasswordStep";
+import OtpVerificationStep from "../OtpVerificationStep";
+import SuccessStep from "../SuccessStep";
 
 export default function ChangePasswordModal({ isOpen, onClose, addAuditLog, setToastMessage }) {
     const [step, setStep] = useState(1);
