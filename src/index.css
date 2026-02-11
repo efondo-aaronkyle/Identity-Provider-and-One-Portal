@@ -1,2 +1,34 @@
 @import "tailwindcss";
 @plugin "daisyui";
+
+.steps .step-primary {
+  color: #991b1b !important;
+}
+
+/* circle + completed line */
+.steps .step-primary:before {
+  background-color: #991b1b !important;
+  border-color: #991b1b !important;
+}
+
+.steps .step-primary:after {
+  background-color: #991b1b !important;
+}
+
+/* icon */
+.steps .step-primary .step-icon {
+  background-color: #991b1b !important;
+  color: white !important;
+  border-color: #991b1b !important;
+}
+
+.steps .step-primary .step-icon svg {
+  color: white !important;
+  fill: white !important;
+}
+
+/* 🔥 connector to next step */
+.steps .step-primary + .step-primary:before {
+  background-color: #991b1b !important;
+  border-color: #991b1b !important;
+}

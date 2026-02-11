@@ -9,7 +9,7 @@ export default function AddRoleCard({ openCreate }) {
                         Create role
                     </h3>
                     <p className="text-xs sm:text-sm text-gray-600">
-                        Create a new role to manage user access and permissions
+                        Create a new role to manage user access 
                     </p>
                 </div>
                 <button onClick={openCreate} className="btn bg-[#991b1b] w-full sm:w-auto rounded-lg text-white border-[#991b1b] hover:bg-[#ffd700] hover:border-[#ffd700] hover:text-[#991b1b]">
