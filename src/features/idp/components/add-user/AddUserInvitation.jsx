@@ -1,5 +1,5 @@
 import FadeWrapper from "../../../../components/FadeWrapper";
-import MultiSelect from "./MultiSelect";
+import MultiSelect from "./../MultiSelect";
 import { initialRoles } from "../../data/RolesData";
 
 export default function AddUserInvitation({ data, setData, onBack, onSubmit }) {
