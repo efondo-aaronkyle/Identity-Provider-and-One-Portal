@@ -6,6 +6,7 @@ import AppClient from "./features/idp/pages/AppClient";
 import UserPool from "./features/idp/pages/UserPool";
 import Roles from "./features/idp/pages/Roles";
 import IdpProfile from "./features/idp/pages/Profile";
+import IdpLayout from "./features/idp/layouts/IdpLayout";
 
 export default function App() {
   return (
@@ -15,10 +16,12 @@ export default function App() {
         <Route path="/" element={<Login />} />
 
         {/* IDP */}
-        <Route path="/idp/app-client" element={<AppClient/>} />
-        <Route path="/idp/user-pool" element={<UserPool/>} />
-        <Route path="/idp/role" element={<Roles />} />
-        <Route path="/idp/profile" element={<IdpProfile />} />
+        <Route element={<IdpLayout />}>
+          <Route path="/idp/app-client" element={<AppClient />} />
+          <Route path="/idp/user-pool" element={<UserPool />} />
+          <Route path="/idp/role" element={<Roles />} />
+          <Route path="/idp/profile" element={<IdpProfile />} />
+        </Route>
 
         {/* One Portal */}
         <Route path="/portal" element={<OnePortalHome />} />

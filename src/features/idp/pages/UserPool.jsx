@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import IdpLayout from "../layouts/IdpLayout";
 import UserPoolCard from "../components/user-pool/UserPoolCard";
 import AddUserCard from "../components/user-pool/AddUserCard";
 import UserPoolFilters from "../components/user-pool/UserPoolFilters";
@@ -131,7 +130,7 @@ export default function UserPool() {
     };
 
     return (
-        <IdpLayout>
+        <>
             <div className="flex flex-col items-center gap-6 px-3 sm:px-6">
                 <div className="max-w-md md:max-w-lg lg:max-w-6xl w-full mx-auto">
                     <h1 className="text-[#991b1b] text-2xl sm:text-4xl font-bold">Users</h1>
@@ -188,6 +187,6 @@ export default function UserPool() {
                 message={successMessage}
                 onClose={() => setSuccessMessage("")}
             />
-        </IdpLayout>
+        </>
     );
 }

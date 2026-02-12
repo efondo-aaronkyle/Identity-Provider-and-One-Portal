@@ -1,5 +1,4 @@
 import { useState, useMemo, useEffect } from "react";
-import IdpLayout from "../layouts/IdpLayout";
 import AddRoleCard from "../components/role/AddRoleCard";
 import RolesListCard from "../components/role/RolesListCard";
 import RoleModal from "../components/role/RoleModal";
@@ -98,7 +97,7 @@ export default function Roles() {
     };
 
     return (
-        <IdpLayout>
+        <>
             <div className="flex flex-col items-center gap-6 px-3 sm:px-6">
                 <div className="max-w-md md:max-w-lg lg:max-w-6xl w-full mx-auto">
                     <h1 className="text-[#991b1b] text-2xl sm:text-4xl font-bold">Roles</h1>
@@ -139,6 +138,6 @@ export default function Roles() {
                 message={successMessage}
                 onClose={() => setSuccessMessage("")}
             />
-        </IdpLayout>
+        </>
     );
 }

@@ -1,5 +1,4 @@
 import { useState, useMemo, useEffect } from "react";
-import IdpLayout from "../layouts/IdpLayout";
 import CreateAppClientCard from "../components/app-client/CreateAppClientCard";
 import ConnectedAppClientCard from "../components/app-client/ConnectedAppClientCard";
 import AppClientModal from "../components/app-client/AppClientModal";
@@ -123,7 +122,7 @@ export default function AppClient() {
 
 
     return (
-        <IdpLayout>
+        <>
             <div className="flex flex-col items-center gap-6 px-3 sm:px-6">
                 <div className="max-w-md md:max-w-lg lg:max-w-6xl w-full mx-auto">
                     <h1 className="text-[#991b1b] text-2xl sm:text-4xl font-bold">App Client</h1>
@@ -161,6 +160,6 @@ export default function AppClient() {
             />
 
             <SuccessAlert message={successMessage} onClose={() => setSuccessMessage("")} />
-        </IdpLayout>
+        </>
     );
 }
