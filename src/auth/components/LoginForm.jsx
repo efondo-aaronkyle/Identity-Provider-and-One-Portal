@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
-import ChangePasswordModal from "./ChangePasswordModal";
+import ChangePasswordModal from "../../components/modals/ChangePasswordModal";
 
 export default function LoginForm() {
   const navigate = useNavigate();

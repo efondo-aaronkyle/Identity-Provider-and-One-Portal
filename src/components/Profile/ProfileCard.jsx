@@ -1,6 +1,6 @@
 import { useState } from "react";
 import EditProfileModal from "./EditProfileModal";
-import ChangePasswordModal from "./ChangePasswordModal";
+import ChangePasswordModal from "../modals/ChangePasswordModal";
 import ProfileDetails from "./ProfileDetails";
 import EmailStatus from "./EmailStatus";
 import ActionButtons from "./ActionButtons";
@@ -62,10 +62,12 @@ export default function ProfileCard({ profile, addAuditLog, allowEmailEdit = fal
                 allowEmailEdit={allowEmailEdit}
             />
             <ChangePasswordModal 
-                isOpen={isPasswordOpen} 
-                onClose={() => setPasswordOpen(false)} 
+                isOpen={isPasswordOpen}
+                onClose={() => setPasswordOpen(false)}
+                showCurrentPassword={true}
                 addAuditLog={addAuditLog}
                 setToastMessage={setToastMessage}
+                enableSuccessAlert={false}
             />
             <SuccessAlert 
                 message={toastMessage}
