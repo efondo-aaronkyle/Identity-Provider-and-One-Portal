@@ -20,9 +20,9 @@ export default function IdpLayout() {
       <Sidebar isOpen={sidebarOpen} toggleSidebar={() => setSidebarOpen(prev => !prev)} />
 
       {/* Main content */}
-      <div className="flex-1 flex flex-col ml-14 lg:ml-0 transition-all duration-300">
+      <div className="flex-1 flex flex-col transition-all duration-300">
         <Navbar sidebarOpen={sidebarOpen} toggleSidebar={() => setSidebarOpen(prev => !prev)} />
-        <main className="p-6"><Outlet /></main>
+        <main className="flex-1 p-4 sm:p-6 pb-28 lg:pb-6"><Outlet /></main>
       </div>
     </div>
   );

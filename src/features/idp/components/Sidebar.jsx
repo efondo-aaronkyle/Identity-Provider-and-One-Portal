@@ -109,7 +109,7 @@ export default function Sidebar({ isOpen, toggleSidebar }) {
         </div>
       </div>
       {/* Mobile Bottom Navigation */}
-      <div className="lg:hidden fixed bottom-6 left-1/2 -translate-x-1/2 z-50 w-[92%] max-w-105">
+      <div className="lg:hidden fixed bottom-6 left-1/2 -translate-x-1/2 z-50 w-[92%] max-w-[420px]">
         <div className="w-full px-2 py-2 gap-2 rounded-3xl bg-[#991b1b]/95 backdrop-blur-xl shadow-[0_8px_30px_rgba(0,0,0,0.45)] border border-[#991b1b] flex items-center justify-between">
           {menuItems.map((item, idx) => {
             const isActive = location.pathname === item.path;
