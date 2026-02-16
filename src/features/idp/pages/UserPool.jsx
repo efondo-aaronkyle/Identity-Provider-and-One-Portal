@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import UserPoolCard from "../components/user-pool/UserPoolCard";
-import AddUserCard from "../components/user-pool/AddUserCard";
 import UserPoolFilters from "../components/user-pool/UserPoolFilters";
 import UserPoolTable from "../components/user-pool/UserPoolTable";
 import Pagination from "../../../components/Pagination";
@@ -9,6 +8,7 @@ import AddUserModal from "../components/user-pool/AddUserModal"
 import SuccessAlert from "../../../components/SuccessAlert";
 import DeleteConfirmModal from "../../../components/DeleteConfirmAlert";
 import ResultsCount from "../../../components/ResultsCount";
+import PageHeader from "../components/PageHeader";
 import { userPoolData } from "../data/UserPoolData";
 import { initialRoles } from "../../idp/data/RolesData";
 
@@ -132,17 +132,22 @@ export default function UserPool() {
     return (
         <>
             <div className="flex flex-col items-center gap-6 px-3 sm:px-6">
-                <div className="max-w-md md:max-w-lg lg:max-w-6xl w-full mx-auto">
-                    <h1 className="text-[#991b1b] text-2xl sm:text-4xl font-bold">Users</h1>
-                    <p className="text-sm text-gray-600">Manage and view user accounts in the user pool</p>
-                </div>
-                <AddUserCard onCreate={handleOpenCreate} />
+                <PageHeader
+                    title="Users"
+                    description="Manage and view user accounts in the user pool"
+                    icon={
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-28 h-28 text-[#991b1b]">
+                            <path fillRule="evenodd" d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-5.5-2.5a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0ZM10 12a5.99 5.99 0 0 0-4.793 2.39A6.483 6.483 0 0 0 10 16.5a6.483 6.483 0 0 0 4.793-2.11A5.99 5.99 0 0 0 10 12Z" clipRule="evenodd" />
+                        </svg>
+                    }
+                />
                 <UserPoolCard>
                     <UserPoolFilters 
                         search={search} 
                         setSearch={setSearch} 
                         status={status} 
                         setStatus={setStatus} 
+                        onCreate={handleOpenCreate}
                     />
                     <UserPoolTable 
                         users={paginatedUsers} 
