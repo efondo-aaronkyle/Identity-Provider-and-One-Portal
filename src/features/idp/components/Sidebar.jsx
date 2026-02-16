@@ -59,8 +59,8 @@ export default function Sidebar({ isOpen, toggleSidebar }) {
                     flex items-center h-12 w-full transition-all duration-300
                     ${!isOpen ? "justify-center" : ""}
                     ${isActive
-                      ? "bg-[#ffd700] text-[#991b1b] rounded-full shadow-lg"
-                      : "text-white hover:bg-[#7f1d1d] rounded-lg"
+                      ? "bg-[#ffd700] text-[#991b1b] rounded-2xl shadow-lg"
+                      : "text-white hover:bg-[#7f1d1d] rounded-2xl"
                     }
                   `}
                 >
@@ -93,9 +93,9 @@ export default function Sidebar({ isOpen, toggleSidebar }) {
           })}
         </ul>
 
-        <div className="mt-4"/>
+        <div className="mt-10"/>
         <div className="relative group p-2 border-t border-red-900">
-          <button onClick={handleLogout} className="flex items-center h-11 w-full transition-all rounded-lg hover:bg-red-900">
+          <button onClick={handleLogout} className="flex items-center h-11 w-full transition-all rounded-2xl hover:bg-red-900">
             <div className="w-14 flex justify-center">
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="ml-[.5em] w-6 h-6 text-white">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 9V5.25A2.25 2.25 0 0 1 10.5 3h6a2.25 2.25 0 0 1 2.25 2.25v13.5A2.25 2.25 0 0 1 16.5 21h-6a2.25 2.25 0 0 1-2.25-2.25V15m-3 0-3-3m0 0 3-3m-3 3H15" />
@@ -109,7 +109,7 @@ export default function Sidebar({ isOpen, toggleSidebar }) {
         </div>
       </div>
       {/* Mobile Bottom Navigation */}
-      <div className="lg:hidden fixed bottom-6 left-1/2 -translate-x-1/2 z-50 w-[92%] max-w-[420px]">
+      <div className="lg:hidden fixed bottom-6 left-1/2 -translate-x-1/2 z-50 w-[92%] max-w-105">
         <div className="w-full px-2 py-2 gap-2 rounded-3xl bg-[#991b1b]/95 backdrop-blur-xl shadow-[0_8px_30px_rgba(0,0,0,0.45)] border border-[#991b1b] flex items-center justify-between">
           {menuItems.map((item, idx) => {
             const isActive = location.pathname === item.path;
