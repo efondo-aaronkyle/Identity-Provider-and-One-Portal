@@ -20,7 +20,7 @@ export default function ConnectedAppClientTable({ clients, onView, onEdit, onDel
                 <tbody>
                     {clients.length === 0 && (
                         <tr>
-                            <td colSpan={5} className="text-center py-10 text-gray-500">No app clients found</td>
+                            <td colSpan={6} className="text-center py-10 text-gray-500">No app clients found</td>
                         </tr>
                     )}
                     {clients.map((c) => (

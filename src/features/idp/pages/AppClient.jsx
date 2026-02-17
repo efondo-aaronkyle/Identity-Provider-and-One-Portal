@@ -1,6 +1,7 @@
 import { useState, useMemo, useEffect } from "react";
 import ConnectedAppClientCard from "../components/app-client/ConnectedAppClientCard";
 import AppClientModal from "../components/app-client/AppClientModal";
+import AppClientCreateModal from "../components/app-client/AppClientCreateModal";
 import SuccessAlert from "../../../components/SuccessAlert";
 import DeleteConfirmModal from "../../../components/DeleteConfirmAlert";
 import PageHeader from "../components/PageHeader";
@@ -20,26 +21,21 @@ export default function AppClient() {
         image: "/assets/images/connected-systems-button.png",
         },
     ]);
-
     const [search, setSearch] = useState("");
     const [page, setPage] = useState(1);
-
-    const [modalOpen, setModalOpen] = useState(false);
+    const [createOpen, setCreateOpen] = useState(false);
+    const [editViewOpen, setEditViewOpen] = useState(false);
     const [mode, setMode] = useState("create");
     const [activeClient, setActiveClient] = useState(null);
-
     const [successMessage, setSuccessMessage] = useState("");
-
     const [showDeleteAlert, setShowDeleteAlert] = useState(false);
     const [deleteTarget, setDeleteTarget] = useState(null);
 
     useEffect(() => {
         if (!successMessage) return;
-
         const timer = setTimeout(() => {
             setSuccessMessage("");
         }, 3000);
-
         return () => clearTimeout(timer);
     }, [successMessage]);
 
@@ -58,21 +54,19 @@ export default function AppClient() {
     );
 
     const openCreate = () => {
-        setMode("create");
-        setActiveClient(null);
-        setModalOpen(true);
+        setCreateOpen(true);
     };
 
     const openView = (client) => {
         setMode("view");
         setActiveClient(client);
-        setModalOpen(true);
+        setEditViewOpen(true);
     };
 
     const openEdit = (client) => {
         setMode("edit");
         setActiveClient(client);
-        setModalOpen(true);
+        setEditViewOpen(true);
     };
 
     const deleteClient = (id) => {
@@ -81,27 +75,25 @@ export default function AppClient() {
     };
 
     const confirmDelete = () => {
-        setClients((prev) => prev.filter((c) => c.clientId !== deleteTarget));
+        setClients((prev) =>
+            prev.filter((c) => c.clientId !== deleteTarget)
+        );
         setShowDeleteAlert(false);
         setDeleteTarget(null);
-
         setSuccessMessage("App client successfully deleted!");
     };
 
     const generateClientId = (name) => {
-    // take first letters of each word in the name
-    const prefix = name
-        .split(" ")
-        .map((w) => w[0].toLowerCase())
-        .join("");
-    // random 8-character alphanumeric string
-    const random = Math.random().toString(36).substring(2, 10);
-    return `${prefix}-${random}`;
+        const prefix = name
+            .split(" ")
+            .map((w) => w[0].toLowerCase())
+            .join("");
+        const random = Math.random().toString(36).substring(2, 10);
+        return `${prefix}-${random}`;
     };
 
-    const saveClient = (data) => {
-        if (mode === "create") {
-            setClients((prev) => [
+    const saveCreatedClient = (data) => {
+        setClients((prev) => [
             {
                 ...data,
                 clientId: generateClientId(data.name),
@@ -109,15 +101,21 @@ export default function AppClient() {
                 lastUsed: "-",
             },
             ...prev,
-            ]);
-            setSuccessMessage("App client successfully created!");
-        } else if (mode === "edit") {
-            setClients((prev) =>
-                prev.map((c) => (c.clientId === data.clientId ? data : c))
-            );
-            setSuccessMessage("App client successfully updated!");
-        }
-        setModalOpen(false);
+        ]);
+
+        setCreateOpen(false);
+        setSuccessMessage("App client successfully created!");
+    };
+
+    const saveEditedClient = (data) => {
+        setClients((prev) =>
+            prev.map((c) =>
+                c.clientId === data.clientId ? { ...c, ...data } : c
+            )
+        );
+
+        setEditViewOpen(false);
+        setSuccessMessage("App client successfully updated!");
     };
 
 
@@ -147,13 +145,17 @@ export default function AppClient() {
                     onDelete={deleteClient}
                     onCreate={openCreate}
                 />
+                <AppClientCreateModal
+                    open={createOpen}
+                    onClose={() => setCreateOpen(false)}
+                    onSubmit={saveCreatedClient}
+                />
                 <AppClientModal 
-                    key={modalOpen + mode + (activeClient?.clientId || "new")}
-                    open={modalOpen}
+                    open={editViewOpen}
                     mode={mode}
                     client={activeClient}
-                    onClose={() => setModalOpen(false)}
-                    onSubmit={saveClient}
+                    onClose={() => setEditViewOpen(false)}
+                    onSubmit={saveEditedClient}
                 />
             </div>
 
