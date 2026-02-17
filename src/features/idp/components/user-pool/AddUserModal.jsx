@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import MultiSelect from "./../MultiSelect";
 import FadeWrapper from "../../../../components/FadeWrapper";
+import ModalSteps from "../ModalSteps";
 import { initialRoles } from "../../data/RolesData";
 
 const initialFormData = {
@@ -99,9 +100,6 @@ export default function UserPoolModal({ open, onClose, onSubmit }) {
 
     if (!open) return null;
 
-    const stepClass = (s) =>
-        `step ${step >= s ? "step-primary" : ""}`;
-
     return (
         <dialog className="modal modal-open">
             <div className="modal-box max-w-xl max-h-[85vh] p-0 overflow-hidden flex flex-col">
@@ -124,30 +122,32 @@ export default function UserPoolModal({ open, onClose, onSubmit }) {
                 </div>
 
                 <div className="flex-1 overflow-y-auto p-6 bg-white space-y-4">
-                    <ul className="steps w-full px-6 pt-4">
-                        <li className={stepClass(1)}>
-                            <span className="step-icon">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4">
-                                    <path d="M10 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6ZM3.465 14.493a1.23 1.23 0 0 0 .41 1.412A9.957 9.957 0 0 0 10 18c2.31 0 4.438-.784 6.131-2.1.43-.333.604-.903.408-1.41a7.002 7.002 0 0 0-13.074.003Z" />
-                                </svg>
-                            </span>Basic Info
-                        </li>
-                        <li className={stepClass(2)}>
-                            <span className="step-icon">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4">
-                                    <path fillRule="evenodd" d="M14.5 1A4.5 4.5 0 0 0 10 5.5V9H3a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6a2 2 0 0 0-2-2h-1.5V5.5a3 3 0 1 1 6 0v2.75a.75.75 0 0 0 1.5 0V5.5A4.5 4.5 0 0 0 14.5 1Z" clipRule="evenodd" />
-                                </svg>
-                            </span>Access
-                        </li>
-                        <li className={stepClass(3)}>
-                            <span className="step-icon">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4">
-                                    <path fillRule="evenodd" d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clipRule="evenodd" />
-                                </svg>
-                            </span>Verify
-                        </li>
-                    </ul>
-
+                    <ModalSteps
+                        currentStep={step}
+                        steps={[
+                            <>
+                                <span className="step-icon">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4">
+                                        <path d="M10 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6ZM3.465 14.493a1.23 1.23 0 0 0 .41 1.412A9.957 9.957 0 0 0 10 18c2.31 0 4.438-.784 6.131-2.1.43-.333.604-.903.408-1.41a7.002 7.002 0 0 0-13.074.003Z" />
+                                    </svg>
+                                </span>Basic Info
+                            </>,
+                            <>
+                                <span className="step-icon">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4">
+                                        <path fillRule="evenodd" d="M14.5 1A4.5 4.5 0 0 0 10 5.5V9H3a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6a2 2 0 0 0-2-2h-1.5V5.5a3 3 0 1 1 6 0v2.75a.75.75 0 0 0 1.5 0V5.5A4.5 4.5 0 0 0 14.5 1Z" clipRule="evenodd" />
+                                    </svg>
+                                </span>Access
+                            </>,
+                            <>
+                                <span className="step-icon">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4">
+                                        <path fillRule="evenodd" d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clipRule="evenodd" />
+                                    </svg>
+                                </span>Verify
+                            </>,
+                        ]}
+                    />
                     <FadeWrapper isVisible={step === 1}>
                         <>
                             <div className="mb-5">
@@ -370,12 +370,12 @@ export default function UserPoolModal({ open, onClose, onSubmit }) {
                     )}
                     {step > 1 && (
                         <>
-                            <button onClick={() => setStep(step - 1)} className="btn h-12 rounded-lg bg-[#991b1b] text-white border-[#991b1b] hover:bg-[#ffd700] hover:border-[#ffd700] hover:text-[#991b1b]">Back</button>
+                            <button onClick={() => setStep(step - 1)} className="btn h-12 rounded-lg btn-outline text-[#991b1b] border-[#991b1b] hover:bg-[#ffd700] hover:border-[#ffd700] hover:text-[#991b1b]">Back</button>
                         </>
                     )}
                     {step < 3 && (
                         <>
-                            <button onClick={nextStep} className="btn h-12 rounded-lg btn-outline text-[#991b1b] border-[#991b1b] hover:bg-[#ffd700] hover:border-[#ffd700] hover:text-[#991b1b]">Next</button>
+                            <button onClick={nextStep} className="btn h-12 rounded-lg bg-[#991b1b] text-white border-[#991b1b] hover:bg-[#ffd700] hover:border-[#ffd700] hover:text-[#991b1b]">Next</button>
                         </>
                     )}
                     {step === 3 && (
