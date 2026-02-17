@@ -8,13 +8,13 @@ export default function LoginFooter() {
           <div className="flex flex-col md:flex-row items-center md:items-center space-y-3 md:space-y-0 md:space-x-3 mb-4">
             <div>
               <img
-                src="/assets/images/PUPIDP-logo.png"
+                src="/assets/images/IDP_Logo.png"
                 alt="PUP IDP Logo"
                 className="h-16 w-16 object-contain"
               />
             </div>
             <div className="flex flex-col text-center md:text-left">
-              <h2 className="text-[1.6em] font-bold">PUPT IDP 2025</h2>
+              <h2 className="text-[1.6em] font-bold">PUPT IDP 2026</h2>
               <p className="text-sm text-[#facc15] font-bold">Identity Provider System</p>
             </div>
           </div>
@@ -24,8 +24,8 @@ export default function LoginFooter() {
             across all PUPT systems.
           </p>
           <p className="text-[.85rem] w-100">
-            © 2025 <span className="font-bold">Polytechnic University of the Philippines</span><br />
-            All rights reserved. PUPT IDP Management System.
+            © 2026 <span className="font-bold">Polytechnic University of the Philippines</span><br />
+            All rights reserved. PUPT IDP System.
           </p>
         </aside>
 

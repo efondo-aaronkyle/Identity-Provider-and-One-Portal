@@ -5,7 +5,7 @@ export default function AuthLayout({ children }) {
   return (
     <div className="font-[Poppins]">
       <LoginHeader />
-      <main className="hero min-h-screen" style={{ backgroundImage: "url(/assets/images/PUPTbg1.jpg)" }}>
+      <main className="hero min-h-screen" style={{ backgroundImage: "url(/assets/images/PUP_Bg.jpg)" }}>
         {children}
       </main>
       <LoginFooter />
