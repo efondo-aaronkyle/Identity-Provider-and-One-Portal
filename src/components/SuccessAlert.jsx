@@ -20,7 +20,7 @@ export default function SuccessAlert({ message, onClose }) {
                     <span>{message}</span>
 
                     {onClose && (
-                        <button onClick={onClose} className="btn btn-sm btn-ghost ml-auto">✕</button>
+                        <button onClick={onClose} className="btn btn-xs btn-ghost ml-auto">✕</button>
                     )}
                 </div>
             </motion.div>
