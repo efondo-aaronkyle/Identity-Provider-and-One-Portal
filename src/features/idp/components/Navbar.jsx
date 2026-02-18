@@ -5,10 +5,7 @@ export default function Navbar() {
 
   return (
     <nav className="h-16 sm:h-24 bg-[#991b1b] shadow flex items-center px-3 sm:px-6 justify-between transition-all duration-300">
-      <div className="flex items-center gap-4">
-        <div className="flex items-center gap-2 sm:gap-4">
-          <img src="/assets/images/PUPlogo.png" alt="PUP Logo" className="h-9 w-9 sm:h-15 sm:w-15" />
-        </div>
+      <div className="flex items-center">
         <div className="flex flex-col items-start text-white leading-tight">
           <div className="font-bold text-[0.6rem] sm:text-[1.1em] tracking-[0.5px] sm:tracking-[1px]">
             PUP TAGUIG IDENTITY PROVIDER
