@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import ErrorAlert from "../../../../components/ErrorAlert";
 
 export default function AppClientModal({ open, mode, client, onClose, onSubmit }) {
   const [name, setName] = useState(client?.name || "");
@@ -9,6 +10,7 @@ export default function AppClientModal({ open, mode, client, onClose, onSubmit }
   const [imagePreview, setImagePreview] = useState(client?.image || null);
   const [isDragging, setIsDragging] = useState(false);
   const [showFullImage, setShowFullImage] = useState(false);
+  const [error, setError] = useState("");
 
   useEffect(() => {
   if (mode === "create") {
@@ -19,6 +21,7 @@ export default function AppClientModal({ open, mode, client, onClose, onSubmit }
     setLogoutURL("");
     setSelectedScopes(["openid"]);
     setImagePreview(null);
+    setError("");
   } else {
     // Load existing client for view/edit
     setName(client?.name || "");
@@ -82,6 +85,18 @@ export default function AppClientModal({ open, mode, client, onClose, onSubmit }
     e.preventDefault();
     if (mode === "view") return onClose();
 
+    if (!name.trim()) {
+      setError("Client name is required.");
+      return;
+    }
+
+    if (!baseURL.trim() || !redirectURL.trim() || !logoutURL.trim()) {
+      setError("All URL fields are required.");
+      return;
+    }
+
+    setError("");
+
     onSubmit({ 
       clientId: client?.clientId, // keep the existing ID for edit, undefined for new create
       name,
@@ -91,7 +106,8 @@ export default function AppClientModal({ open, mode, client, onClose, onSubmit }
       scopes: selectedScopes,
       image: imagePreview,
       created: client?.created || new Date().toISOString().slice(0, 10),
-      lastUsed: client?.lastUsed || "-", });
+      lastUsed: client?.lastUsed || "-", 
+    });
   };
 
   if (!open) return null;
@@ -104,8 +120,11 @@ export default function AppClientModal({ open, mode, client, onClose, onSubmit }
             <div className="flex items-center justify-between">
               <div>
                 <h3 className="text-2xl font-bold">
-                  {mode === "create" ? "Create App Client" : mode === "edit" ? "Edit App Client" : "View App Client"}
+                  {mode === "edit" ? "Edit App Client" : "View App Client"}
                 </h3>
+                <p className="text-white/90 mt-1">
+                  {mode === "edit" ? "Update the application client's configuration and settings." : "Application client's configuration details."}
+                </p>
               </div>
               <button className="btn btn-sm btn-circle btn-ghost text-white hover:bg-white/20" onClick={onClose}>
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -115,6 +134,7 @@ export default function AppClientModal({ open, mode, client, onClose, onSubmit }
             </div>
           </div>
           <form id="app-client-form" className="flex-1 overflow-y-auto p-6 space-y-4 bg-white" onSubmit={handleSubmit}>
+            <ErrorAlert message={error} onClose={() => setError("")}/>
             <div className="space-y-1.5">
               <label className="block text-sm font-semibold text-gray-700">System Logo</label>
               <div onDragOver={handleDragOver} onDragLeave={handleDragLeave} onDrop={handleDrop}className={`relative flex flex-col items-center justify-center w-full h-40 border-2 border-dashed rounded-xl transition-all duration-200 ${

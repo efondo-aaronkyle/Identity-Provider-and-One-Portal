@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import ModalSteps from "../ModalSteps";
+import ErrorAlert from "../../../../components/ErrorAlert";
 
 export default function AppClientCreateModal({ open, onClose, onSubmit }) {
   const [step, setStep] = useState(1);
@@ -11,6 +12,7 @@ export default function AppClientCreateModal({ open, onClose, onSubmit }) {
   const [imagePreview, setImagePreview] = useState(null);
   const [isDragging, setIsDragging] = useState(false);
   const [showFullImage, setShowFullImage] = useState(false);
+  const [error, setError] = useState("");
 
   useEffect(() => {
     if (!open) {
@@ -21,6 +23,7 @@ export default function AppClientCreateModal({ open, onClose, onSubmit }) {
       setLogoutURL("");
       setScopes(["openid"]);
       setImagePreview(null);
+      setError("");
     }
   }, [open]);
 
@@ -66,31 +69,45 @@ export default function AppClientCreateModal({ open, onClose, onSubmit }) {
   };
 
   const nextStep = () => {
-    if (step === 1 && !name) {
-      alert("Client name is required.");
-      return;
+    if (step === 1 && !name.trim()) {
+        setError("Client name is required.");
+        return;
     }
 
-    if (step === 2 && (!baseURL || !redirectURL || !logoutURL)) {
-      alert("All URL fields are required.");
-      return;
+    if (step === 2 && (!baseURL.trim() || !redirectURL.trim() || !logoutURL.trim())) {
+        setError("All URL fields are required.");
+        return;
     }
 
+    setError("");
     setStep(step + 1);
   };
 
-  const handleSubmit = () => {
-    onSubmit({
-      name,
-      baseURL,
-      redirectURL,
-      logoutURL,
-      scopes,
-      image: imagePreview,
-    });
+    const handleSubmit = () => {
+        if (!name.trim()) {
+            setError("Client name is required.");
+            setStep(1);
+            return;
+        }
 
-    onClose();
-  };
+        if (!baseURL.trim() || !redirectURL.trim() || !logoutURL.trim()) {
+            setError("All URL fields are required.");
+            setStep(2);
+            return;
+        }
+
+        setError("");
+
+        onSubmit({
+            name,
+            baseURL,
+            redirectURL,
+            logoutURL,
+            scopes,
+            image: imagePreview,
+        });
+        onClose();
+    };
 
   if (!open) return null;
 
@@ -102,6 +119,9 @@ export default function AppClientCreateModal({ open, onClose, onSubmit }) {
                     <div className="flex items-center justify-between">
                         <div>
                             <h3 className="text-2xl font-bold">Create App Client</h3>
+                            <p className="text-white/90 mt-1">
+                                Register a new application for integration.
+                            </p>
                         </div>
                         <button className="btn btn-sm btn-circle btn-ghost text-white hover:bg-white/20" onClick={onClose}>
                             <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -139,10 +159,11 @@ export default function AppClientCreateModal({ open, onClose, onSubmit }) {
                             </>,
                         ]}
                     />
+                    <ErrorAlert message={error} onClose={() => setError("")}/>
                     {step === 1 && (
                         <>
                             <div className="space-y-1.5">
-                                <label className="block text-base font-semibold text-gray-700">System Logo</label>
+                                <label className="block text-base font-semibold text-gray-700">System Logo<span className="text-red-500"> *</span></label>
                                 <div onDragOver={handleDragOver} onDragLeave={handleDragLeave} onDrop={handleDrop}className={`relative flex flex-col items-center justify-center w-full h-40 border-2 border-dashed rounded-xl transition-all duration-200 ${
                                     isDragging ? "border-[#991b1b] bg-red-50" : "border-gray-300 bg-gray-50"
                                     } hover:bg-gray-100 cursor-pointer`}
@@ -183,7 +204,7 @@ export default function AppClientCreateModal({ open, onClose, onSubmit }) {
                             </div>
                             <div className="space-y-0.5">
                                 <label className="block text-base font-semibold text-gray-700">
-                                    Client Id
+                                    Client Name<span className="text-red-500"> *</span>
                                 </label>
                                 <input type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder="Client name (e.g., LMS Portal)" required className="w-full px-3 py-2 rounded-lg border border-gray-300 bg-transparent text-gray-700 focus:ring-2 focus:ring-[#991b1b]"/>
                             </div>
@@ -192,24 +213,24 @@ export default function AppClientCreateModal({ open, onClose, onSubmit }) {
                     {step === 2 && (
                         <>
                             <div className="space-y-0.5">
-                                <label className="block text-base font-semibold text-gray-700">Base URL</label>
+                                <label className="block text-base font-semibold text-gray-700">Base URL<span className="text-red-500"> *</span></label>
                                 <textarea value={baseURL} onChange={(e) => setBaseURL(e.target.value)} name="base_urls" rows="3" placeholder="Base URLs (comma-separated)" className="w-full px-3 py-2 rounded-md border border-gray-300 resize-none max-h-40 overflow-y-auto foucs:outline-none bg-transparent text-gray-700 focus:ring-2 focus:ring-[#991b1b]"/>
                             </div>
 
                             <div className="space-y-0.5">
-                                <label className="block text-base font-semibold text-gray-700">Redirect URL</label>
+                                <label className="block text-base font-semibold text-gray-700">Redirect URL<span className="text-red-500"> *</span></label>
                                 <textarea value={redirectURL} onChange={(e) => setRedirectURL(e.target.value)} name="redirect_urls" rows="3" placeholder="Redirect URLs (comma-separated)" className="w-full px-3 py-2 rounded-md border border-gray-300 resize-none max-h-40 overflow-y-auto foucs:outline-none bg-transparent text-gray-700 focus:ring-2 focus:ring-[#991b1b]"/>
                             </div>
 
                             <div className="space-y-0.5">
-                                <label className="block text-base font-semibold text-gray-700">Logout URL</label>
+                                <label className="block text-base font-semibold text-gray-700">Logout URL<span className="text-red-500"> *</span></label>
                                 <textarea value={logoutURL} onChange={(e) => setLogoutURL(e.target.value)} name="redirect_urls" rows="3" placeholder="Redirect URLs (comma-separated)" className="w-full px-3 py-2 rounded-md border border-gray-300 resize-none max-h-40 overflow-y-auto foucs:outline-none bg-transparent text-gray-700 focus:ring-2 focus:ring-[#991b1b]"/>
                             </div>
                         </>
                     )}
                     {step === 3 && (
                         <div className="mb-5">
-                            <span className="block text-base font-medium text-gray-700">Allowed scopes</span>
+                            <span className="block text-base font-medium text-gray-700">Allowed scopes<span className="text-red-500"> *</span></span>
                             <div className="mt-2 grid grid-cols-2 gap-3 sm:grid-cols-4">
                             {["openid", "profile", "email", "phone"].map((scope) => (
                                 <label key={scope} className="flex items-center gap-2 text-gray-700">

@@ -39,6 +39,9 @@ export default function RoleModal({ open, mode, role, onClose, onSubmit }) {
                             <h3 className="text-2xl font-bold">
                                 {mode === "create" ? "Create Role" : mode === "edit" ? "Edit Role" : "View Role"}
                             </h3>
+                            <p className="text-white/90 mt-1">
+                                {mode === "create" ? "Define a new role.": mode === "edit" ? "Modify the role's name and description." : "View the role's information."}
+                            </p>
                         </div>
                         <button className="btn btn-sm btn-circle btn-ghost text-white hover:bg-white/20" onClick={onClose}>
                             <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
