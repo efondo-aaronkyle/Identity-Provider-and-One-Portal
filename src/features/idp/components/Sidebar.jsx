@@ -27,24 +27,18 @@ export default function Sidebar({ isOpen, toggleSidebar }) {
   };
 
   return (
-    <>
-      <div className={`hidden lg:flex flex-col bg-[#991b1b] border-red-900 transition-all duration-300 fixed lg:relative top-0 left-0 min-h-screen z-50 ${isOpen ? "w-64 translate-x-0" : "w-14 translate-x-0 lg:translate-x-0"}`}>
-        <div className="h-24 px-3 flex items-center justify-between">
-          <div className="flex items-center justify-between w-full">
-            <div className="flex flex-col items-start overflow-hidden">
-              <h1 className={`text-white text-3xl font-bold transition-all duration-300 ${isOpen ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-4"}`}>PUPTIDP</h1>
-              <span className={`inline-flex bg-[#ffd700] text-black mt-1 px-2 rounded-md text-xs transition-all duration-300 ${isOpen ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-4"}`}>ver.2026</span>
+    <>  
+      <div className={`hidden lg:flex flex-col bg-[#991b1b] border-red-900 transition-all duration-300 ease-in-out ${isOpen ? "w-64" : "w-20"}`}>
+        <div className="h-24 flex items-center border-b border-red-900 px-3">
+          <button onClick={toggleSidebar} className={`flex items-center transition-all duration-300 ease-in-out ${isOpen ? "gap-2" : "justify-center w-full"}`}>
+            <img src="/assets/images/IDP_Logo.png" alt="IDP Logo" className={`object-contain transition-all duration-300 ease-in-out hover:scale-110 ${isOpen ? "h-16 w-16" : "h-14 w-14"}`}/>
+            <div className={`flex flex-col transition-all duration-300 ease-in-out${isOpen ? "opacity-100 translate-x-0 ml-2" : "opacity-0 -translate-x-2 w-0 overflow-hidden"}`}>
+              <h1 className="text-white text-3xl font-bold leading-tight">PUPTIDP</h1>
+              <span className="inline-flex bg-[#ffd700] font-extrabold text-black px-2 rounded-md text-xs w-fit">ver.2026</span>
             </div>
-            <button type="button" className="p-2 rounded-full hover:bg-[#7f1d1d] text-white shrink-0" onClick={toggleSidebar}>
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-6 h-6">
-                <path d="M4 4m0 2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-12a2 2 0 0 1-2-2z"></path>
-                <path d="M9 4v16"></path>
-                <path d="M14 10l2 2l-2 2"></path>
-              </svg>
-            </button>
-          </div>
+          </button>
         </div>
-        <ul className="p-2 space-y-2">
+        <ul className="p-2 space-y-2">                                                                                                                                                                                                                                                                                                                                                       
           {menuItems.map((item, idx) => {
             const isActive = location.pathname === item.path;
 
@@ -94,14 +88,15 @@ export default function Sidebar({ isOpen, toggleSidebar }) {
         </ul>
 
         <div className="mt-10"/>
-        <div className="relative group p-2 border-t border-red-900">
-          <button onClick={handleLogout} className="flex items-center h-11 w-full transition-all rounded-2xl hover:bg-red-900">
-            <div className="w-14 flex justify-center">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="ml-[.5em] w-6 h-6 text-white">
+        <div className="p-2 border-t border-red-900">
+          <button onClick={handleLogout} className={`flex items-center h-11 w-full rounded-2xl hover:bg-red-900 transition-all duration-300 ${!isOpen ? "justify-center" : ""}`}>
+            <div className="w-14 flex items-center justify-center">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 text-white transition-all duration-300 ease-in-out">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 9V5.25A2.25 2.25 0 0 1 10.5 3h6a2.25 2.25 0 0 1 2.25 2.25v13.5A2.25 2.25 0 0 1 16.5 21h-6a2.25 2.25 0 0 1-2.25-2.25V15m-3 0-3-3m0 0 3-3m-3 3H15" />
               </svg>
             </div>
-            <span className={`text-white ml-3 whitespace-nowrap font-semibold transition-opacity duration-300 ${isOpen ? "opacity-100" : "opacity-0"}`}>Logout</span>
+            <span className={`whitespace-nowrap font-semibold text-white transition-all duration-300 ${isOpen? "opacity-100 ml-3": "opacity-0 w-0 overflow-hidden"
+        }`}>Logout</span>
           </button>
           {!isOpen && (
             <span className="absolute left-full top-1/2 -translate-y-1/2 ml-2 px-2 py-1 rounded-md text-sm bg-[#991b1b] text-white font-medium opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">Logout</span>
