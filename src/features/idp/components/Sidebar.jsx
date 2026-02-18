@@ -30,7 +30,7 @@ export default function Sidebar({ isOpen, toggleSidebar }) {
     <>  
       <div className={`hidden lg:flex flex-col bg-[#991b1b] border-red-900 transition-all duration-300 ease-in-out ${isOpen ? "w-64" : "w-20"}`}>
         <div className="h-24 flex items-center border-b border-red-900 px-3">
-          <button onClick={toggleSidebar} className={`flex items-center transition-all duration-300 ease-in-out ${isOpen ? "gap-2" : "justify-center w-full"}`}>
+          <button onClick={toggleSidebar} className="flex items-center gap-2 w-full transition-all duration-300 ease-in-out">
             <img src="/assets/images/IDP_Logo.png" alt="IDP Logo" className={`object-contain transition-all duration-300 ease-in-out hover:scale-110 ${isOpen ? "h-16 w-16" : "h-14 w-14"}`}/>
             <div className={`flex flex-col transition-all duration-300 ease-in-out${isOpen ? "opacity-100 translate-x-0 ml-2" : "opacity-0 -translate-x-2 w-0 overflow-hidden"}`}>
               <h1 className="text-white text-3xl font-bold leading-tight">PUPTIDP</h1>
@@ -49,21 +49,12 @@ export default function Sidebar({ isOpen, toggleSidebar }) {
                     navigate(item.path);
                     if (window.innerWidth < 1024) toggleSidebar();
                   }}
-                  className={`
-                    flex items-center h-12 w-full transition-all duration-300
-                    ${!isOpen ? "justify-center" : ""}
-                    ${isActive
-                      ? "bg-[#ffd700] text-[#991b1b] rounded-2xl shadow-lg"
-                      : "text-white hover:bg-[#7f1d1d] rounded-2xl"
-                    }
+                  className={`flex items-center h-12 w-full transition-all duration-300
+                    ${isActive ? "bg-[#ffd700] text-[#991b1b] rounded-2xl shadow-lg" : "text-white hover:bg-[#7f1d1d] rounded-2xl"}
                   `}
                 >
                   <div className="w-14 flex items-center justify-center">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor"
-                      className={`w-6 h-6 transition-colors duration-300 ${
-                        isActive ? "text-[#991b1b]" : "text-white"
-                      }`}
-                    >
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className={`w-6 h-6 transition-colors duration-300 ${isActive ? "text-[#991b1b]" : "text-white"}`}>
                       <path strokeLinecap="round" strokeLinejoin="round" d={item.iconPath}/>
                     </svg>
                   </div>
@@ -89,7 +80,7 @@ export default function Sidebar({ isOpen, toggleSidebar }) {
 
         <div className="mt-10"/>
         <div className="p-2 border-t border-red-900">
-          <button onClick={handleLogout} className={`flex items-center h-11 w-full rounded-2xl hover:bg-red-900 transition-all duration-300 ${!isOpen ? "justify-center" : ""}`}>
+          <button onClick={handleLogout} className="flex items-center h-11 w-full rounded-2xl hover:bg-red-900 transition-all duration-300">
             <div className="w-14 flex items-center justify-center">
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 text-white transition-all duration-300 ease-in-out">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 9V5.25A2.25 2.25 0 0 1 10.5 3h6a2.25 2.25 0 0 1 2.25 2.25v13.5A2.25 2.25 0 0 1 16.5 21h-6a2.25 2.25 0 0 1-2.25-2.25V15m-3 0-3-3m0 0 3-3m-3 3H15" />
