@@ -1,18 +1,14 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 
 export default function Sidebar({ isOpen, toggleSidebar }) {
   const navigate = useNavigate();
+  const location = useLocation();
 
   const menuItems = [
     {
       name: "User Pool",
       path: "/idp/user-pool",
       iconPath: "M18 18.72a9.094 9.094 0 0 0 3.741-.479 3 3 0 0 0-4.682-2.72m.94 3.198.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0 1 12 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 0 1 6 18.719m12 0a5.971 5.971 0 0 0-.941-3.197m0 0A5.995 5.995 0 0 0 12 12.75a5.995 5.995 0 0 0-5.058 2.772m0 0a3 3 0 0 0-4.681 2.72 8.986 8.986 0 0 0 3.74.477m.94-3.197a5.971 5.971 0 0 0-.94 3.197M15 6.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm6 3a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Zm-13.5 0a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Z"
-    },
-    {
-      name: "Add User",
-      path: "/idp/add-user",
-      iconPath: "M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z"
     },
     {
       name: "App Client",
@@ -31,71 +27,103 @@ export default function Sidebar({ isOpen, toggleSidebar }) {
   };
 
   return (
-    <div className={`flex flex-col bg-[#991b1b] border-red-900 transition-all duration-300 fixed lg:relative top-0 left-0 min-h-screen z-50 ${isOpen ? "w-64 translate-x-0" : "w-14 translate-x-0 lg:translate-x-0"}`}>
+    <>  
+      <div className={`hidden lg:flex flex-col bg-[#991b1b] border-red-900 transition-all duration-300 ease-in-out ${isOpen ? "w-64" : "w-20"}`}>
+        <div className="h-24 flex items-center border-b border-red-900 px-3">
+          <button onClick={toggleSidebar} className="flex items-center gap-2 w-full transition-all duration-300 ease-in-out">
+            <img src="/assets/images/IDP_Logo.png" alt="IDP Logo" className={`object-contain transition-all duration-300 ease-in-out hover:scale-110 ${isOpen ? "h-16 w-16" : "h-14 w-14"}`}/>
+            <div className={`flex flex-col transition-all duration-300 ease-in-out${isOpen ? "opacity-100 translate-x-0 ml-2" : "opacity-0 -translate-x-2 w-0 overflow-hidden"}`}>
+              <h1 className="text-white text-3xl font-bold leading-tight">PUPTIDP</h1>
+              <span className="inline-flex bg-[#ffd700] font-extrabold text-black px-2 rounded-md text-xs w-fit">ver.2026</span>
+            </div>
+          </button>
+        </div>
+        <ul className="p-2 space-y-2">                                                                                                                                                                                                                                                                                                                                                       
+          {menuItems.map((item, idx) => {
+            const isActive = location.pathname === item.path;
 
-      <div className="h-24 px-3 flex items-center">
-        <div className="flex items-center justify-between w-full">
-          <div className="flex flex-col items-start overflow-hidden">
-            <h1 className={`text-white text-3xl font-bold transition-all duration-300 ${isOpen ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-4"}`}>PUPTIDP</h1>
-            <span className={`inline-flex bg-[#ffd700] text-black mt-1 px-2 rounded-md text-xs transition-all duration-300 ${isOpen ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-4"}`}>ver.2026</span>
-          </div>
-          <button type="button" className="p-2 rounded-full hover:bg-red-900 text-white shrink-0" onClick={toggleSidebar}>
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-6 h-6">
-              <path d="M4 4m0 2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-12a2 2 0 0 1-2-2z"></path>
-              <path d="M9 4v16"></path>
-              <path d="M14 10l2 2l-2 2"></path>
+            return (
+              <li key={idx} className="relative group">
+                <button
+                  onClick={() => {
+                    navigate(item.path);
+                    if (window.innerWidth < 1024) toggleSidebar();
+                  }}
+                  className={`flex items-center h-12 w-full transition-all duration-300
+                    ${isActive ? "bg-[#ffd700] text-[#991b1b] rounded-2xl shadow-lg" : "text-white hover:bg-[#7f1d1d] rounded-2xl"}
+                  `}
+                >
+                  <div className="w-14 flex items-center justify-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className={`w-6 h-6 transition-colors duration-300 ${isActive ? "text-[#991b1b]" : "text-white"}`}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d={item.iconPath}/>
+                    </svg>
+                  </div>
+
+                  <span className={`whitespace-nowrap font-semibold transition-all duration-300
+                      ${isOpen ? "opacity-100 ml-3" : "opacity-0 w-0 overflow-hidden"}
+                      ${isActive ? "text-[#991b1b]" : ""}
+                    `}
+                  >
+                    {item.name}
+                  </span>
+                </button>
+
+                {!isOpen && (
+                  <span className="absolute left-full top-1/2 -translate-y-1/2 ml-2 px-2 py-1 rounded-md text-sm bg-[#991b1b] text-white font-medium opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+                    {item.name}
+                  </span>
+                )}
+              </li>
+            );
+          })}
+        </ul>
+
+        <div className="mt-10"/>
+        <div className="p-2 border-t border-red-900">
+          <button onClick={handleLogout} className="flex items-center h-11 w-full rounded-2xl hover:bg-red-900 transition-all duration-300">
+            <div className="w-14 flex items-center justify-center">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 text-white transition-all duration-300 ease-in-out">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 9V5.25A2.25 2.25 0 0 1 10.5 3h6a2.25 2.25 0 0 1 2.25 2.25v13.5A2.25 2.25 0 0 1 16.5 21h-6a2.25 2.25 0 0 1-2.25-2.25V15m-3 0-3-3m0 0 3-3m-3 3H15" />
+              </svg>
+            </div>
+            <span className={`whitespace-nowrap font-semibold text-white transition-all duration-300 ${isOpen? "opacity-100 ml-3": "opacity-0 w-0 overflow-hidden"
+        }`}>Logout</span>
+          </button>
+          {!isOpen && (
+            <span className="absolute left-full top-1/2 -translate-y-1/2 ml-2 px-2 py-1 rounded-md text-sm bg-[#991b1b] text-white font-medium opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">Logout</span>
+          )}
+        </div>
+      </div>
+      {/* Mobile Bottom Navigation */}
+      <div className="lg:hidden fixed bottom-6 left-1/2 -translate-x-1/2 z-50 w-[92%] max-w-105">
+        <div className="w-full px-2 py-2 gap-2 rounded-3xl bg-[#991b1b]/95 backdrop-blur-xl shadow-[0_8px_30px_rgba(0,0,0,0.45)] border border-[#991b1b] flex items-center justify-between">
+          {menuItems.map((item, idx) => {
+            const isActive = location.pathname === item.path;
+
+            return (
+              <button
+                key={idx}
+                onClick={() => navigate(item.path)}
+                className={`flex-1 flex items-center justify-center p-2 rounded-3xl transition-all duration-300
+                  ${isActive
+                    ? "bg-[#ffd700] text-[#991b1b] shadow-[0_0_14px_rgba(185,28,28,0.6)]"
+                    : "text-white/70 hover:text-white hover:bg-[#7f1d1d]"
+                  }
+                `}
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.8} stroke="currentColor" className="w-6 h-6">
+                  <path strokeLinecap="round" strokeLinejoin="round" d={item.iconPath}/>
+                </svg>
+              </button>
+            );
+          })}
+          <button onClick={handleLogout} className="flex-1 flex items-center justify-center p-2 rounded-2xl text-white/70 hover:text-white hover:bg-[#7f1d1d] transition-all duration-300">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.8} stroke="currentColor" className="w-6 h-6">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 9V5.25A2.25 2.25 0 0 1 10.5 3h6a2.25 2.25 0 0 1 2.25 2.25v13.5A2.25 2.25 0 0 1 16.5 21h-6a2.25 2.25 0 0 1-2.25-2.25V15m-3 0-3-3m0 0 3-3m-3 3H15"/>
             </svg>
           </button>
         </div>
       </div>
-      <button onClick={() => navigate("/idp/profile")} className="flex items-center w-full px-2 py-3 rounded-lg transition-all hover:bg-red-900">
-        <div className="w-14 flex justify-center">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="ml-[.5em] w-7 h-7 text-white">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
-          </svg>
-        </div>
-        <div className={`flex flex-col text-left transition-opacity duration-300 ${isOpen ? "opacity-100" : "opacity-0"}`}>
-          <span className="text-white font-semibold">John Doe</span>
-          <span className="text-xs text-yellow-300">SuperAdmin</span>
-        </div>
-      </button>
-
-      <ul className="p-2 space-y-1">
-        {menuItems.map((item, idx) => (
-          <li key={idx} className="relative group">
-            <button onClick={() => {
-              navigate(item.path);
-              if(window.innerWidth < 1024) toggleSidebar();
-            }} 
-            className="flex items-center h-11 w-full transition-all rounded-lg hover:bg-red-900">
-              <div className="w-14 flex justify-center">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="ml-[.5em] w-6 h-6 text-white">
-                  <path strokeLinecap="round" strokeLinejoin="round" d={item.iconPath} />
-                </svg>
-              </div>
-              <span className={`text-white ml-3 whitespace-nowrap font-semibold transition-opacity duration-300 ${isOpen ? "opacity-100" : "opacity-0"}`}>{item.name}</span>
-            </button>
-
-            {!isOpen && (
-              <span className="absolute left-full top-1/2 -translate-y-1/2 ml-2 px-2 py-1 rounded-md text-sm bg-[#991b1b] text-white font-medium opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">{item.name}</span>
-            )}
-          </li>
-        ))}
-      </ul>
-      <div className="mt-4"/>
-      <div className="relative group p-2 border-t border-red-900">
-        <button onClick={handleLogout} className="flex items-center h-11 w-full transition-all rounded-lg hover:bg-red-900">
-          <div className="w-14 flex justify-center">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="ml-[.5em] w-6 h-6 text-white">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 9V5.25A2.25 2.25 0 0 1 10.5 3h6a2.25 2.25 0 0 1 2.25 2.25v13.5A2.25 2.25 0 0 1 16.5 21h-6a2.25 2.25 0 0 1-2.25-2.25V15m-3 0-3-3m0 0 3-3m-3 3H15" />
-            </svg>
-          </div>
-          <span className={`text-white ml-3 whitespace-nowrap font-semibold transition-opacity duration-300 ${isOpen ? "opacity-100" : "opacity-0"}`}>Logout</span>
-        </button>
-        {!isOpen && (
-          <span className="absolute left-full top-1/2 -translate-y-1/2 ml-2 px-2 py-1 rounded-md text-sm bg-[#991b1b] text-white font-medium opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">Logout</span>
-        )}
-      </div>
-    </div>
+    </>
   );
 }

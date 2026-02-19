@@ -2,7 +2,7 @@ export default function Pagination({ totalPages, currentPage, onPageChange }) {
   const pages = Array.from({ length: totalPages }, (_, i) => i + 1);
 
   return (
-    <div className="join flex justify-center mt-10">
+    <div className="join flex justify-center mt-5 sm:mb-10 lg:mb-0">
       {pages.map((page) => {
         const isActive = currentPage === page;
 

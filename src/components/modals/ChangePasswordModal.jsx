@@ -1,12 +1,13 @@
 import { useState, useEffect } from "react";
-import ChangePasswordStep from "../../components/ChangePasswordStep";
-import OtpVerificationStep from "../../components/OtpVerificationStep";
-import SuccessStep from "../../components/SuccessStep";
-import SuccessAlert from "../../components/SuccessAlert";
+import ChangePasswordStep from "../ChangePasswordStep";
+import OtpVerificationStep from "../OtpVerificationStep";
+import SuccessStep from "../SuccessStep";
+import SuccessAlert from "../SuccessAlert";
 
-export default function ChangePasswordModal({ isOpen, onClose }) {
+export default function ChangePasswordModal({ isOpen, onClose, showCurrentPassword = true, addAuditLog, setToastMessage, enableSuccessAlert = false }) {
     const [step, setStep] = useState(1);
     const [form, setForm] = useState({
+        currentPassword: "",
         newPassword: "",
         confirmPassword: "",
     });
@@ -39,6 +40,7 @@ export default function ChangePasswordModal({ isOpen, onClose }) {
         if (!isOpen) {
             setStep(1);
             setForm({
+                currentPassword: "",
                 newPassword: "",
                 confirmPassword: "",
             });
@@ -48,8 +50,24 @@ export default function ChangePasswordModal({ isOpen, onClose }) {
     }, [isOpen]);
 
     useEffect(() => {
-        if (step === 3) {
-            setSuccessMessage("Password changed successfully!");
+        if (step !== 3) return;
+
+        const message = "Password changed successfully!";
+
+        // External toast (Profile flow)
+        if (setToastMessage) {
+            setToastMessage(message);
+
+            const hide = setTimeout(() => {
+                setToastMessage("");
+            }, 2500);
+
+            return () => clearTimeout(hide);
+        }
+
+        // Internal success alert (Auth flow)
+        if (enableSuccessAlert) {
+            setSuccessMessage(message);
 
             const timeout = setTimeout(() => {
                 setSuccessMessage("");
@@ -57,28 +75,38 @@ export default function ChangePasswordModal({ isOpen, onClose }) {
 
             return () => clearTimeout(timeout);
         }
-    }, [step]);
+    }, [step, setToastMessage, enableSuccessAlert]);
 
     const verifyOTP = () => {
         const code = otp.join("");
         if (code.length !== 6 || !/^\d+$/.test(code)) return;
 
+        // Optional audit logging
+        if (addAuditLog) {
+            addAuditLog({
+                timestamp: new Date().toISOString().replace("T", " ").slice(0, 19),
+                action: "PASSWORD_CHANGE",
+                details: "Password changed successfully",
+                color: "yellow",
+            });
+        }
+
         setStep(3);
     };
 
     if (!isOpen) return null;
-    
+
     return (
         <>
             <dialog className="modal modal-open">
                 <div className="modal-box rounded-3xl max-h-[90vh] overflow-y-auto custom-scrollbar max-w-md p-0">
                     {step === 1 && (
-                        <ChangePasswordStep 
+                        <ChangePasswordStep
                             form={form}
                             setForm={setForm}
                             onClose={onClose}
                             onNext={() => setStep(2)}
-                            showCurrentPassword={false}
+                            showCurrentPassword={showCurrentPassword}
                         />
                     )}
                     {step === 2 && (
@@ -98,10 +126,12 @@ export default function ChangePasswordModal({ isOpen, onClose }) {
                     )}
                 </div>
             </dialog>
-            <SuccessAlert 
-                message={successMessage}
-                onClose={() => setSuccessMessage("")}
-            />
+            {enableSuccessAlert && (
+                <SuccessAlert
+                    message={successMessage}
+                    onClose={() => setSuccessMessage("")}
+                />
+            )}
         </>
     );
 }

@@ -3,10 +3,10 @@ import Pagination from "../../../../components/Pagination";
 import RolesListTable from "./RolesListTable";
 import ResultsCount from "../../../../components/ResultsCount";
 
-export default function RolesListCard({ roles, totalResults, itemsPerPage, search, setSearch, page, totalPages, onPageChange, onView, onEdit, onDelete }) {
+export default function RolesListCard({ roles, totalResults, itemsPerPage, search, setSearch, page, totalPages, onPageChange, onView, onEdit, onDelete, onCreate }) {
     return (
         <RoleCard title="Roles">
-            <div className="flex flex-col gap-3 mb-4 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex flex-col gap-3 mb-4 lg:flex-row lg:items-end lg:justify-between">
                 <div className="w-full">
                     <label className="block font-semibold mb-1 text-black text-base">What role are you looking for?</label>
                     <label className="input max-w-xl rounded-xl flex items-center gap-2 bg-transparent border border-gray-300 text-gray-700 w-full focus-within:ring-1 focus-within:ring-red-500 focus-within:border-red-500">
@@ -19,9 +19,16 @@ export default function RolesListCard({ roles, totalResults, itemsPerPage, searc
                         <input type="search" value={search} placeholder="Search by role name..." className="grow bg-transparent" onChange={(e) => setSearch(e.target.value)} />
                     </label>
                 </div>
-                <ResultsCount page={page} itemsPerPage={itemsPerPage} totalResults={totalResults} />
+                <div className="flex justify-end w-full lg:w-auto">
+                    <button onClick={onCreate} className="btn bg-[#991b1b] w-auto rounded-lg text-white border-[#991b1b] hover:bg-[#ffd700] hover:border-[#ffd700] hover:text-[#991b1b]">
+                        + Add role
+                    </button>
+                </div>
             </div>
             <RolesListTable roles={roles} onView={onView} onEdit={onEdit} onDelete={onDelete} />
+            <div className="flex justify-center mt-6">
+                <ResultsCount page={page} itemsPerPage={itemsPerPage} totalResults={totalResults} />
+            </div>
             <Pagination currentPage={page} totalPages={totalPages} onPageChange={onPageChange} />
         </RoleCard>
     );

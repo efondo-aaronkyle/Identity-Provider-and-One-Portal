@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import MultiSelect from "../add-user/MultiSelect";
+import MultiSelect from "./../MultiSelect";
 import { initialRoles } from "../../data/RolesData";
 
 export default function UserPoolModal({ open, mode, user, onClose, onSubmit }) {

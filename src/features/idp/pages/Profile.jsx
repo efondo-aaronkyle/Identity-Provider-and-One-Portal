@@ -1,5 +1,4 @@
 import { useState } from "react";
-import OnePortalLayout from "../layouts/IdpLayout";
 import ProfileCard from "../../../components/Profile/ProfileCard";
 import AuditLogs from "../../../components/Profile/AuditLogs";
 
@@ -17,27 +16,25 @@ export default function Profile() {
     };
 
     return (
-        <OnePortalLayout>
-            <div className="p-6">
-                <div className="max-w-4xl mx-auto">
-                    <div className="mb-8">
-                        <h1 className="text-3xl font-bold text-gray-800">User Profile Information</h1>
-                        <p className="text-gray-600 mt-2">View and manage your account details</p>    
-                    </div>    
-                    <ProfileCard  
-                        profile={{
-                            firstName: "John",
-                            middleName: "Jose",
-                            lastName: "Doe",
-                            username: "john.doe",
-                            email: "john.doe@iskolarngbayan.pup.edu.ph",
-                        }} 
-                        addAuditLog={handleAddAuditLog} 
-                        allowEmailEdit={true}
-                    />
-                    <AuditLogs logs={logs} />
-                </div> 
-            </div>
-        </OnePortalLayout>
+        <div className="p-6">
+            <div className="max-w-4xl mx-auto">
+                <div className="mb-8">
+                    <h1 className="text-3xl font-bold text-gray-800">User Profile Information</h1>
+                    <p className="text-gray-600 mt-2">View and manage your account details</p>    
+                </div>    
+                <ProfileCard  
+                    profile={{
+                        firstName: "John",
+                        middleName: "Jose",
+                        lastName: "Doe",
+                        username: "john.doe",
+                        email: "john.doe@iskolarngbayan.pup.edu.ph",
+                    }} 
+                    addAuditLog={handleAddAuditLog} 
+                    allowEmailEdit={true}
+                />
+                <AuditLogs logs={logs} />
+            </div> 
+        </div>
     );
 }

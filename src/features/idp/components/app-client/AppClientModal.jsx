@@ -1,27 +1,33 @@
 import React, { useState, useEffect } from "react";
+import ErrorAlert from "../../../../components/ErrorAlert";
 
 export default function AppClientModal({ open, mode, client, onClose, onSubmit }) {
   const [name, setName] = useState(client?.name || "");
-  const [callbacks, setCallbacks] = useState(client?.callbacks || "");
-  const [logouts, setLogouts] = useState(client?.logouts || "");
+  const [baseURL, setBaseURL] = useState(client?.baseURL || "");
+  const [redirectURL, setRedirectURL] = useState(client?.redirectURL || "");
+  const [logoutURL, setLogoutURL] = useState(client?.logoutURL || "");
   const [selectedScopes, setSelectedScopes] = useState(client?.scopes || ["openid"]);
   const [imagePreview, setImagePreview] = useState(client?.image || null);
   const [isDragging, setIsDragging] = useState(false);
   const [showFullImage, setShowFullImage] = useState(false);
+  const [error, setError] = useState("");
 
   useEffect(() => {
   if (mode === "create") {
     // Reset all fields for creating a new client
     setName("");
-    setCallbacks("");
-    setLogouts("");
+    setBaseURL("");
+    setRedirectURL("");
+    setLogoutURL("");
     setSelectedScopes(["openid"]);
     setImagePreview(null);
+    setError("");
   } else {
     // Load existing client for view/edit
     setName(client?.name || "");
-    setCallbacks(client?.callbacks || "");
-    setLogouts(client?.logouts || "");
+    setBaseURL(client?.baseURL || "");
+    setRedirectURL(client?.redirectURL || "");
+    setLogoutURL(client?.logoutURL || "");
     setSelectedScopes(client?.scopes || ["openid"]);
     setImagePreview(client?.image || null);
   }
@@ -79,28 +85,46 @@ export default function AppClientModal({ open, mode, client, onClose, onSubmit }
     e.preventDefault();
     if (mode === "view") return onClose();
 
-    onSubmit({ clientId: client?.clientId, // keep the existing ID for edit, undefined for new create
+    if (!name.trim()) {
+      setError("Client name is required.");
+      return;
+    }
+
+    if (!baseURL.trim() || !redirectURL.trim() || !logoutURL.trim()) {
+      setError("All URL fields are required.");
+      return;
+    }
+
+    setError("");
+
+    onSubmit({ 
+      clientId: client?.clientId, // keep the existing ID for edit, undefined for new create
       name,
-      callbacks,
-      logouts,
+      baseURL,
+      redirectURL,
+      logoutURL,
       scopes: selectedScopes,
       image: imagePreview,
       created: client?.created || new Date().toISOString().slice(0, 10),
-      lastUsed: client?.lastUsed || "-", });
+      lastUsed: client?.lastUsed || "-", 
+    });
   };
 
   if (!open) return null;
 
   return (
     <>
-      <dialog className={`modal ${open ? "modal-open" : ""} z-[998]`}>
+      <dialog className={`modal ${open ? "modal-open" : ""} z-998`}>
         <div className="modal-box max-w-2xl max-h-[85vh] p-0 overflow-hidden flex flex-col">
           <div className="bg-linear-to-r from-[#991b1b] to-red-600 p-6 text-white shrink-0">
             <div className="flex items-center justify-between">
               <div>
                 <h3 className="text-2xl font-bold">
-                  {mode === "create" ? "Create App Client" : mode === "edit" ? "Edit App Client" : "View App Client"}
+                  {mode === "edit" ? "Edit App Client" : "View App Client"}
                 </h3>
+                <p className="text-white/90 mt-1">
+                  {mode === "edit" ? "Update the application client's configuration and settings." : "Application client's configuration details."}
+                </p>
               </div>
               <button className="btn btn-sm btn-circle btn-ghost text-white hover:bg-white/20" onClick={onClose}>
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -110,6 +134,7 @@ export default function AppClientModal({ open, mode, client, onClose, onSubmit }
             </div>
           </div>
           <form id="app-client-form" className="flex-1 overflow-y-auto p-6 space-y-4 bg-white" onSubmit={handleSubmit}>
+            <ErrorAlert message={error} onClose={() => setError("")}/>
             <div className="space-y-1.5">
               <label className="block text-sm font-semibold text-gray-700">System Logo</label>
               <div onDragOver={handleDragOver} onDragLeave={handleDragLeave} onDrop={handleDrop}className={`relative flex flex-col items-center justify-center w-full h-40 border-2 border-dashed rounded-xl transition-all duration-200 ${
@@ -175,17 +200,29 @@ export default function AppClientModal({ open, mode, client, onClose, onSubmit }
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-0.5">
                   <label className="block text-sm font-semibold text-gray-700">
-                    Callback URLs
+                    Base URLs
                   </label>
-                  <textarea value={callbacks} onChange={(e) => setCallbacks(e.target.value)} name="callback_urls" rows="3" placeholder="Callback URLs (comma-separated)" className={`w-full px-3 py-2 rounded-md border border-gray-300 resize-none max-h-40 overflow-y-auto foucs:outline-none ${
+                  <textarea value={baseURL} onChange={(e) => setBaseURL(e.target.value)} rows="3" placeholder="Callback URLs (comma-separated)" className={`w-full px-3 py-2 rounded-md border border-gray-300 resize-none max-h-40 overflow-y-auto foucs:outline-none ${
                   mode === "view" ? "bg-gray-100 text-gray-700" : "bg-transparent text-gray-700 focus:ring-2 focus:ring-[#991b1b]"}`} disabled={mode === "view"}/>
                 </div>
                 <div className="space-y-0.5">
                   <label className="block text-sm font-semibold text-gray-700">
-                    Signout URLs
+                    Redirect URLs
                   </label>
-                  <textarea value={logouts} onChange={(e) => setLogouts(e.target.value)} name="logout_urls" rows="3" placeholder="Sign out URLs (comma-separated)" className={`w-full px-3 py-2 rounded-md border border-gray-300 resize-none max-h-40 overflow-y-auto foucs:outline-none ${
+                  <textarea value={redirectURL} onChange={(e) => setRedirectURL(e.target.value)} rows="3" placeholder="Sign out URLs (comma-separated)" className={`w-full px-3 py-2 rounded-md border border-gray-300 resize-none max-h-40 overflow-y-auto foucs:outline-none ${
                   mode === "view" ? "bg-gray-100 text-gray-700" : "bg-transparent text-gray-700 focus:ring-2 focus:ring-[#991b1b]"}`}  disabled={mode === "view"}/>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="md:col-span-2 flex justify-center">
+                  <div className="w-full md:w-1/2 space-y-0.5">
+                    <label className="block text-sm font-semibold text-gray-700">
+                      Logout URLs
+                    </label>
+                    <textarea value={logoutURL} onChange={(e) => setLogoutURL(e.target.value)} rows="3" placeholder="Sign out URLs (comma-separated)" className={`w-full px-3 py-2 rounded-md border border-gray-300 resize-none max-h-40 overflow-y-auto foucs:outline-none ${
+                    mode === "view" ? "bg-gray-100 text-gray-700" : "bg-transparent text-gray-700 focus:ring-2 focus:ring-[#991b1b]"}`}  disabled={mode === "view"}/>
+                  </div>
                 </div>
               </div>
 

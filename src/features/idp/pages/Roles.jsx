@@ -1,10 +1,9 @@
 import { useState, useMemo, useEffect } from "react";
-import IdpLayout from "../layouts/IdpLayout";
-import AddRoleCard from "../components/role/AddRoleCard";
 import RolesListCard from "../components/role/RolesListCard";
 import RoleModal from "../components/role/RoleModal";
 import SuccessAlert from "../../../components/SuccessAlert";
 import DeleteConfirmModal from "../../../components/DeleteConfirmAlert";
+import PageHeader from "../components/PageHeader";
 import { initialRoles } from "../data/RolesData";
 
 const ITEMS_PER_PAGE = 10;
@@ -98,13 +97,17 @@ export default function Roles() {
     };
 
     return (
-        <IdpLayout>
+        <>
             <div className="flex flex-col items-center gap-6 px-3 sm:px-6">
-                <div className="max-w-md md:max-w-lg lg:max-w-6xl w-full mx-auto">
-                    <h1 className="text-[#991b1b] text-2xl sm:text-4xl font-bold">Roles</h1>
-                    <p className="text-sm text-gray-600">Manage system roles and permissions</p>
-                </div>
-                <AddRoleCard openCreate={openCreate} />
+                <PageHeader
+                    title="Roles"
+                    description="Manage system roles and permissions"
+                    icon={
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-28 h-28 text-[#991b1b]">
+                            <path fillRule="evenodd" d="M9.661 2.237a.531.531 0 0 1 .678 0 11.947 11.947 0 0 0 7.078 2.749.5.5 0 0 1 .479.425c.069.52.104 1.05.104 1.59 0 5.162-3.26 9.563-7.834 11.256a.48.48 0 0 1-.332 0C5.26 16.564 2 12.163 2 7c0-.538.035-1.069.104-1.589a.5.5 0 0 1 .48-.425 11.947 11.947 0 0 0 7.077-2.75Zm4.196 5.954a.75.75 0 0 0-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 1 0-1.06 1.061l2.5 2.5a.75.75 0 0 0 1.137-.089l4-5.5Z" clipRule="evenodd" />
+                        </svg>
+                    }
+                />
                 <RolesListCard 
                     roles={paginated}
                     totalResults={filtered.length}
@@ -117,6 +120,7 @@ export default function Roles() {
                     onView={openView}
                     onEdit={openEdit}
                     onDelete={deleteRole}
+                    onCreate={openCreate}
                 />
                 <RoleModal 
                     open={modalOpen}
@@ -139,6 +143,6 @@ export default function Roles() {
                 message={successMessage}
                 onClose={() => setSuccessMessage("")}
             />
-        </IdpLayout>
+        </>
     );
 }
