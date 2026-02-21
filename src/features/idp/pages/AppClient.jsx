@@ -1,4 +1,5 @@
-import { useState, useMemo, useEffect } from "react";
+import { useState } from "react";
+import { useAppClients } from "../hooks/useAppClients";
 import ConnectedAppClientCard from "../components/app-client/ConnectedAppClientCard";
 import AppClientModal from "../components/app-client/AppClientModal";
 import AppClientCreateModal from "../components/app-client/AppClientCreateModal";
@@ -9,53 +10,28 @@ import PageHeader from "../components/PageHeader";
 const ITEMS_PER_PAGE = 10;
 
 export default function AppClient() {
-    const [clients, setClients] = useState([
-        {
-        name: "Admission System",
-        clientId: "as-ewfc2mewf",
-        created: "2024-06-22",
-        lastUsed: "2024-10-28",
-        callbacks: "puptas.com",
-        logouts: "",
-        scopes: ["openid", "profile"],
-        image: "/assets/images/connected-systems-button.png",
-        },
-    ]);
-    const [search, setSearch] = useState("");
-    const [page, setPage] = useState(1);
+    const {
+        search,
+        setSearch,
+        page,
+        setPage,
+        paginatedClients,
+        totalPages,
+        totalResults,
+        successMessage,
+        setSuccessMessage,
+        createClient,
+        updateClient,
+        deleteClient,
+    } = useAppClients();
     const [createOpen, setCreateOpen] = useState(false);
     const [editViewOpen, setEditViewOpen] = useState(false);
     const [mode, setMode] = useState("create");
     const [activeClient, setActiveClient] = useState(null);
-    const [successMessage, setSuccessMessage] = useState("");
     const [showDeleteAlert, setShowDeleteAlert] = useState(false);
     const [deleteTarget, setDeleteTarget] = useState(null);
 
-    useEffect(() => {
-        if (!successMessage) return;
-        const timer = setTimeout(() => {
-            setSuccessMessage("");
-        }, 3000);
-        return () => clearTimeout(timer);
-    }, [successMessage]);
-
-    const filtered = useMemo(() => {
-        return clients.filter(
-        (c) =>
-            c.name.toLowerCase().includes(search.toLowerCase()) ||
-            c.clientId.toLowerCase().includes(search.toLowerCase())
-        );
-    }, [clients, search]);
-
-    const totalPages = Math.max(1, Math.ceil(filtered.length / ITEMS_PER_PAGE));
-    const paginated = filtered.slice(
-        (page - 1) * ITEMS_PER_PAGE,
-        page * ITEMS_PER_PAGE
-    );
-
-    const openCreate = () => {
-        setCreateOpen(true);
-    };
+    const openCreate = () => setCreateOpen(true);
 
     const openView = (client) => {
         setMode("view");
@@ -69,55 +45,16 @@ export default function AppClient() {
         setEditViewOpen(true);
     };
 
-    const deleteClient = (id) => {
-        setDeleteTarget(id);
+    const handleDeleteClick  = (clientId) => {
+        setDeleteTarget(clientId);
         setShowDeleteAlert(true);
     };
 
     const confirmDelete = () => {
-        setClients((prev) =>
-            prev.filter((c) => c.clientId !== deleteTarget)
-        );
+        deleteClient(deleteTarget);
         setShowDeleteAlert(false);
         setDeleteTarget(null);
-        setSuccessMessage("App client successfully deleted!");
     };
-
-    const generateClientId = (name) => {
-        const prefix = name
-            .split(" ")
-            .map((w) => w[0].toLowerCase())
-            .join("");
-        const random = Math.random().toString(36).substring(2, 10);
-        return `${prefix}-${random}`;
-    };
-
-    const saveCreatedClient = (data) => {
-        setClients((prev) => [
-            {
-                ...data,
-                clientId: generateClientId(data.name),
-                created: new Date().toISOString().slice(0, 10),
-                lastUsed: "-",
-            },
-            ...prev,
-        ]);
-
-        setCreateOpen(false);
-        setSuccessMessage("App client successfully created!");
-    };
-
-    const saveEditedClient = (data) => {
-        setClients((prev) =>
-            prev.map((c) =>
-                c.clientId === data.clientId ? { ...c, ...data } : c
-            )
-        );
-
-        setEditViewOpen(false);
-        setSuccessMessage("App client successfully updated!");
-    };
-
 
     return (
         <>
@@ -132,30 +69,30 @@ export default function AppClient() {
                     }
                 />
                 <ConnectedAppClientCard
-                    clients={paginated}
-                    totalResults={filtered.length}
+                    clients={paginatedClients}
+                    totalResults={totalResults}
                     itemsPerPage={ITEMS_PER_PAGE}
                     search={search}
                     setSearch={setSearch}
                     page={page}
                     totalPages={totalPages}
-                    onPageChange={(p) => setPage(p)}
+                    onPageChange={setPage}
                     onView={openView}
                     onEdit={openEdit}
-                    onDelete={deleteClient}
+                    onDelete={handleDeleteClick}
                     onCreate={openCreate}
                 />
                 <AppClientCreateModal
                     open={createOpen}
                     onClose={() => setCreateOpen(false)}
-                    onSubmit={saveCreatedClient}
+                    onSubmit={createClient}
                 />
                 <AppClientModal 
                     open={editViewOpen}
                     mode={mode}
                     client={activeClient}
                     onClose={() => setEditViewOpen(false)}
-                    onSubmit={saveEditedClient}
+                    onSubmit={updateClient}
                 />
             </div>
 
