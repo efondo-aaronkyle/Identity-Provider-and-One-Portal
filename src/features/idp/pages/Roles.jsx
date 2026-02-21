@@ -1,49 +1,34 @@
-import { useState, useMemo, useEffect } from "react";
+import { useState } from "react";
+import { useRoles } from "../hooks/useRoles";
 import RolesListCard from "../components/role/RolesListCard";
 import RoleModal from "../components/role/RoleModal";
 import SuccessAlert from "../../../components/SuccessAlert";
 import DeleteConfirmModal from "../../../components/DeleteConfirmAlert";
 import PageHeader from "../components/PageHeader";
-import { initialRoles } from "../data/RolesData";
 
 const ITEMS_PER_PAGE = 10;
 
-
 export default function Roles() {
-    const [roles, setRoles] = useState(initialRoles);
-
-    const [search, setSearch] = useState("");
-    const [page, setPage] = useState(1);
+    const {
+        search,
+        setSearch,
+        page,
+        setPage,
+        paginatedRoles,
+        totalPages,
+        totalResults,
+        successMessage,
+        setSuccessMessage,
+        createRole,
+        updateRole,
+        deleteRole,
+    } = useRoles();
 
     const [modalOpen, setModalOpen] = useState(false);
     const [mode, setMode] = useState("create");
     const [activeRole, setActiveRole] = useState(null);
-
-    const [successMessage, setSuccessMessage] = useState("");
     const [showDeleteAlert, setShowDeleteAlert] = useState(false);
     const [deleteTarget, setDeleteTarget] = useState(null);
-
-    useEffect(() => {
-        if(!successMessage) return;
-
-        const timer = setTimeout(() => {
-            setSuccessMessage("");
-        }, 3000);
-
-        return () => clearTimeout(timer);
-    }, [successMessage]);
-
-    const filtered = useMemo(() => {
-        return roles.filter((r) => 
-            r.role_name.toLowerCase().includes(search.toLowerCase())
-        );
-    }, [roles, search]);
-
-    const totalPages = Math.max(1, Math.ceil(filtered.length / ITEMS_PER_PAGE));
-    const paginated = filtered.slice(
-        (page - 1) * ITEMS_PER_PAGE,
-        page * ITEMS_PER_PAGE
-    );
     
     const openCreate = () => {
         setMode("create");
@@ -63,36 +48,24 @@ export default function Roles() {
         setModalOpen(true);
     };
 
-    const deleteRole = (id) => {
+    const handleDeleteClick = (id) => {
         setDeleteTarget(id);
         setShowDeleteAlert(true);
     };
 
     const confirmDelete = () => {
-        setRoles((prev) => prev.filter((r) => r.id !== deleteTarget));
+        deleteRole(deleteTarget);
         setShowDeleteAlert(false);
         setDeleteTarget(null);
-        setSuccessMessage("Role successfully deleted!");
     };
 
-    const saveRole = (data) => {
-        if(mode === "create") {
-            const nextId = roles.length > 0 ? Math.max(...roles.map(r => r.id)) + 1 : 1;
-            setRoles((prev) => [
-                {
-                    ...data,
-                    id: nextId,
-                    created_at: new Date().toISOString().slice(0,10),
-                },
-                ...prev,
-            ]);
-            setSuccessMessage("Role successfully created!");
-        } else if(mode === "edit") {
-            setRoles((prev) => 
-                prev.map((r) => (r.id === data.id ? data : r))
-            );
-            setSuccessMessage("Role successfully updated!");
+    const handleSubmit = (data) => {
+        if (mode === "create") {
+        createRole(data);
+        } else if (mode === "edit") {
+        updateRole(data);
         }
+
         setModalOpen(false);
     };
 
@@ -109,8 +82,8 @@ export default function Roles() {
                     }
                 />
                 <RolesListCard 
-                    roles={paginated}
-                    totalResults={filtered.length}
+                    roles={paginatedRoles}
+                    totalResults={totalResults}
                     itemsPerPage={ITEMS_PER_PAGE}
                     search={search}
                     setSearch={setSearch}
@@ -119,7 +92,7 @@ export default function Roles() {
                     onPageChange={setPage}
                     onView={openView}
                     onEdit={openEdit}
-                    onDelete={deleteRole}
+                    onDelete={handleDeleteClick}
                     onCreate={openCreate}
                 />
                 <RoleModal 
@@ -127,7 +100,7 @@ export default function Roles() {
                     mode={mode}
                     role={activeRole}
                     onClose={() => setModalOpen(false)}
-                    onSubmit={saveRole}
+                    onSubmit={handleSubmit}
                 />
             </div>
             <DeleteConfirmModal 

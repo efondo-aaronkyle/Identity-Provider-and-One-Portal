@@ -1,4 +1,5 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
+import { useUsers } from "../hooks/useUsers";
 import UserPoolCard from "../components/user-pool/UserPoolCard";
 import UserPoolFilters from "../components/user-pool/UserPoolFilters";
 import UserPoolTable from "../components/user-pool/UserPoolTable";
@@ -9,91 +10,32 @@ import SuccessAlert from "../../../components/SuccessAlert";
 import DeleteConfirmModal from "../../../components/DeleteConfirmAlert";
 import ResultsCount from "../../../components/ResultsCount";
 import PageHeader from "../components/PageHeader";
-import { userPoolData } from "../data/UserPoolData";
-import { initialRoles } from "../../idp/data/RolesData";
 
 const ITEMS_PER_PAGE = 10;
 
 export default function UserPool() {
-    const [users, setUsers] = useState(userPoolData);
-    const [search, setSearch] = useState("");
-    const [status, setStatus] = useState("");
-    const [page, setPage] = useState(1);
+    const {
+        search,
+        setSearch,
+        status,
+        setStatus,
+        page,
+        setPage,
+        paginatedUsers,
+        totalPages,
+        totalResults,
+        successMessage,
+        setSuccessMessage,
+        createUser,
+        updateUser,
+        deleteUser,
+    } = useUsers();
     const [openViewEditModal, setOpenViewEditModal] = useState(false);
     const [modalMode, setModalMode] = useState("view");
     const [selectedUser, setSelectedUser] = useState(null);
     const [openAddModal, setOpenAddModal] = useState(false);
     const [openDelete, setOpenDelete] = useState(false);
     const [userToDelete, setUserToDelete] = useState(null);
-    const [successMessage, setSuccessMessage] = useState("");
-
-    const normalize = (str = "") =>
-        str.toLowerCase().replace(/\s+/g, " ").trim();
-
-    const filteredUsers = users.filter((u) => {
-        const fullName = normalize(
-        `${u.givenName || ""} ${u.middleName || ""} ${u.surname || ""}`
-        );
-
-        const searchValue = normalize(search);
-
-        const matchesSearch =
-        normalize(u.username).includes(searchValue) ||
-        normalize(u.email).includes(searchValue) ||
-        fullName.includes(searchValue);
-
-        const matchesStatus = status ? u.status === status : true;
-
-        return matchesSearch && matchesStatus;
-    });
-
-    const totalResults = filteredUsers.length;
-    const totalPages = Math.max(1, Math.ceil(filteredUsers.length / ITEMS_PER_PAGE));
-    const paginatedUsers = filteredUsers.slice(
-        (page - 1) * ITEMS_PER_PAGE,
-        page * ITEMS_PER_PAGE
-    );
-
-    useEffect(() => {
-        setPage(1);
-    }, [search, status]);
-
-    useEffect(() => {
-        if (!successMessage) return;
-        const timer = setTimeout(() => setSuccessMessage(""), 3000);
-        return () => clearTimeout(timer);
-    }, [successMessage]);
-
-    const handleOpenCreate = () => {
-        setOpenAddModal(true);
-    };
-
-    const handleCreateUser = (newUser) => {
-        const allIds = users.map(u => parseInt(u.id));
-        const maxId = allIds.length > 0 ? Math.max(...allIds) : 15;
-        const newId = (maxId + 1).toString();
-
-        const selectedRoles = initialRoles
-        .filter(r => newUser.roleIds.includes(r.id))
-        .map(r => r.role_name);
-
-        const finalUser = {
-        id: newId,
-        username: newUser.username || "",
-        email: newUser.email,
-        givenName: newUser.givenName,
-        middleName: newUser.middleName,
-        surname: newUser.surname,
-        roleIds: newUser.roleIds,
-        roles: selectedRoles,
-        status: "active",
-        emailVerified: newUser.emailVerified,
-        createdAt: new Date().toISOString().split("T")[0],
-        };
-
-        setUsers((prev) => [finalUser, ...prev]);
-        setSuccessMessage("User successfully created!");
-    };
 
     const handleView = (user) => {
         setSelectedUser(user);
@@ -108,12 +50,9 @@ export default function UserPool() {
     };
 
     const handleSave = (updatedUser) => {
-        setUsers((prev) =>
-        prev.map((u) => (u.id === updatedUser.id ? updatedUser : u))
-        );
+        updateUser(updatedUser);
         setOpenViewEditModal(false);
         setSelectedUser(null);
-        setSuccessMessage(`User ${updatedUser.username} updated successfully`);
     };
 
     // 🔹 DELETE
@@ -123,10 +62,9 @@ export default function UserPool() {
     };
 
     const handleConfirmDelete = () => {
-        setUsers((prev) => prev.filter((u) => u.id !== userToDelete.id));
+        deleteUser(userToDelete.id, userToDelete.username);
         setOpenDelete(false);
         setUserToDelete(null);
-        setSuccessMessage(`User ${userToDelete.username} deleted successfully`);
     };
 
     return (
@@ -147,7 +85,7 @@ export default function UserPool() {
                         setSearch={setSearch} 
                         status={status} 
                         setStatus={setStatus} 
-                        onCreate={handleOpenCreate}
+                        onCreate={() => setOpenAddModal(true)}
                     />
                     <UserPoolTable 
                         users={paginatedUsers} 
@@ -175,7 +113,7 @@ export default function UserPool() {
                     <AddUserModal
                         open={openAddModal}
                         onClose={() => setOpenAddModal(false)}
-                        onSubmit={handleCreateUser}
+                        onSubmit={createUser}
                     />
                 </UserPoolCard>
             </div>
