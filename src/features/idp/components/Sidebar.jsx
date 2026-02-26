@@ -1,4 +1,5 @@
 import { useNavigate, useLocation } from "react-router-dom";
+import { authService } from "../../../auth/services/authService";
 
 export default function Sidebar({ isOpen, toggleSidebar }) {
   const navigate = useNavigate();
@@ -22,13 +23,20 @@ export default function Sidebar({ isOpen, toggleSidebar }) {
     }
   ];
 
-  const handleLogout = () => {
-    navigate("/");
+  const handleLogout = async () => {
+    try {
+      await authService.logout();
+    } catch (err) {
+      console.error("Logout failed", err);
+    } finally {
+      localStorage.removeItem("access_token");
+      navigate("/");
+    }
   };
 
   return (
     <>  
-      <div className={`hidden lg:flex flex-col bg-[#991b1b] border-red-900 transition-all duration-300 ease-in-out ${isOpen ? "w-64" : "w-20"}`}>
+      <div className={`hidden lg:flex flex-col bg-[#991b1b] border-red-900 transition-[width] duration-300 ease-in-out ${isOpen ? "w-64" : "w-20"}`}>
         <div className="h-24 flex items-center border-b border-red-900 px-3">
           <button onClick={toggleSidebar} className="flex items-center gap-2 w-full transition-all duration-300 ease-in-out">
             <img src="/assets/images/IDP_Logo.png" alt="IDP Logo" className={`object-contain transition-all duration-300 ease-in-out hover:scale-110 ${isOpen ? "h-16 w-16" : "h-14 w-14"}`}/>
@@ -49,18 +57,22 @@ export default function Sidebar({ isOpen, toggleSidebar }) {
                     navigate(item.path);
                     if (window.innerWidth < 1024) toggleSidebar();
                   }}
-                  className={`flex items-center h-12 w-full transition-all duration-300
-                    ${isActive ? "bg-[#ffd700] text-[#991b1b] rounded-2xl shadow-lg" : "text-white hover:bg-[#7f1d1d] rounded-2xl"}
+                  className={`flex items-center h-12 w-full rounded-2xl transition-all duration-300
+                    ${isOpen ? "justify-start px-2" : "justify-center"}
+                    ${isActive ? "bg-[#ffd700] text-[#991b1b] shadow-lg" : "text-white hover:bg-[#7f1d1d]"}
                   `}
                 >
-                  <div className="w-14 flex items-center justify-center">
+                  <div className={`flex items-center justify-center transition-all duration-300
+                    ${isOpen ? "w-10" : "w-full"}
+                    `}
+                  >
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className={`w-6 h-6 transition-colors duration-300 ${isActive ? "text-[#991b1b]" : "text-white"}`}>
                       <path strokeLinecap="round" strokeLinejoin="round" d={item.iconPath}/>
                     </svg>
                   </div>
 
-                  <span className={`whitespace-nowrap font-semibold transition-all duration-300
-                      ${isOpen ? "opacity-100 ml-3" : "opacity-0 w-0 overflow-hidden"}
+                  <span className={`overflow-hidden whitespace-nowrap font-semibold transition-all duration-300
+                      ${isOpen ? "opacity-100 translate-x-0 ml-3" : "opacity-0 -translate-x-4 absolute"}
                       ${isActive ? "text-[#991b1b]" : ""}
                     `}
                   >
@@ -80,14 +92,23 @@ export default function Sidebar({ isOpen, toggleSidebar }) {
 
         <div className="mt-10"/>
         <div className="p-2 border-t border-red-900">
-          <button onClick={handleLogout} className="flex items-center h-11 w-full rounded-2xl hover:bg-red-900 transition-all duration-300">
-            <div className="w-14 flex items-center justify-center">
+          <button onClick={handleLogout} className={`flex items-center h-11 w-full rounded-2xl transition-all duration-300
+            ${isOpen ? "justify-start px-2" : "justify-center"}
+              hover:bg-red-900
+            `}
+          >
+            <div className={`flex items-center justify-center transition-all duration-300 ${isOpen ? "w-10" : "w-full"}`}>
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 text-white transition-all duration-300 ease-in-out">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 9V5.25A2.25 2.25 0 0 1 10.5 3h6a2.25 2.25 0 0 1 2.25 2.25v13.5A2.25 2.25 0 0 1 16.5 21h-6a2.25 2.25 0 0 1-2.25-2.25V15m-3 0-3-3m0 0 3-3m-3 3H15" />
               </svg>
             </div>
-            <span className={`whitespace-nowrap font-semibold text-white transition-all duration-300 ${isOpen? "opacity-100 ml-3": "opacity-0 w-0 overflow-hidden"
-        }`}>Logout</span>
+            <span className={`overflow-hidden whitespace-nowrap font-semibold text-white transition-all duration-300
+                ${isOpen
+                  ? "opacity-100 translate-x-0 ml-3"
+                  : "opacity-0 -translate-x-4 absolute"
+                }
+              `}
+            >Logout</span>
           </button>
           {!isOpen && (
             <span className="absolute left-full top-1/2 -translate-y-1/2 ml-2 px-2 py-1 rounded-md text-sm bg-[#991b1b] text-white font-medium opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">Logout</span>

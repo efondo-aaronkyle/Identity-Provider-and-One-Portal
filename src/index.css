@@ -32,3 +32,16 @@
   background-color: #991b1b !important;
   border-color: #991b1b !important;
 }
+
+@keyframes floatLogo {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.float-logo {
+  animation: floatLogo 2.5s ease-in-out infinite;
+}

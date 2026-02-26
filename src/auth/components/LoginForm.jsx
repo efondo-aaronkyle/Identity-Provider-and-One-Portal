@@ -1,6 +1,8 @@
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import ChangePasswordModal from "../../components/modals/ChangePasswordModal";
+import { authService } from "../services/authService";
+import ErrorAlert from "../../components/ErrorAlert";
 
 export default function LoginForm() {
   const navigate = useNavigate();
@@ -8,19 +10,40 @@ export default function LoginForm() {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [isForgotOpen, setForgotOpen] = useState(false);
+  const [error, setError] = useState("");
 
   const toggleShowPassword = () => {
     setShowPassword(prev => !prev);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (password === "admin123") {
-      navigate("/idp/user-pool");
-    } else if (password === "user123") {
-      navigate("/portal");
-    } else {
-      alert("Invalid credentials");
+    setError("");
+    try {
+      const loginResponse = await authService.login(email, password);
+      if (!loginResponse?.redirect_to) {
+        setError("Invalid server response. Please contact support.");
+        return;
+      }
+      window.location.href = loginResponse.redirect_to;
+    } catch (err) {
+      console.error(err.response?.data || err);
+      const status = err.response?.status;
+      if (status === 400) {
+        setError("Please enter valid credentials.");
+      } 
+      else if (status === 401) {
+        setError("Invalid email or password.");
+      } 
+      else if (status === 403) {
+        setError("Your account is not authorized to access this system.");
+      } 
+      else if (status === 500) {
+        setError("Server error. Please try again later.");
+      } 
+      else {
+        setError("Login failed. Please try again.");
+      }
     }
   };
 
@@ -33,6 +56,12 @@ export default function LoginForm() {
             <div>
               <h2 className="text-white mb-0 leading-none text-2xl font-bold text-center">Welcome <span className="text-[#ffd700]">PUPTian!</span></h2>
               <p className="text-white/80 text-base font-semibold text-center">Sign in to access PUPT systems</p>
+              <div className="mt-4">
+                <ErrorAlert
+                  message={error}
+                  onClose={() => setError("")}
+                />
+              </div>
             </div>
             
             <form onSubmit={handleSubmit} className="space-y-6">
