@@ -51,7 +51,7 @@ export default function LoginForm() {
     <>
       <div className="w-full max-w-md px-7 sm:px-0">
         <div className="card bg-[#991b1b]/75 w-full shadow-2xl backdrop-blur-md border border-white/20">
-          <div className="card-body space-y-6">
+          <div className="card-body space-y-1">
             <img src="/assets/images/IDP_Logo.png" alt="IDP Logo" className="h-24 object-contain mx-auto block drop-shadow-[#ffd700] drop-shadow-md mb-1 hover:scale-110 hover:drop-shadow-[#ffd700] hover:drop-shadow-xl transition-all"/>
             <div>
               <h2 className="text-white mb-0 leading-none text-2xl font-bold text-center">Welcome <span className="text-[#ffd700]">PUPTian!</span></h2>
