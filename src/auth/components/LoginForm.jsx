@@ -54,8 +54,8 @@ export default function LoginForm() {
           <div className="card-body space-y-1">
             <img src="/assets/images/IDP_Logo.png" alt="IDP Logo" className="h-24 object-contain mx-auto block drop-shadow-[#ffd700] drop-shadow-md mb-1 hover:scale-110 hover:drop-shadow-[#ffd700] hover:drop-shadow-xl transition-all"/>
             <div>
-              <h2 className="text-white mb-0 leading-none text-2xl font-bold text-center">Welcome <span className="text-[#ffd700]">PUPTian!</span></h2>
-              <p className="text-white/80 text-base font-semibold text-center">Sign in to access PUPT systems</p>
+              <h2 className="text-white mb-0 leading-none text-3xl font-bold text-center">Welcome <span className="text-[#ffd700]">PUPTian!</span></h2>
+              <p className="text-white/80 text-sm font-extralight text-center">Sign in to access PUPT systems</p>
               <div className="mt-4">
                 <ErrorAlert
                   message={error}
