@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import MultiSelect from "./../MultiSelect";
 import FadeWrapper from "../../../../components/FadeWrapper";
 import ModalSteps from "../ModalSteps";
-import { initialRoles } from "../../data/RolesData";
+import { useAllRoles } from "../../hooks/useAllRoles";
 
 const initialFormData = {
   username: "",
@@ -13,16 +13,15 @@ const initialFormData = {
   surname: "",
   inviteMode: "invite",
   delivery: "email",
-  emailVerified: false,
-  phoneVerified: false,
   tempPassword: "",
   roleIds: [],
+  status: "active",
 };
 
 
-export default function UserPoolModal({ open, onClose, onSubmit }) {
+export default function AddUserModal({ open, onClose, onSubmit }) {
     const [step, setStep] = useState(1);
-
+    const roles = useAllRoles();
     const [data, setData] = useState(initialFormData);
 
     const handleChange = (e) => {
@@ -71,7 +70,7 @@ export default function UserPoolModal({ open, onClose, onSubmit }) {
 
 
     const handleSubmit = () => {
-        const selectedRoles = initialRoles
+        const selectedRoles = roles
             .filter(r => data.roleIds.includes(r.id))
             .map(r => r.role_name);
 
@@ -90,9 +89,7 @@ export default function UserPoolModal({ open, onClose, onSubmit }) {
             inviteMode: data.inviteMode,
             delivery: data.delivery,
             tempPassword: data.tempPassword,
-            emailVerified: data.emailVerified,
-            phoneVerified: data.phoneVerified,
-            status: "active",
+            status: data.status,
         });
 
         onClose();
@@ -142,9 +139,9 @@ export default function UserPoolModal({ open, onClose, onSubmit }) {
                             <>
                                 <span className="step-icon">
                                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4">
-                                        <path fillRule="evenodd" d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clipRule="evenodd" />
+                                        <path fillRule="evenodd" d="M4.5 2A1.5 1.5 0 0 0 3 3.5v13A1.5 1.5 0 0 0 4.5 18h11a1.5 1.5 0 0 0 1.5-1.5V7.621a1.5 1.5 0 0 0-.44-1.06l-4.12-4.122A1.5 1.5 0 0 0 11.378 2H4.5ZM10 8a.75.75 0 0 1 .75.75v1.5h1.5a.75.75 0 0 1 0 1.5h-1.5v1.5a.75.75 0 0 1-1.5 0v-1.5h-1.5a.75.75 0 0 1 0-1.5h1.5v-1.5A.75.75 0 0 1 10 8Z" clipRule="evenodd" />
                                     </svg>
-                                </span>Verify
+                                </span>Account Status
                             </>,
                         ]}
                     />
@@ -254,7 +251,10 @@ export default function UserPoolModal({ open, onClose, onSubmit }) {
                                     Choose a role for the user
                                 </p>
                                 <MultiSelect
-                                    options={initialRoles}
+                                    options={roles.map(r => ({
+                                        id: r.id,
+                                        role_name: r.role_name
+                                    }))}
                                     selectedValues={data.roleIds || []}
                                     onChange={(ids) =>
                                         setData({ ...data, roleIds: ids })
@@ -331,33 +331,22 @@ export default function UserPoolModal({ open, onClose, onSubmit }) {
                         <>
                             <div className="mb-5">
                                 <label className="font-medium text-black text-base">
-                                Verification status
+                                    Account Status <span className="text-red-500">*</span>
                                 </label>
-                                <p className="text-xs text-gray-500 italic">
-                                Mark attributes as verified (optional)
+                                <p className="text-xs text-gray-500 italic mb-2">
+                                    Set the user's account state
                                 </p>
 
-                                <label className="flex items-center gap-2 mt-3 cursor-pointer">
-                                <input
-                                    type="checkbox"
-                                    name="emailVerified"
-                                    checked={data.emailVerified}
+                                <select
+                                    name="status"
+                                    value={data.status || "active"}
                                     onChange={handleChange}
-                                    className="checkbox border-gray-300 bg-transparent checked:bg-red-800 checked:border-red-800 checked:text-white"
-                                />
-                                <span className="text-base text-black">Email is already verified</span>
-                                </label>
-
-                                <label className="flex items-center gap-2 mt-2 cursor-pointer">
-                                <input
-                                    type="checkbox"
-                                    name="phoneVerified"
-                                    checked={data.phoneVerified}
-                                    onChange={handleChange}
-                                    className="checkbox border-gray-300 bg-transparent checked:bg-red-800 checked:border-red-800 checked:text-white"
-                                />
-                                <span className="text-base text-black">Phone is already verified</span>
-                                </label>
+                                    className="select bg-white border rounded-lg border-gray-300 text-gray-700 w-full focus:outline-none focus:ring-2 focus:ring-[#991b1b] focus:border-[#991b1b]"
+                                >
+                                    <option value="active">Active</option>
+                                    <option value="inactive">Inactive</option>
+                                    <option value="suspended">Suspended</option>
+                                </select>
                             </div>
                         </>
                     </FadeWrapper>
