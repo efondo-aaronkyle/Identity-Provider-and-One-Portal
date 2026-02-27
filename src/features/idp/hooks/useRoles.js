@@ -1,97 +1,102 @@
 import { useState, useMemo, useEffect } from "react";
-import { initialRoles } from "../data/RolesData";
-
-const ITEMS_PER_PAGE = 10;
+import { roleService } from "../services/roleService";
 
 export function useRoles() {
-  const [roles, setRoles] = useState(initialRoles);
+  const [roles, setRoles] = useState([]);
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalResults, setTotalResults] = useState(0);
   const [successMessage, setSuccessMessage] = useState("");
+  const [loading, setLoading] = useState(false);
 
   // =========================
-  // FILTERING
+  // FETCH ROLES
   // =========================
-  const filteredRoles = useMemo(() => {
-    return roles.filter((r) =>
-      r.role_name.toLowerCase().includes(search.toLowerCase())
-    );
-  }, [roles, search]);
+  const fetchRoles = async () => {
+    try {
+      setLoading(true);
+      const data = await roleService.getRoles(page);
 
-  const totalResults = filteredRoles.length;
+      setRoles(data.roles);
+      setTotalPages(data.last_page);
+      setTotalResults(data.total_count);
+    } catch (error) {
+      console.error("Failed to fetch roles:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-  const totalPages = Math.max(
-    1,
-    Math.ceil(filteredRoles.length / ITEMS_PER_PAGE)
+  useEffect(() => {
+    fetchRoles();
+  }, [page]);
+
+  // =========================
+  // CREATE
+  // =========================
+  const createRole = async (data) => {
+    try {
+      await roleService.createRole(data);
+      setSuccessMessage("Role successfully created!");
+      fetchRoles();
+    } catch (error) {
+      console.error("Create failed:", error);
+    }
+  };
+
+  // =========================
+  // UPDATE
+  // =========================
+  const updateRole = async (data) => {
+    try {
+      await roleService.updateRole(data.id, data);
+      setSuccessMessage("Role successfully updated!");
+      fetchRoles();
+    } catch (error) {
+      console.error("Update failed:", error);
+    }
+  };
+
+  // =========================
+  // DELETE
+  // =========================
+  const deleteRole = async (id) => {
+    try {
+      await roleService.deleteRole(id);
+      setSuccessMessage("Role successfully deleted!");
+      fetchRoles();
+    } catch (error) {
+      console.error("Delete failed:", error);
+    }
+  };
+
+  // =========================
+  // SEARCH (frontend only)
+  // =========================
+  const filteredRoles = roles.filter((r) =>
+    r.role_name.toLowerCase().includes(search.toLowerCase())
   );
 
-  const paginatedRoles = useMemo(() => {
-    return filteredRoles.slice(
-      (page - 1) * ITEMS_PER_PAGE,
-      page * ITEMS_PER_PAGE
-    );
-  }, [filteredRoles, page]);
-
-  // Reset page when search changes
-  useEffect(() => {
-    setPage(1);
-  }, [search]);
-
-  // Auto-hide success alert
   useEffect(() => {
     if (!successMessage) return;
     const timer = setTimeout(() => setSuccessMessage(""), 3000);
     return () => clearTimeout(timer);
   }, [successMessage]);
 
-  // =========================
-  // CRUD
-  // =========================
-
-  const createRole = (data) => {
-    const nextId =
-      roles.length > 0 ? Math.max(...roles.map((r) => r.id)) + 1 : 1;
-
-    const newRole = {
-      ...data,
-      id: nextId,
-      created_at: new Date().toISOString().slice(0, 10),
-    };
-
-    setRoles((prev) => [newRole, ...prev]);
-    setSuccessMessage("Role successfully created!");
-  };
-
-  const updateRole = (data) => {
-    setRoles((prev) =>
-      prev.map((r) => (r.id === data.id ? { ...r, ...data } : r))
-    );
-
-    setSuccessMessage("Role successfully updated!");
-  };
-
-  const deleteRole = (id) => {
-    setRoles((prev) => prev.filter((r) => r.id !== id));
-    setSuccessMessage("Role successfully deleted!");
-  };
-
   return {
-    // state
     search,
     setSearch,
     page,
     setPage,
-    successMessage,
-    setSuccessMessage,
-
-    // derived
-    paginatedRoles,
     totalPages,
     totalResults,
-
-    // CRUD
+    paginatedRoles: filteredRoles,
+    successMessage,
+    setSuccessMessage,
     createRole,
     updateRole,
     deleteRole,
+    loading,
   };
 }

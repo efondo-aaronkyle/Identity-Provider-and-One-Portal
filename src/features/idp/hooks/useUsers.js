@@ -1,130 +1,137 @@
-import { useState, useEffect, useMemo } from "react";
-import { userPoolData } from "../data/UserPoolData";
-import { initialRoles } from "../data/RolesData";
-
-const ITEMS_PER_PAGE = 10;
+import { useState, useEffect } from "react";
+import { userService } from "../services/userService";
+import { roleService } from "../services/roleService";
 
 export function useUsers() {
-  const [users, setUsers] = useState(userPoolData);
+  const [users, setUsers] = useState([]);
+  const [allRoles, setAllRoles] = useState([]);
   const [search, setSearch] = useState("");
   const [status, setStatus] = useState("");
   const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalResults, setTotalResults] = useState(0);
   const [successMessage, setSuccessMessage] = useState("");
 
-  // 🔹 Normalize helper
-  const normalize = (str = "") =>
-    str.toLowerCase().replace(/\s+/g, " ").trim();
-
-  // 🔹 Filtered users
-  const filteredUsers = useMemo(() => {
-    return users.filter((u) => {
-      const fullName = normalize(
-        `${u.givenName || ""} ${u.middleName || ""} ${u.surname || ""}`
-      );
-
-      const searchValue = normalize(search);
-
-      const matchesSearch =
-        normalize(u.username).includes(searchValue) ||
-        normalize(u.email).includes(searchValue) ||
-        fullName.includes(searchValue);
-
-      const matchesStatus = status ? u.status === status : true;
-
-      return matchesSearch && matchesStatus;
-    });
-  }, [users, search, status]);
-
-  const totalResults = filteredUsers.length;
-  const totalPages = Math.max(
-    1,
-    Math.ceil(filteredUsers.length / ITEMS_PER_PAGE)
-  );
-
-  const paginatedUsers = useMemo(() => {
-    return filteredUsers.slice(
-      (page - 1) * ITEMS_PER_PAGE,
-      page * ITEMS_PER_PAGE
-    );
-  }, [filteredUsers, page]);
-
-  // 🔹 Reset page on filter change
-  useEffect(() => {
-    setPage(1);
-  }, [search, status]);
-
-  // 🔹 Auto-hide success
-  useEffect(() => {
-    if (!successMessage) return;
-    const timer = setTimeout(() => setSuccessMessage(""), 3000);
-    return () => clearTimeout(timer);
-  }, [successMessage]);
-
   // =========================
-  // CRUD OPERATIONS
+  // FETCH ROLES
   // =========================
-
-  const createUser = (newUser) => {
-    const allIds = users.map((u) => parseInt(u.id));
-    const maxId = allIds.length > 0 ? Math.max(...allIds) : 0;
-    const newId = (maxId + 1).toString();
-
-    const selectedRoles = initialRoles
-      .filter((r) => newUser.roleIds.includes(r.id))
-      .map((r) => r.role_name);
-
-    const finalUser = {
-      id: newId,
-      username: newUser.username || "",
-      email: newUser.email,
-      givenName: newUser.givenName,
-      middleName: newUser.middleName,
-      surname: newUser.surname,
-      roleIds: newUser.roleIds,
-      roles: selectedRoles,
-      status: "active",
-      emailVerified: newUser.emailVerified,
-      createdAt: new Date().toISOString().split("T")[0],
+  useEffect(() => {
+    const fetchRoles = async () => {
+      try {
+        const data = await roleService.getRoles(1);
+        setAllRoles(data.roles || []);
+      } catch (error) {
+        console.error("Fetch roles error:", error);
+      }
     };
 
-    setUsers((prev) => [finalUser, ...prev]);
-    setSuccessMessage("User successfully created!");
+    fetchRoles();
+  }, []);
+
+  // =========================
+  // FETCH USERS
+  // =========================
+  useEffect(() => {
+    fetchUsers(page);
+  }, [page]);
+
+  const fetchUsers = async (pageNumber) => {
+    try {
+      const data = await userService.getUsers(pageNumber);
+
+      const mappedUsers = (data.users || []).map((u) => ({
+        id: u.id,
+        username: u.user_name,
+        email: u.email,
+        givenName: u.first_name,
+        middleName: u.middle_name,
+        surname: u.last_name,
+        status: u.status,
+        createdAt: u.created_at,
+        roles: Array.isArray(u.roles) ? u.roles : [],
+      }));
+
+      setUsers(mappedUsers);
+      setTotalPages(data.last_page);
+      setTotalResults(data.total_count);
+    } catch (error) {
+      console.error("Fetch users error:", error);
+    }
   };
 
-  const updateUser = (updatedUser) => {
-    setUsers((prev) =>
-      prev.map((u) => (u.id === updatedUser.id ? updatedUser : u))
-    );
+  // =========================
+  // CREATE USER
+  // =========================
+  const createUser = async (newUser) => {
+    try {
+      const payload = {
+        email: newUser.email,
+        first_name: newUser.givenName,
+        middle_name: newUser.middleName,
+        last_name: newUser.surname,
+        user_name: newUser.username,
+        password: newUser.tempPassword || "TempPass123!",
+        roles: newUser.roles,
+        status: newUser.status,
+      };
 
-    setSuccessMessage(
-      `User ${updatedUser.username} updated successfully`
-    );
+      await userService.createUser(payload);
+
+      setSuccessMessage("User successfully created!");
+      fetchUsers(page);
+    } catch (error) {
+      console.error("Create user error:", error);
+    }
   };
 
-  const deleteUser = (userId, username) => {
-    setUsers((prev) => prev.filter((u) => u.id !== userId));
-    setSuccessMessage(`User ${username} deleted successfully`);
+  // =========================
+  // DELETE USER
+  // =========================
+  const deleteUser = async (userId, username) => {
+    try {
+      await userService.deleteUser(userId);
+      setSuccessMessage(`User ${username} deleted successfully`);
+      fetchUsers(page);
+    } catch (error) {
+      console.error("Delete error:", error);
+    }
   };
+
+  // =========================
+  // FILTER USERS
+  // =========================
+  const filteredUsers = users.map((u) => ({
+    ...u,
+    roles:
+      allRoles.length > 0
+        ? u.roles.filter((roleName) =>
+            allRoles.some((r) => r.role_name === roleName)
+          )
+        : u.roles,
+  })).filter((u) => {
+    const matchesSearch =
+      u.username?.toLowerCase().includes(search.toLowerCase()) ||
+      u.email?.toLowerCase().includes(search.toLowerCase()) ||
+      `${u.givenName} ${u.surname}`
+        .toLowerCase()
+        .includes(search.toLowerCase());
+
+    const matchesStatus = status ? u.status === status : true;
+
+    return matchesSearch && matchesStatus;
+  });
 
   return {
-    // state
     search,
     setSearch,
     status,
     setStatus,
     page,
     setPage,
-    successMessage,
-    setSuccessMessage,
-
-    // derived
-    paginatedUsers,
+    paginatedUsers: filteredUsers,
     totalPages,
     totalResults,
-
-    // CRUD
-    createUser,
-    updateUser,
-    deleteUser,
+    successMessage,
+    setSuccessMessage,
   };
 }

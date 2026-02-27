@@ -27,7 +27,6 @@ export default function UserPool() {
         successMessage,
         setSuccessMessage,
         createUser,
-        updateUser,
         deleteUser,
     } = useUsers();
     const [openViewEditModal, setOpenViewEditModal] = useState(false);
@@ -47,12 +46,6 @@ export default function UserPool() {
         setSelectedUser(user);
         setModalMode("edit");
         setOpenViewEditModal(true);
-    };
-
-    const handleSave = (updatedUser) => {
-        updateUser(updatedUser);
-        setOpenViewEditModal(false);
-        setSelectedUser(null);
     };
 
     // 🔹 DELETE
@@ -93,11 +86,13 @@ export default function UserPool() {
                         onEdit={handleEdit}
                         onDisable={handleDeleteClick}
                     />
-                    <ResultsCount
-                        page={page}
-                        itemsPerPage={ITEMS_PER_PAGE}
-                        totalResults={totalResults}
-                    />
+                    <div className="flex justify-center mt-6">
+                        <ResultsCount
+                            page={page}
+                            itemsPerPage={ITEMS_PER_PAGE}
+                            totalResults={totalResults}
+                        />
+                    </div>
                     <Pagination 
                         totalPages={totalPages}
                         currentPage={page}
@@ -108,7 +103,6 @@ export default function UserPool() {
                         mode={modalMode}
                         user={selectedUser}
                         onClose={() => setOpenViewEditModal(false)}
-                        onSubmit={handleSave}
                     />
                     <AddUserModal
                         open={openAddModal}
