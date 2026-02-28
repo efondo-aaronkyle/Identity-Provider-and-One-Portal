@@ -19,6 +19,18 @@ export default function LoginForm() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
+
+    if (!email.trim() || !password.trim()) {
+      setError("Email and password are required.");
+      return;
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      setError("Please enter a valid email address.");
+      return;
+    }
+
     try {
       const loginResponse = await authService.login(email, password);
       if (!loginResponse?.redirect_to) {
@@ -27,7 +39,6 @@ export default function LoginForm() {
       }
       window.location.href = loginResponse.redirect_to;
     } catch (err) {
-      console.error(err.response?.data || err);
       const status = err.response?.status;
       if (status === 400) {
         setError("Please enter valid credentials.");
@@ -64,7 +75,7 @@ export default function LoginForm() {
               </div>
             </div>
             
-            <form onSubmit={handleSubmit} className="space-y-6">
+            <form onSubmit={handleSubmit} noValidate className="space-y-6">
               <div>
                 <label className="block font-medium mb-2 text-white text-base">Email Address <span className="text-red-500">*</span></label>
                 <label className="input validator flex items-center rounded-lg gap-2 bg-white border border-gray-200 text-gray-700 w-full">
