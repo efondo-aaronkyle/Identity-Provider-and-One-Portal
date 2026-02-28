@@ -93,8 +93,8 @@ export default function AppClientModal({ open, mode, client, onClose, onSubmit }
     e.preventDefault();
     if (mode === "view") return onClose();
 
-    if (!name.trim()) {
-      setError("Client name is required.");
+    if (!name.trim() || name.length < 5 || name.length > 100) {
+      setError("Client name must be between 5 and 100 characters.");
       return;
     }
 
@@ -203,11 +203,14 @@ export default function AppClientModal({ open, mode, client, onClose, onSubmit }
               
               <div className="space-y-0.5">
                 <label className="block text-sm font-semibold text-gray-700">
-                    Client Name
+                    Name
                   </label>
-                <input type="text" value={name} onChange={(e) => setName(e.target.value)} name="client_name" placeholder="Client name (e.g., My Web App)" required className={`w-full px-3 py-2 rounded-lg border border-gray-300 ${
-                  mode === "view" ? "bg-gray-100 text-gray-700" : "bg-transparent text-gray-700 focus:ring-2 focus:ring-[#991b1b]"
-                }`} disabled={mode === "view"}/>
+                <input type="text" required minLength={5} maxLength={100} value={name} onChange={(e) => setName(e.target.value)} placeholder="(e.g., Identity Provider System)" className={`input validator w-full rounded-lg border border-gray-200 ${ mode === "view" ? "bg-gray-100 text-gray-700" : "bg-transparent text-gray-700" }`} disabled={mode === "view"}/>
+                {mode !== "view" && (
+                  <div className="validator-hint">
+                    Must be 5–100 characters
+                  </div>
+                )}
               </div>
               <div className="space-y-0.5">
                   <label className="block text-sm font-semibold text-gray-700">

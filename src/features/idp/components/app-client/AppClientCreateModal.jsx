@@ -79,9 +79,16 @@ export default function AppClientCreateModal({ open, onClose, onSubmit }) {
     };
 
     const nextStep = () => {
-        if (step === 1 && !name.trim()) {
-            setError("Client name and abbreviation is required.");
-            return;
+        if (step === 1) {
+            if (!name.trim() || name.length < 5 || name.length > 100) {
+                setError("Client name must be between 5 and 100 characters.");
+                return;
+            }
+
+            if (!abbreviation.trim() || abbreviation.length > 10) {
+                setError("Abbreviation is required (max 10 characters).");
+                return;
+            }
         }
 
         if (step === 2 && (!baseURL.trim() || !redirectURL.trim() || !logoutURL.trim())) {
@@ -89,9 +96,16 @@ export default function AppClientCreateModal({ open, onClose, onSubmit }) {
             return;
         }
 
-        if (step === 3 && roles.length === 0) {
-            setError("Please select at least one role.");
-            return;
+        if (step === 3) {
+            if (grants.length === 0) {
+                setError("At least one grant must be selected.");
+                return;
+            }
+
+            if (roles.length === 0) {
+                setError("Please select at least one role.");
+                return;
+            }
         }
 
         setError("");
@@ -99,8 +113,14 @@ export default function AppClientCreateModal({ open, onClose, onSubmit }) {
     };
 
     const handleSubmit = () => {
-        if (!name.trim() || !abbreviation.trim()) {
-            setError("Client name and abbreviation are required.");
+        if (!name.trim() || name.length < 5 || name.length > 100) {
+            setError("Client name must be between 5 and 100 characters.");
+            setStep(1);
+            return;
+        }
+
+        if (!abbreviation.trim() || abbreviation.length > 10) {
+            setError("Abbreviation is required (max 10 characters).");
             setStep(1);
             return;
         }
@@ -108,6 +128,12 @@ export default function AppClientCreateModal({ open, onClose, onSubmit }) {
         if (!baseURL.trim() || !redirectURL.trim() || !logoutURL.trim()) {
             setError("All URL fields are required.");
             setStep(2);
+            return;
+        }
+
+        if (grants.length === 0) {
+            setError("At least one grant must be selected.");
+            setStep(3);
             return;
         }
 
@@ -223,15 +249,17 @@ export default function AppClientCreateModal({ open, onClose, onSubmit }) {
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <div className="space-y-0.5">
                                     <label className="block text-base font-semibold text-gray-700">
-                                        Client Name<span className="text-red-500"> *</span>
+                                        Name<span className="text-red-500"> *</span>
                                     </label>
-                                    <input type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder="Name (e.g., LMS Portal)" required className="w-full px-3 py-2 rounded-lg border border-gray-300 bg-transparent text-gray-700 focus:ring-2 focus:ring-[#991b1b]"/>
+                                    <input type="text" required minLength={5} maxLength={100} value={name} onChange={(e) => setName(e.target.value)} placeholder="(e.g., Identity Provider System)" className="input validator w-full rounded-lg bg-transparent border border-gray-200 text-gray-700"/>
+                                    <div className="validator-hint">Must be 5–100 characters</div>
                                 </div>
                                 <div className="space-y-0.5">
                                     <label className="block text-base font-semibold text-gray-700">
                                         Abbreviation<span className="text-red-500"> *</span>
                                     </label>
-                                    <input type="text" value={abbreviation} onChange={(e) => setAbbreviation(e.target.value.toUpperCase())} placeholder="Abbreviation (e.g., LMS)" required className="w-full px-3 py-2 rounded-lg border border-gray-300 bg-transparent text-gray-700 focus:ring-2 focus:ring-[#991b1b]"/>
+                                    <input type="text" required maxLength={10} value={abbreviation} onChange={(e) => setAbbreviation(e.target.value.toUpperCase())} placeholder="(e.g., IdP)" className="input validator w-full rounded-lg bg-transparent border border-gray-200 text-gray-700"/>
+                                    <div className="validator-hint">Maximum 10 characters</div>
                                 </div>
                             </div>
                             <div className="space-y-0.5 mt-4">
@@ -276,11 +304,14 @@ export default function AppClientCreateModal({ open, onClose, onSubmit }) {
                                 <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 lg:grid-cols-3 lg:gap-x-8 lg:gap-y-5">
                                 {["authorization_code", "refresh_token", "client_credentials"].map((grant) => (
                                     <label key={grant} className="flex items-center gap-2 text-gray-700">
-                                    <input type="checkbox" name="grants" value={grant} className="checkbox border-gray-300 bg-transparent checked:bg-[#991b1b] checked:border-red-900 checked:text-white mr-1" checked={grants.includes(grant)} onChange={() => toggleGrant(grant)} />
+                                    <input type="checkbox" name="grants" value={grant} className="checkbox validator border-gray-300 bg-transparent checked:bg-[#991b1b] checked:border-red-900 checked:text-white mr-1" checked={grants.includes(grant)} onChange={() => toggleGrant(grant)} required={grants.length === 0} title="Required"/>
                                     <span className="text-[#991b1b] text-[.7rem] sm:text-sm">{grant}</span>
                                     </label>
                                 ))}
                                 </div>
+                                {grants.length === 0 && (
+                                    <p className="text-xs text-[#ff637d] mt-2">At least one grant is required.</p>
+                                )}
                             </div>
                             <div className="mt-6">
                                 <label className="block text-base font-medium text-gray-700">
