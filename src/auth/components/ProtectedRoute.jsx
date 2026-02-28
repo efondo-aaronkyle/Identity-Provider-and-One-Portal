@@ -3,22 +3,30 @@ import { Navigate } from "react-router-dom";
 import { authService } from "../services/authService";
 
 export default function ProtectedRoute({ children }) {
-  const [isAuthenticated, setIsAuthenticated] = useState(null);
+  const [authState, setAuthState] = useState("loading");
 
   useEffect(() => {
-    const verify = async () => {
+    const validate = async () => {
+      const token = localStorage.getItem("access_token");
+
+      if (!token) {
+        setAuthState("denied");
+        return;
+      }
+
       try {
         await authService.checkSession();
-        setIsAuthenticated(true);
-      } catch {
-        setIsAuthenticated(false);
+        setAuthState("allowed");
+      } catch (err) {
+        localStorage.removeItem("access_token");
+        setAuthState("denied");
       }
     };
 
-    verify();
+    validate();
   }, []);
 
-  if (isAuthenticated === null) {
+  if (authState === "loading") {
     return (
       <div className="min-h-screen bg-[#991b1b] flex items-center justify-center text-white">
         Loading...
@@ -26,7 +34,7 @@ export default function ProtectedRoute({ children }) {
     );
   }
 
-  if (!isAuthenticated) {
+  if (authState === "denied") {
     return <Navigate to="/" replace />;
   }
 

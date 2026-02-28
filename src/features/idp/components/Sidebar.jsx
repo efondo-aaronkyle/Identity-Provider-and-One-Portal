@@ -30,7 +30,7 @@ export default function Sidebar({ isOpen, toggleSidebar }) {
       console.error("Logout failed", err);
     } finally {
       localStorage.removeItem("access_token");
-      navigate("/");
+      navigate("/", { replace: true });
     }
   };
 
