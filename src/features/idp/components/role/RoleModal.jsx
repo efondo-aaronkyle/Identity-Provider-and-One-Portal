@@ -1,34 +1,54 @@
 import React, { useState, useEffect } from "react";
+import ErrorAlert from "../../../../components/ErrorAlert";
 
 export default function RoleModal({ open, mode, role, onClose, onSubmit }) {
     const [roleName, setRoleName] = useState("");
     const [description, setDescription] = useState("");
+    const [error, setError] = useState("");
+    const [touched, setTouched] = useState(false);
 
     useEffect(() => {
-        if(mode === "create") {
+        if (!open) return;
+
+        if (mode === "create") {
             setRoleName("");
             setDescription("");
-        } else if(mode === "edit" || mode === "view") {
+        } else {
             setRoleName(role?.role_name || "");
             setDescription(role?.description || "");
         }
+
+        setError("");
+        setTouched(false);
     }, [mode, role, open]);
 
     const handleSubmit = (e) => {
         e.preventDefault();
         if (mode === "view") return onClose();
 
+        setTouched(true);
+
+        if (!roleName.trim() || !description.trim()) {
+            setError("Role name and description are required.");
+            return;
+        }
+
+        setError("");
+
         onSubmit({
             id: role?.id || Date.now(),
-            role_name: roleName,
-            description,
+            role_name: roleName.trim(),
+            description: description.trim(),
             created_at: role?.created_at || new Date().toISOString().slice(0, 10),
         });
-        setRoleName("");
-        setDescription("");
+
+        onClose();
     };
 
     if (!open) return null;
+
+    const isRoleNameInvalid = touched && !roleName.trim();
+    const isDescriptionInvalid = touched && !description.trim();
     
     return (
         <dialog className="modal modal-open">
@@ -50,33 +70,36 @@ export default function RoleModal({ open, mode, role, onClose, onSubmit }) {
                         </button>
                     </div>
                 </div>
-                <form id="role-form" className="flex-1 overflow-y-auto p-6 space-y-4 bg-white" onSubmit={handleSubmit}>
+                <form id="role-form" noValidate className="flex-1 overflow-y-auto p-6 space-y-4 bg-white" onSubmit={handleSubmit}>
+                    <ErrorAlert message={error} onClose={() => setError("")} />
                     <div className="space-y-4 flex-1">
                         {(mode === "view" || mode === "edit") && (
-                        <div className="space-y-0.5">
-                            <label className="block text-sm font-semibold text-gray-700">
-                            Role Id
-                            </label>
-                            <input type="text" value={role?.id} placeholder="Role ID" readOnly className="w-full px-3 py-2 rounded-md border bg-gray-100 text-gray-700 border-gray-300"/>
-                        </div>
+                            <div className="space-y-0.5">
+                                <label className="block text-sm font-semibold text-gray-700">
+                                    Role Id
+                                </label>
+                                <input type="text" value={role?.id} placeholder="Role ID" readOnly className="input w-full rounded-lg border bg-gray-100 text-gray-700 border-gray-300"/>
+                            </div>
                         )}
 
                         <div className="space-y-0.5">
                             <label className="block text-sm font-semibold text-gray-700">
-                                Role Name
+                                Role Name<span className="text-red-500"> *</span>
                             </label>
-                            <input type="text" value={roleName} onChange={(e) => setRoleName(e.target.value)} name="role_name" placeholder="Role name (e.g., Admin)" required className={`w-full px-3 py-2 rounded-lg border border-gray-300 ${
-                                mode === "view" ? "bg-gray-100 text-gray-700" : "bg-transparent text-gray-700 focus:ring-2 focus:ring-[#991b1b]"
-                            }`} disabled={mode === "view"}/>
+                            <input type="text" required={mode !== "view"} value={roleName} onChange={(e) => setRoleName(e.target.value)} placeholder="(e.g., idp:superadmin)" className={`input validator w-full rounded-lg ${ mode === "view" ? "bg-gray-100 border-gray-300 text-gray-700" : "bg-transparent border-gray-200 text-gray-700" }`} disabled={mode === "view"}/>
+                            {mode !== "view" && (
+                                <div className="validator-hint">Role name is required</div>
+                            )}
                         </div>
 
                         <div className="space-y-0.5">
                             <label className="block text-sm font-semibold text-gray-700">
-                                Role Description
+                                Role Description<span className="text-red-500"> *</span>
                             </label>
-                            <textarea value={description} onChange={(e) => setDescription(e.target.value)} name="description" rows="3" placeholder="Role description" required className={`w-full px-3 py-2 rounded-lg border border-gray-300 ${
-                                mode === "view" ? "bg-gray-100 text-gray-700" : "bg-transparent text-gray-700 focus:ring-2 focus:ring-[#991b1b]"
-                            }`} disabled={mode === "view"}/>
+                            <textarea required={mode !== "view"} value={description} onChange={(e) => setDescription(e.target.value)} rows="3" placeholder="Role description" className={`textarea validator w-full rounded-lg resize-none ${ mode === "view" ? "bg-gray-100 border-gray-300 text-gray-700" : "bg-transparent border-gray-200 text-gray-700" }`} disabled={mode === "view"}/>
+                            {mode !== "view" && (
+                                <div className="validator-hint">Role description is required</div>
+                            )}
                         </div>
                     </div>
                 </form>
