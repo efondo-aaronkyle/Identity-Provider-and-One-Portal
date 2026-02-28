@@ -233,13 +233,19 @@ export default function AppClientModal({ open, mode, client, onClose, onSubmit }
                   <label className="block text-sm font-semibold text-gray-700">
                     Base URLs
                   </label>
-                  <input type="text" value={baseURL} onChange={(e) => setBaseURL(e.target.value)} placeholder="Base URL" className={`w-full px-3 py-2 rounded-md border border-gray-300 ${ mode === "view" ? "bg-gray-100 text-gray-700" : "bg-transparent text-gray-700 focus:ring-2 focus:ring-[#991b1b]" }`} disabled={mode === "view"}/>
+                  <input type="url" required value={baseURL} onChange={(e) => setBaseURL(e.target.value)} placeholder="https://app.example.com" className={`input validator w-full rounded-lg border border-gray-200 ${ mode === "view" ? "bg-gray-100 text-gray-700" : "bg-transparent text-gray-700" }`} pattern="^(https?://)?([a-zA-Z0-9]([a-zA-Z0-9-].*[a-zA-Z0-9])?.)+[a-zA-Z].*$" title="Must be valid URL" disabled={mode === "view"}/>
+                  {mode !== "view" && (
+                    <p className="validator-hint">Must be valid URL</p>
+                  )}
                 </div>
                 <div className="space-y-0.5">
                   <label className="block text-sm font-semibold text-gray-700">
                     Redirect URLs
                   </label>
-                  <input type="text" value={redirectURL} onChange={(e) => setRedirectURL(e.target.value)} placeholder="Redirect URL" className={`w-full px-3 py-2 rounded-md border border-gray-300 ${ mode === "view" ? "bg-gray-100 text-gray-700" : "bg-transparent text-gray-700 focus:ring-2 focus:ring-[#991b1b]" }`} disabled={mode === "view"}/>
+                  <input type="url" required value={redirectURL} onChange={(e) => setRedirectURL(e.target.value)} placeholder="https://app.example.com/callback" className={`input validator w-full rounded-lg border border-gray-200 ${ mode === "view" ? "bg-gray-100 text-gray-700" : "bg-transparent text-gray-700" }`} pattern="^(https?://)?([a-zA-Z0-9]([a-zA-Z0-9-].*[a-zA-Z0-9])?.)+[a-zA-Z].*$" title="Must be valid URL" disabled={mode === "view"}/>
+                  {mode !== "view" && (
+                    <p className="validator-hint">Must be valid URL</p>
+                  )}
                 </div>
               </div>
 
@@ -249,7 +255,10 @@ export default function AppClientModal({ open, mode, client, onClose, onSubmit }
                     <label className="block text-sm font-semibold text-gray-700">
                       Logout URLs
                     </label>
-                    <input type="text" value={logoutURL} onChange={(e) => setLogoutURL(e.target.value)} placeholder="Logout URL" className={`w-full px-3 py-2 rounded-md border border-gray-300 ${ mode === "view" ? "bg-gray-100 text-gray-700" : "bg-transparent text-gray-700 focus:ring-2 focus:ring-[#991b1b]" }`} disabled={mode === "view"}/>
+                    <input type="url" required value={logoutURL} onChange={(e) => setLogoutURL(e.target.value)} placeholder="https://app.example.com/logout" className={`input validator w-full rounded-lg border border-gray-200 ${ mode === "view" ? "bg-gray-100 text-gray-700" : "bg-transparent text-gray-700" }`} pattern="^(https?://)?([a-zA-Z0-9]([a-zA-Z0-9-].*[a-zA-Z0-9])?.)+[a-zA-Z].*$" title="Must be valid URL" disabled={mode === "view"}/>
+                    {mode !== "view" && (
+                      <p className="validator-hint">Must be valid URL</p>
+                    )}
                   </div>
                 </div>
               </div>

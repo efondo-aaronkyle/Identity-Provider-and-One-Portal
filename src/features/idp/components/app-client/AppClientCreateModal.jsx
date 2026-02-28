@@ -252,17 +252,20 @@ export default function AppClientCreateModal({ open, onClose, onSubmit }) {
                         <>
                             <div className="space-y-0.5">
                                 <label className="block text-base font-semibold text-gray-700">Base URL<span className="text-red-500"> *</span></label>
-                                <input type="text" value={baseURL} onChange={(e) => setBaseURL(e.target.value)} name="base_urls" placeholder="Base URL (e.g., https://app.example.com)" className="w-full px-3 py-2 rounded-md border border-gray-300 bg-transparent text-gray-700 focus:ring-2 focus:ring-[#991b1b]"/>
+                                <input type="url" required value={baseURL} onChange={(e) => setBaseURL(e.target.value)} placeholder="https://app.example.com" className="input validator w-full rounded-lg border border-gray-200 bg-transparent text-gray-700" pattern="^(https?://)?([a-zA-Z0-9]([a-zA-Z0-9-].*[a-zA-Z0-9])?.)+[a-zA-Z].*$" title="Must be valid URL"/>
+                                <p className="validator-hint">Must be valid URL</p>
                             </div>
 
                             <div className="space-y-0.5">
                                 <label className="block text-base font-semibold text-gray-700">Redirect URL<span className="text-red-500"> *</span></label>
-                                <input type="text" value={redirectURL} onChange={(e) => setRedirectURL(e.target.value)} name="redirect_urls" placeholder="Redirect URL (e.g., https://app.example.com/callback)" className="w-full px-3 py-2 rounded-md border border-gray-300 bg-transparent text-gray-700 focus:ring-2 focus:ring-[#991b1b]"/>
+                                <input type="url" required value={redirectURL} onChange={(e) => setRedirectURL(e.target.value)} placeholder="https://app.example.com/callback" className="input validator w-full rounded-lg border border-gray-200 bg-transparent text-gray-700" pattern="^(https?://)?([a-zA-Z0-9]([a-zA-Z0-9-].*[a-zA-Z0-9])?.)+[a-zA-Z].*$" title="Must be valid URL"/>
+                                <p className="validator-hint">Must be valid URL</p>
                             </div>
 
                             <div className="space-y-0.5">
                                 <label className="block text-base font-semibold text-gray-700">Logout URL<span className="text-red-500"> *</span></label>
-                                <input type="text" value={logoutURL} onChange={(e) => setLogoutURL(e.target.value)} placeholder="Logout URL (e.g., https://app.example.com/logout)" className="w-full px-3 py-2 rounded-md border border-gray-300 bg-transparent text-gray-700 focus:ring-2 focus:ring-[#991b1b]"/>
+                                <input type="url" required value={logoutURL} onChange={(e) => setLogoutURL(e.target.value)} placeholder="https://app.example.com/logout" className="input validator w-full rounded-lg border border-gray-200 bg-transparent text-gray-700" pattern="^(https?://)?([a-zA-Z0-9]([a-zA-Z0-9-].*[a-zA-Z0-9])?.)+[a-zA-Z].*$" title="Must be valid URL"/>
+                                <p className="validator-hint">Must be valid URL</p>
                             </div>
                         </>
                     )}
