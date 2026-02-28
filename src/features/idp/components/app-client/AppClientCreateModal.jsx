@@ -271,7 +271,7 @@ export default function AppClientCreateModal({ open, onClose, onSubmit }) {
                                     onChange={(e) => setDescription(e.target.value)}
                                     rows="3"
                                     placeholder="Short description of the application (optional)"
-                                    className="w-full px-3 py-2 rounded-lg border border-gray-300 bg-transparent text-gray-700 resize-none focus:ring-2 focus:ring-[#991b1b]"
+                                    className="textarea w-full rounded-lg border border-gray-200 bg-transparent text-gray-700 resize-none"
                                 />
                             </div>
                         </>

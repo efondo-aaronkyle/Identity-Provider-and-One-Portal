@@ -221,10 +221,10 @@ export default function AppClientModal({ open, mode, client, onClose, onSubmit }
                       onChange={(e) => setDescription(e.target.value)}
                       rows="3"
                       placeholder="Application description"
-                      className={`w-full px-3 py-2 rounded-md border border-gray-300 resize-none ${
+                      className={`textarea w-full rounded-lg border border-gray-200 resize-none ${
                           mode === "view"
                               ? "bg-gray-100 text-gray-700"
-                              : "bg-transparent text-gray-700 focus:ring-2 focus:ring-[#991b1b]"
+                              : "bg-transparent text-gray-700"
                       }`}
                       disabled={mode === "view"}
                   />
