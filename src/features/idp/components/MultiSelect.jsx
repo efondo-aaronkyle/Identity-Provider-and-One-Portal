@@ -41,12 +41,7 @@ export default function MultiSelect({ options, selectedValues, onChange, placeho
   return (
     <div className="relative w-full" ref={dropdownRef}>
       {/* Input Field with Tags */}
-      <div 
-        onClick={() => setIsOpen(!isOpen)}
-        className={`flex items-center justify-between p-2 bg-white border rounded-lg cursor-pointer min-h-10.5 transition-colors ${
-          isOpen ? 'border-[#991b1b] ring-1 ring-[#991b1b]/20' : 'border-gray-300'
-        }`}
-      >
+      <div onClick={() => setIsOpen(!isOpen)} className="flex items-center justify-between p-2 bg-transparent border border-gray-200 text-gray-700 rounded-lg cursor-pointer min-h-10.5">
         <div className="flex flex-wrap gap-1.5 items-center flex-1">
           {selectedItems.length === 0 && !searchTerm && (
             <span className="text-gray-400 ml-1 text-sm">{placeholder}</span>

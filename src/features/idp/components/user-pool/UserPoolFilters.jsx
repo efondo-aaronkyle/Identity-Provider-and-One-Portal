@@ -23,6 +23,7 @@ export default function UserPoolFilters({ search, setSearch, status, setStatus, 
                         <option className="text-gray-600" value="">All Status</option>
                         <option className="text-gray-600" value="active">Active</option>
                         <option className="text-gray-600" value="inactive">Inactive</option>
+                        <option className="text-gray-600" value="suspended">Suspended</option>
                     </select>
                 </div>
             </div>

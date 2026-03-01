@@ -1,40 +1,49 @@
 import React, { useState, useEffect } from "react";
 import ErrorAlert from "../../../../components/ErrorAlert";
 
+const FIXED_UUID = "00000000-0000-0000-0000-000000000001";
+
 export default function AppClientModal({ open, mode, client, onClose, onSubmit }) {
-  const [name, setName] = useState(client?.name || "");
-  const [baseURL, setBaseURL] = useState(client?.baseURL || "");
-  const [redirectURL, setRedirectURL] = useState(client?.redirectURL || "");
-  const [logoutURL, setLogoutURL] = useState(client?.logoutURL || "");
-  const [selectedScopes, setSelectedScopes] = useState(client?.scopes || ["openid"]);
-  const [imagePreview, setImagePreview] = useState(client?.image || null);
+  const [name, setName] = useState("");
+  const [description, setDescription] = useState("");
+  const [baseURL, setBaseURL] = useState("");
+  const [redirectURL, setRedirectURL] = useState("");
+  const [logoutURL, setLogoutURL] = useState("");
+  const [imageFile, setImageFile] = useState(null);
+  const [imagePreview, setImagePreview] = useState(null);
+  const [imageLocation, setImageLocation] = useState(null);
   const [isDragging, setIsDragging] = useState(false);
-  const [showFullImage, setShowFullImage] = useState(false);
+  const [selectedGrants, setSelectedGrants] = useState(["authorization_code"]);
   const [error, setError] = useState("");
+  const [showFullImage, setShowFullImage] = useState(false);
 
   useEffect(() => {
-  if (mode === "create") {
-    // Reset all fields for creating a new client
-    setName("");
-    setBaseURL("");
-    setRedirectURL("");
-    setLogoutURL("");
-    setSelectedScopes(["openid"]);
-    setImagePreview(null);
+    if (!open || !client) return;
+    setName(client.name || "");
+    setDescription(client.description || "");
+    setBaseURL(client.base_url || "");
+    setRedirectURL(client.redirect_uri || "");
+    setLogoutURL(client.logout_uri || "");
+    setSelectedGrants(client.grants || ["authorization_code"]);
+    setImageFile(null);
     setError("");
-  } else {
-    // Load existing client for view/edit
-    setName(client?.name || "");
-    setBaseURL(client?.baseURL || "");
-    setRedirectURL(client?.redirectURL || "");
-    setLogoutURL(client?.logoutURL || "");
-    setSelectedScopes(client?.scopes || ["openid"]);
-    setImagePreview(client?.image || null);
-  }
-}, [client, mode]);
+    setIsDragging(false);
+    setImageLocation(client.image || null);
+    if (client.image) {
+      setImagePreview(
+        client.image.startsWith("data:")
+          ? client.image
+          : `${import.meta.env.VITE_BACKEND_URL}${client.image}`
+      );
+    } else {
+      setImagePreview(null);
+    }
+
+  }, [client, open]);
 
   const processFile = (file) => {
     if (file && file.type.startsWith("image/")) {
+      setImageFile(file);
       const reader = new FileReader();
       reader.onloadend = () => {
         setImagePreview(reader.result);
@@ -44,10 +53,9 @@ export default function AppClientModal({ open, mode, client, onClose, onSubmit }
   };
 
   const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    processFile(file);
+    processFile(e.target.files[0]);
   };
-
+  
   const handleDragOver = (e) => {
     e.preventDefault();
     if (mode !== "view") setIsDragging(true);
@@ -67,26 +75,26 @@ export default function AppClientModal({ open, mode, client, onClose, onSubmit }
   };
 
   const removeImage = (e) => {
-    e.stopPropagation(); // Prevent opening the preview when clicking delete
+    e.stopPropagation();
     setImagePreview(null);
-    const input = document.getElementById('dropzone-file');
-    if (input) input.value = "";
+    setImageFile(null);
+    setImageLocation("");
   };
 
-  const toggleScope = (scope) => {
-    if (selectedScopes.includes(scope)) {
-      setSelectedScopes(selectedScopes.filter((s) => s !== scope));
+  const toggleGrant = (grant) => {
+    if (selectedGrants.includes(grant)) {
+      setSelectedGrants(selectedGrants.filter((g) => g !== grant));
     } else {
-      setSelectedScopes([...selectedScopes, scope]);
+      setSelectedGrants([...selectedGrants, grant]);
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (mode === "view") return onClose();
 
-    if (!name.trim()) {
-      setError("Client name is required.");
+    if (!name.trim() || name.length < 5 || name.length > 100) {
+      setError("Client name must be between 5 and 100 characters.");
       return;
     }
 
@@ -97,17 +105,23 @@ export default function AppClientModal({ open, mode, client, onClose, onSubmit }
 
     setError("");
 
-    onSubmit({ 
-      clientId: client?.clientId, // keep the existing ID for edit, undefined for new create
+    let finalImageLocation = imageLocation || "";
+
+    if (imageFile) {
+      finalImageLocation = imagePreview;
+    }
+
+    await onSubmit({
+      id: client?.id,
       name,
-      baseURL,
-      redirectURL,
-      logoutURL,
-      scopes: selectedScopes,
-      image: imagePreview,
-      created: client?.created || new Date().toISOString().slice(0, 10),
-      lastUsed: client?.lastUsed || "-", 
+      description,
+      base_url: baseURL,
+      redirect_uri: redirectURL,
+      logout_uri: logoutURL,
+      image_location: finalImageLocation,
     });
+
+    onClose();
   };
 
   if (!open) return null;
@@ -183,17 +197,37 @@ export default function AppClientModal({ open, mode, client, onClose, onSubmit }
                   <label className="block text-sm font-semibold text-gray-700">
                     Client Id
                   </label>
-                  <input type="text" value={client?.clientId} placeholder="Client ID" readOnly className="w-full px-3 py-2 rounded-md border bg-gray-100 text-gray-700 border-gray-300"/>
+                  <input type="text" value={FIXED_UUID} readOnly className="w-full px-3 py-2 rounded-md border bg-gray-100 text-gray-700 border-gray-300"/>
                 </div>
               )}
               
               <div className="space-y-0.5">
                 <label className="block text-sm font-semibold text-gray-700">
-                    Client Name
+                    Name
                   </label>
-                <input type="text" value={name} onChange={(e) => setName(e.target.value)} name="client_name" placeholder="Client name (e.g., My Web App)" required className={`w-full px-3 py-2 rounded-lg border border-gray-300 ${
-                  mode === "view" ? "bg-gray-100 text-gray-700" : "bg-transparent text-gray-700 focus:ring-2 focus:ring-[#991b1b]"
-                }`} disabled={mode === "view"}/>
+                <input type="text" required minLength={5} maxLength={100} value={name} onChange={(e) => setName(e.target.value)} placeholder="(e.g., Identity Provider System)" className={`input validator w-full rounded-lg border border-gray-200 ${ mode === "view" ? "bg-gray-100 text-gray-700" : "bg-transparent text-gray-700" }`} disabled={mode === "view"}/>
+                {mode !== "view" && (
+                  <div className="validator-hint">
+                    Must be 5–100 characters
+                  </div>
+                )}
+              </div>
+              <div className="space-y-0.5">
+                  <label className="block text-sm font-semibold text-gray-700">
+                      Description
+                  </label>
+                  <textarea
+                      value={description}
+                      onChange={(e) => setDescription(e.target.value)}
+                      rows="3"
+                      placeholder="Application description"
+                      className={`textarea w-full rounded-lg border border-gray-200 resize-none ${
+                          mode === "view"
+                              ? "bg-gray-100 text-gray-700"
+                              : "bg-transparent text-gray-700"
+                      }`}
+                      disabled={mode === "view"}
+                  />
               </div>
               
 
@@ -202,15 +236,19 @@ export default function AppClientModal({ open, mode, client, onClose, onSubmit }
                   <label className="block text-sm font-semibold text-gray-700">
                     Base URLs
                   </label>
-                  <textarea value={baseURL} onChange={(e) => setBaseURL(e.target.value)} rows="3" placeholder="Callback URLs (comma-separated)" className={`w-full px-3 py-2 rounded-md border border-gray-300 resize-none max-h-40 overflow-y-auto foucs:outline-none ${
-                  mode === "view" ? "bg-gray-100 text-gray-700" : "bg-transparent text-gray-700 focus:ring-2 focus:ring-[#991b1b]"}`} disabled={mode === "view"}/>
+                  <input type="url" required value={baseURL} onChange={(e) => setBaseURL(e.target.value)} placeholder="https://app.example.com" className={`input validator w-full rounded-lg border border-gray-200 ${ mode === "view" ? "bg-gray-100 text-gray-700" : "bg-transparent text-gray-700" }`} pattern="^(https?://)?([a-zA-Z0-9]([a-zA-Z0-9-].*[a-zA-Z0-9])?.)+[a-zA-Z].*$" title="Must be valid URL" disabled={mode === "view"}/>
+                  {mode !== "view" && (
+                    <p className="validator-hint">Must be valid URL</p>
+                  )}
                 </div>
                 <div className="space-y-0.5">
                   <label className="block text-sm font-semibold text-gray-700">
                     Redirect URLs
                   </label>
-                  <textarea value={redirectURL} onChange={(e) => setRedirectURL(e.target.value)} rows="3" placeholder="Sign out URLs (comma-separated)" className={`w-full px-3 py-2 rounded-md border border-gray-300 resize-none max-h-40 overflow-y-auto foucs:outline-none ${
-                  mode === "view" ? "bg-gray-100 text-gray-700" : "bg-transparent text-gray-700 focus:ring-2 focus:ring-[#991b1b]"}`}  disabled={mode === "view"}/>
+                  <input type="url" required value={redirectURL} onChange={(e) => setRedirectURL(e.target.value)} placeholder="https://app.example.com/callback" className={`input validator w-full rounded-lg border border-gray-200 ${ mode === "view" ? "bg-gray-100 text-gray-700" : "bg-transparent text-gray-700" }`} pattern="^(https?://)?([a-zA-Z0-9]([a-zA-Z0-9-].*[a-zA-Z0-9])?.)+[a-zA-Z].*$" title="Must be valid URL" disabled={mode === "view"}/>
+                  {mode !== "view" && (
+                    <p className="validator-hint">Must be valid URL</p>
+                  )}
                 </div>
               </div>
 
@@ -220,23 +258,27 @@ export default function AppClientModal({ open, mode, client, onClose, onSubmit }
                     <label className="block text-sm font-semibold text-gray-700">
                       Logout URLs
                     </label>
-                    <textarea value={logoutURL} onChange={(e) => setLogoutURL(e.target.value)} rows="3" placeholder="Sign out URLs (comma-separated)" className={`w-full px-3 py-2 rounded-md border border-gray-300 resize-none max-h-40 overflow-y-auto foucs:outline-none ${
-                    mode === "view" ? "bg-gray-100 text-gray-700" : "bg-transparent text-gray-700 focus:ring-2 focus:ring-[#991b1b]"}`}  disabled={mode === "view"}/>
+                    <input type="url" required value={logoutURL} onChange={(e) => setLogoutURL(e.target.value)} placeholder="https://app.example.com/logout" className={`input validator w-full rounded-lg border border-gray-200 ${ mode === "view" ? "bg-gray-100 text-gray-700" : "bg-transparent text-gray-700" }`} pattern="^(https?://)?([a-zA-Z0-9]([a-zA-Z0-9-].*[a-zA-Z0-9])?.)+[a-zA-Z].*$" title="Must be valid URL" disabled={mode === "view"}/>
+                    {mode !== "view" && (
+                      <p className="validator-hint">Must be valid URL</p>
+                    )}
                   </div>
                 </div>
               </div>
-
-              <div className="mb-5">
-                <span className="block text-sm font-medium text-gray-700">Allowed scopes</span>
-                <div className="mt-2 grid grid-cols-2 gap-3 sm:grid-cols-4">
-                  {["openid", "profile", "email", "phone"].map((scope) => (
-                    <label key={scope} className="flex items-center gap-2 text-gray-700">
-                      <input type="checkbox" name="scopes" value={scope} className="checkbox border-gray-300 bg-transparent checked:bg-[#991b1b] checked:border-red-900 checked:text-white mr-1" checked={selectedScopes.includes(scope)} onChange={() => toggleScope(scope)} disabled={mode === "view"} />
-                      <span className="text-[#991b1b] text-[.7rem] sm:text-sm">{scope}</span>
-                    </label>
-                  ))}
+              
+              {(mode === "view") && (
+                <div className="mb-5">
+                  <span className="block text-sm font-medium text-gray-700">Grants</span>
+                  <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 lg:grid-cols-3 lg:gap-x-8 lg:gap-y-5">
+                    {["authorization_code", "refresh_token", "client_credentials"].map((grant) => (
+                      <label key={grant} className="flex items-center gap-2 text-gray-700">
+                        <input type="checkbox" name="grants" value={grant} className="checkbox border-gray-300 bg-transparent checked:bg-[#991b1b] checked:border-red-900 checked:text-white mr-1" checked={selectedGrants.includes(grant)} onChange={() => toggleGrant(grant)} disabled={mode === "view"} />
+                        <span className="text-[#991b1b] text-[.7rem] sm:text-sm">{grant}</span>
+                      </label>
+                    ))}
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
           </form>
 

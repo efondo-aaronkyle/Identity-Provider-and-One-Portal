@@ -1,91 +1,126 @@
 import { useState, useEffect } from "react";
+import { useAllRoles } from "../../hooks/useAllRoles";
+import MultiSelect from "../MultiSelect";
 import ModalSteps from "../ModalSteps";
 import ErrorAlert from "../../../../components/ErrorAlert";
 
 export default function AppClientCreateModal({ open, onClose, onSubmit }) {
-  const [step, setStep] = useState(1);
-  const [name, setName] = useState("");
-  const [baseURL, setBaseURL] = useState("");
-  const [redirectURL, setRedirectURL] = useState("");
-  const [logoutURL, setLogoutURL] = useState("");
-  const [scopes, setScopes] = useState(["openid"]);
-  const [imagePreview, setImagePreview] = useState(null);
-  const [isDragging, setIsDragging] = useState(false);
-  const [showFullImage, setShowFullImage] = useState(false);
-  const [error, setError] = useState("");
+    const [step, setStep] = useState(1);
+    const [name, setName] = useState("");
+    const [abbreviation, setAbbreviation] = useState("");
+    const [description, setDescription] = useState("");
+    const [baseURL, setBaseURL] = useState("");
+    const [redirectURL, setRedirectURL] = useState("");
+    const [logoutURL, setLogoutURL] = useState("");
+    const [grants, setGrants] = useState(["authorization_code"]);
+    const [imageFile, setImageFile] = useState(null);
+    const [imagePreview, setImagePreview] = useState(null);
+    const rolesData = useAllRoles();
+    const [roles, setRoles] = useState([]);
+    const [isDragging, setIsDragging] = useState(false);
+    const [showFullImage, setShowFullImage] = useState(false);
+    const [error, setError] = useState("");
 
-  useEffect(() => {
-    if (!open) {
-      setStep(1);
-      setName("");
-      setBaseURL("");
-      setRedirectURL("");
-      setLogoutURL("");
-      setScopes(["openid"]);
-      setImagePreview(null);
-      setError("");
-    }
-  }, [open]);
+    useEffect(() => {
+        if (!open) {
+            setStep(1);
+            setName("");
+            setAbbreviation("");
+            setDescription("");
+            setBaseURL("");
+            setRedirectURL("");
+            setLogoutURL("");
+            setGrants(["authorization_code"]);
+            setImagePreview(null);
+            setError("");
+        }
+    }, [open]);
 
-  const toggleScope = (scope) => {
-    if (scopes.includes(scope)) {
-      setScopes(scopes.filter((s) => s !== scope));
-    } else {
-      setScopes([...scopes, scope]);
-    }
-  };
+    const toggleGrant = (grant) => {
+        if (grants.includes(grant)) {
+            setGrants(grants.filter((g) => g !== grant));
+        } else {
+            setGrants([...grants, grant]);
+        }
+    };
 
-  const processFile = (file) => {
-    if (file && file.type.startsWith("image/")) {
-      const reader = new FileReader();
-      reader.onloadend = () => setImagePreview(reader.result);
-      reader.readAsDataURL(file);
-    }
-  };
+    const processFile = (file) => {
+        if (file && file.type.startsWith("image/")) {
+            setImageFile(file);
+            const reader = new FileReader();
+            reader.onloadend = () => setImagePreview(reader.result);
+            reader.readAsDataURL(file);
+        }
+    };
 
-  const handleImageChange = (e) => {
-    processFile(e.target.files[0]);
-  };
+    const handleImageChange = (e) => {
+        processFile(e.target.files[0]);
+    };
 
-  const handleDragOver = (e) => {
-    e.preventDefault();
-    setIsDragging(true);
-  };
+    const handleDragOver = (e) => {
+        e.preventDefault();
+        setIsDragging(true);
+    };
 
-  const handleDragLeave = () => {
-    setIsDragging(false);
-  };
+    const handleDragLeave = () => {
+        setIsDragging(false);
+    };
 
-  const handleDrop = (e) => {
-    e.preventDefault();
-    setIsDragging(false);
-    processFile(e.dataTransfer.files[0]);
-  };
+    const handleDrop = (e) => {
+        e.preventDefault();
+        setIsDragging(false);
+        processFile(e.dataTransfer.files[0]);
+    };
 
-  const removeImage = () => {
-    setImagePreview(null);
-    const input = document.getElementById("dropzone-file-create");
-    if (input) input.value = "";
-  };
+    const removeImage = () => {
+        setImagePreview(null);
+        const input = document.getElementById("dropzone-file-create");
+        if (input) input.value = "";
+    };
 
-  const nextStep = () => {
-    if (step === 1 && !name.trim()) {
-        setError("Client name is required.");
-        return;
-    }
+    const nextStep = () => {
+        if (step === 1) {
+            if (!name.trim() || name.length < 5 || name.length > 100) {
+                setError("Client name must be between 5 and 100 characters.");
+                return;
+            }
 
-    if (step === 2 && (!baseURL.trim() || !redirectURL.trim() || !logoutURL.trim())) {
-        setError("All URL fields are required.");
-        return;
-    }
+            if (!abbreviation.trim() || abbreviation.length > 10) {
+                setError("Abbreviation is required (max 10 characters).");
+                return;
+            }
+        }
 
-    setError("");
-    setStep(step + 1);
-  };
+        if (step === 2 && (!baseURL.trim() || !redirectURL.trim() || !logoutURL.trim())) {
+            setError("All URL fields are required.");
+            return;
+        }
+
+        if (step === 3) {
+            if (grants.length === 0) {
+                setError("At least one grant must be selected.");
+                return;
+            }
+
+            if (roles.length === 0) {
+                setError("Please select at least one role.");
+                return;
+            }
+        }
+
+        setError("");
+        setStep(step + 1);
+    };
 
     const handleSubmit = () => {
-        if (!name.trim()) {
-            setError("Client name is required.");
+        if (!name.trim() || name.length < 5 || name.length > 100) {
+            setError("Client name must be between 5 and 100 characters.");
+            setStep(1);
+            return;
+        }
+
+        if (!abbreviation.trim() || abbreviation.length > 10) {
+            setError("Abbreviation is required (max 10 characters).");
             setStep(1);
             return;
         }
@@ -96,15 +131,24 @@ export default function AppClientCreateModal({ open, onClose, onSubmit }) {
             return;
         }
 
+        if (grants.length === 0) {
+            setError("At least one grant must be selected.");
+            setStep(3);
+            return;
+        }
+
         setError("");
 
         onSubmit({
             name,
-            baseURL,
-            redirectURL,
-            logoutURL,
-            scopes,
-            image: imagePreview,
+            abbreviation,
+            description,
+            base_url: baseURL,
+            redirect_uri: redirectURL,
+            logout_uri: logoutURL,
+            grants,
+            roles,
+            imageFile,
         });
         onClose();
     };
@@ -155,7 +199,7 @@ export default function AppClientCreateModal({ open, onClose, onSubmit }) {
                                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4">
                                         <path fillRule="evenodd" d="M14.5 1A4.5 4.5 0 0 0 10 5.5V9H3a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6a2 2 0 0 0-2-2h-1.5V5.5a3 3 0 1 1 6 0v2.75a.75.75 0 0 0 1.5 0V5.5A4.5 4.5 0 0 0 14.5 1Z" clipRule="evenodd" />
                                     </svg>
-                                </span>Allowed Scopes
+                                </span>Grants
                             </>,
                         ]}
                     />
@@ -202,11 +246,33 @@ export default function AppClientCreateModal({ open, onClose, onSubmit }) {
                                     )}
                                 </div>
                             </div>
-                            <div className="space-y-0.5">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div className="space-y-0.5">
+                                    <label className="block text-base font-semibold text-gray-700">
+                                        Name<span className="text-red-500"> *</span>
+                                    </label>
+                                    <input type="text" required minLength={5} maxLength={100} value={name} onChange={(e) => setName(e.target.value)} placeholder="(e.g., Identity Provider System)" className="input validator w-full rounded-lg bg-transparent border border-gray-200 text-gray-700"/>
+                                    <div className="validator-hint">Must be 5–100 characters</div>
+                                </div>
+                                <div className="space-y-0.5">
+                                    <label className="block text-base font-semibold text-gray-700">
+                                        Abbreviation<span className="text-red-500"> *</span>
+                                    </label>
+                                    <input type="text" required maxLength={10} value={abbreviation} onChange={(e) => setAbbreviation(e.target.value.toUpperCase())} placeholder="(e.g., IdP)" className="input validator w-full rounded-lg bg-transparent border border-gray-200 text-gray-700"/>
+                                    <div className="validator-hint">Maximum 10 characters</div>
+                                </div>
+                            </div>
+                            <div className="space-y-0.5 mt-4">
                                 <label className="block text-base font-semibold text-gray-700">
-                                    Client Name<span className="text-red-500"> *</span>
+                                    Description
                                 </label>
-                                <input type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder="Client name (e.g., LMS Portal)" required className="w-full px-3 py-2 rounded-lg border border-gray-300 bg-transparent text-gray-700 focus:ring-2 focus:ring-[#991b1b]"/>
+                                <textarea
+                                    value={description}
+                                    onChange={(e) => setDescription(e.target.value)}
+                                    rows="3"
+                                    placeholder="Short description of the application (optional)"
+                                    className="textarea w-full rounded-lg border border-gray-200 bg-transparent text-gray-700 resize-none"
+                                />
                             </div>
                         </>
                     )}
@@ -214,32 +280,58 @@ export default function AppClientCreateModal({ open, onClose, onSubmit }) {
                         <>
                             <div className="space-y-0.5">
                                 <label className="block text-base font-semibold text-gray-700">Base URL<span className="text-red-500"> *</span></label>
-                                <textarea value={baseURL} onChange={(e) => setBaseURL(e.target.value)} name="base_urls" rows="3" placeholder="Base URLs (comma-separated)" className="w-full px-3 py-2 rounded-md border border-gray-300 resize-none max-h-40 overflow-y-auto foucs:outline-none bg-transparent text-gray-700 focus:ring-2 focus:ring-[#991b1b]"/>
+                                <input type="url" required value={baseURL} onChange={(e) => setBaseURL(e.target.value)} placeholder="https://app.example.com" className="input validator w-full rounded-lg border border-gray-200 bg-transparent text-gray-700" pattern="^(https?://)?([a-zA-Z0-9]([a-zA-Z0-9-].*[a-zA-Z0-9])?.)+[a-zA-Z].*$" title="Must be valid URL"/>
+                                <p className="validator-hint">Must be valid URL</p>
                             </div>
 
                             <div className="space-y-0.5">
                                 <label className="block text-base font-semibold text-gray-700">Redirect URL<span className="text-red-500"> *</span></label>
-                                <textarea value={redirectURL} onChange={(e) => setRedirectURL(e.target.value)} name="redirect_urls" rows="3" placeholder="Redirect URLs (comma-separated)" className="w-full px-3 py-2 rounded-md border border-gray-300 resize-none max-h-40 overflow-y-auto foucs:outline-none bg-transparent text-gray-700 focus:ring-2 focus:ring-[#991b1b]"/>
+                                <input type="url" required value={redirectURL} onChange={(e) => setRedirectURL(e.target.value)} placeholder="https://app.example.com/callback" className="input validator w-full rounded-lg border border-gray-200 bg-transparent text-gray-700" pattern="^(https?://)?([a-zA-Z0-9]([a-zA-Z0-9-].*[a-zA-Z0-9])?.)+[a-zA-Z].*$" title="Must be valid URL"/>
+                                <p className="validator-hint">Must be valid URL</p>
                             </div>
 
                             <div className="space-y-0.5">
                                 <label className="block text-base font-semibold text-gray-700">Logout URL<span className="text-red-500"> *</span></label>
-                                <textarea value={logoutURL} onChange={(e) => setLogoutURL(e.target.value)} name="redirect_urls" rows="3" placeholder="Redirect URLs (comma-separated)" className="w-full px-3 py-2 rounded-md border border-gray-300 resize-none max-h-40 overflow-y-auto foucs:outline-none bg-transparent text-gray-700 focus:ring-2 focus:ring-[#991b1b]"/>
+                                <input type="url" required value={logoutURL} onChange={(e) => setLogoutURL(e.target.value)} placeholder="https://app.example.com/logout" className="input validator w-full rounded-lg border border-gray-200 bg-transparent text-gray-700" pattern="^(https?://)?([a-zA-Z0-9]([a-zA-Z0-9-].*[a-zA-Z0-9])?.)+[a-zA-Z].*$" title="Must be valid URL"/>
+                                <p className="validator-hint">Must be valid URL</p>
                             </div>
                         </>
                     )}
                     {step === 3 && (
-                        <div className="mb-5">
-                            <span className="block text-base font-medium text-gray-700">Allowed scopes<span className="text-red-500"> *</span></span>
-                            <div className="mt-2 grid grid-cols-2 gap-3 sm:grid-cols-4">
-                            {["openid", "profile", "email", "phone"].map((scope) => (
-                                <label key={scope} className="flex items-center gap-2 text-gray-700">
-                                <input type="checkbox" name="scopes" value={scope} className="checkbox border-gray-300 bg-transparent checked:bg-[#991b1b] checked:border-red-900 checked:text-white mr-1" checked={scopes.includes(scope)} onChange={() => toggleScope(scope)} />
-                                <span className="text-[#991b1b] text-[.7rem] sm:text-sm">{scope}</span>
-                                </label>
-                            ))}
+                        <>
+                            <div className="mb-5">
+                                <span className="block text-base font-medium text-gray-700">Grants<span className="text-red-500"> *</span></span>
+                                <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 lg:grid-cols-3 lg:gap-x-8 lg:gap-y-5">
+                                {["authorization_code", "refresh_token", "client_credentials"].map((grant) => (
+                                    <label key={grant} className="flex items-center gap-2 text-gray-700">
+                                    <input type="checkbox" name="grants" value={grant} className="checkbox validator border-gray-300 bg-transparent checked:bg-[#991b1b] checked:border-red-900 checked:text-white mr-1" checked={grants.includes(grant)} onChange={() => toggleGrant(grant)} required={grants.length === 0} title="Required"/>
+                                    <span className="text-[#991b1b] text-[.7rem] sm:text-sm">{grant}</span>
+                                    </label>
+                                ))}
+                                </div>
+                                {grants.length === 0 && (
+                                    <p className="text-xs text-[#ff637d] mt-2">At least one grant is required.</p>
+                                )}
                             </div>
-                        </div>
+                            <div className="mt-6">
+                                <label className="block text-base font-medium text-gray-700">
+                                    Roles
+                                </label>
+                                <p className="text-xs text-gray-500 italic mb-2">
+                                    Assign roles allowed for this client
+                                </p>
+
+                                <MultiSelect
+                                    options={rolesData.map(r => ({
+                                    id: r.id,
+                                    role_name: r.role_name
+                                    }))}
+                                    selectedValues={roles}
+                                    onChange={(ids) => setRoles(ids)}
+                                    placeholder="Select roles"
+                                />
+                            </div>
+                        </>
                     )}
                 </div>
                 <div className="p-6 bg-gray-50 border-t border-gray-200 flex justify-end gap-3">

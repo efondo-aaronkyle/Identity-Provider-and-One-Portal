@@ -1,120 +1,88 @@
-import { useState, useMemo, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
+import { clientService } from "../services/clientService";
 
 const ITEMS_PER_PAGE = 10;
+const FIXED_UUID = "00000000-0000-0000-0000-000000000001";
 
 export function useAppClients() {
-  const [clients, setClients] = useState([
-    {
-      name: "Admission System",
-      clientId: "as-ewfc2mewf",
-      created: "2024-06-22",
-      lastUsed: "2024-10-28",
-      callbacks: "puptas.com",
-      logouts: "",
-      scopes: ["openid", "profile"],
-      image: "/assets/images/connected-systems-button.png",
-    },
-  ]);
-
+  const [clients, setClients] = useState([]);
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
+  const [totalResults, setTotalResults] = useState(0);
   const [successMessage, setSuccessMessage] = useState("");
 
+  const offset = (page - 1) * ITEMS_PER_PAGE;
+
   // =========================
-  // FILTERING
+  // FETCH CLIENTS
   // =========================
-  const filteredClients = useMemo(() => {
-    return clients.filter(
-      (c) =>
-        c.name.toLowerCase().includes(search.toLowerCase()) ||
-        c.clientId.toLowerCase().includes(search.toLowerCase())
-    );
-  }, [clients, search]);
+  const fetchClients = useCallback(async () => {
+    try {
+      const data = await clientService.getClients(
+        ITEMS_PER_PAGE,
+        offset
+      );
 
-  const totalResults = filteredClients.length;
+      const mapped = data.map((c) => ({
+        id: c.id,
+        clientId: c.id,
+        name: c.name,
+        description: c.description || "",
+        created: c.created_at?.slice(0, 10) || "-",
+        image: c.image_location || null,
+        base_url: c.base_url,
+        redirect_uri: c.redirect_uri,
+        logout_uri: c.logout_uri,
+      }));
 
-  const totalPages = Math.max(
-    1,
-    Math.ceil(filteredClients.length / ITEMS_PER_PAGE)
-  );
+      setClients(mapped);
+      setTotalResults(data.length);
+    } catch (err) {
+      console.error("Fetch clients error:", err);
+    }
+  }, [offset]);
 
-  const paginatedClients = useMemo(() => {
-    return filteredClients.slice(
-      (page - 1) * ITEMS_PER_PAGE,
-      page * ITEMS_PER_PAGE
-    );
-  }, [filteredClients, page]);
-
-  // Reset page when search changes
   useEffect(() => {
-    setPage(1);
-  }, [search]);
-
-  // Auto-hide success
-  useEffect(() => {
-    if (!successMessage) return;
-    const timer = setTimeout(() => setSuccessMessage(""), 3000);
-    return () => clearTimeout(timer);
-  }, [successMessage]);
+    fetchClients();
+  }, [fetchClients]);
 
   // =========================
-  // CRUD
+  // CREATE
   // =========================
-
-  const generateClientId = (name) => {
-    const prefix = name
-      .split(" ")
-      .map((w) => w[0]?.toLowerCase())
-      .join("");
-    const random = Math.random().toString(36).substring(2, 10);
-    return `${prefix}-${random}`;
-  };
-
-  const createClient = (data) => {
-    const newClient = {
-      ...data,
-      clientId: generateClientId(data.name),
-      created: new Date().toISOString().slice(0, 10),
-      lastUsed: "-",
-    };
-
-    setClients((prev) => [newClient, ...prev]);
+  const createClient = async (payload) => {
+    await clientService.createClient(payload);
     setSuccessMessage("App client successfully created!");
+    await fetchClients();
   };
 
-  const updateClient = (data) => {
-    setClients((prev) =>
-      prev.map((c) =>
-        c.clientId === data.clientId ? { ...c, ...data } : c
-      )
-    );
-
+  // =========================
+  // UPDATE
+  // =========================
+  const updateClient = async (payload) => {
+    await clientService.updateClient(payload.id, payload);
     setSuccessMessage("App client successfully updated!");
+    await fetchClients();
   };
 
-  const deleteClient = (clientId) => {
-    setClients((prev) =>
-      prev.filter((c) => c.clientId !== clientId)
-    );
-
+  // =========================
+  // DELETE
+  // =========================
+  const deleteClient = async (id) => {
+    await clientService.deleteClient(id);
     setSuccessMessage("App client successfully deleted!");
+    await fetchClients();
   };
 
   return {
-    // state
     search,
     setSearch,
     page,
     setPage,
+    paginatedClients: clients,
+    totalPages: Math.ceil(totalResults / ITEMS_PER_PAGE),
+    totalResults,
     successMessage,
     setSuccessMessage,
-
-    // derived
-    paginatedClients,
-    totalPages,
-    totalResults,
-
-    // CRUD
     createClient,
     updateClient,
     deleteClient,
