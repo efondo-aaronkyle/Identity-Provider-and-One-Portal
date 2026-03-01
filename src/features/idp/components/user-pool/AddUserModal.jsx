@@ -2,12 +2,12 @@ import { useState, useEffect } from "react";
 import MultiSelect from "./../MultiSelect";
 import FadeWrapper from "../../../../components/FadeWrapper";
 import ModalSteps from "../ModalSteps";
+import ErrorAlert from "../../../../components/ErrorAlert";
 import { useAllRoles } from "../../hooks/useAllRoles";
 
 const initialFormData = {
   username: "",
   email: "",
-  phone: "",
   givenName: "",
   middleName: "",
   surname: "",
@@ -15,14 +15,18 @@ const initialFormData = {
   delivery: "email",
   tempPassword: "",
   roleIds: [],
-  status: "active",
+  status: "",
 };
+
+const ALLOWED_STATUS = ["active", "inactive"];
 
 
 export default function AddUserModal({ open, onClose, onSubmit }) {
     const [step, setStep] = useState(1);
     const roles = useAllRoles();
     const [data, setData] = useState(initialFormData);
+    const [rolesError, setRolesError] = useState(false);
+    const [error, setError] = useState("");
 
     const handleChange = (e) => {
         const { name, value, type, checked } = e.target;
@@ -41,23 +45,59 @@ export default function AddUserModal({ open, onClose, onSubmit }) {
 
     const nextStep = () => {
         if (step === 1) {
-            if (!data.email || !data.givenName || !data.surname) {
-                alert("Please fill out all required fields.");
+            if (!data.username.trim() || data.username.length < 4) {
+                setError("Username must be at least 4 characters.");
+                return;
+            }
+            if (!data.email.trim()) {
+                setError("Email is required.");
+                return;
+            }
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(data.email)) {
+                setError("Enter a valid email address.");
+                return;
+            }
+            if (!data.givenName.trim()) {
+                setError("First name is required.");
+                return;
+            }
+            if (!data.surname.trim()) {
+                setError("Last name is required.");
                 return;
             }
         }
-
         if (step === 2) {
             if (!data.roleIds || data.roleIds.length === 0) {
-                alert("Please select at least one role.");
+                setRolesError(true);
+                setError("At least one role must be selected.");
+                return;
+            } else {
+                setRolesError(false);
+                setError("");
+            }
+            if (data.inviteMode === "temp") {
+                if (!data.tempPassword.trim()) {
+                    setError("Temporary password is required.");
+                    return;
+                }
+                if (data.tempPassword.length < 8) {
+                    setError("Temporary password must be at least 8 characters.");
+                    return;
+                }
+            }
+        }
+        if (step === 3) {
+            if (!data.status) {
+                setError("Account status is required.");
                 return;
             }
-            if (data.inviteMode === "temp" && !data.tempPassword) {
-                alert("Please generate a temporary password.");
+            if (!ALLOWED_STATUS.includes(data.status)) {
+                setError("Invalid account status selected.");
                 return;
             }
         }
-
+        setError("");
         setStep(step + 1);
     };
 
@@ -70,6 +110,22 @@ export default function AddUserModal({ open, onClose, onSubmit }) {
 
 
     const handleSubmit = () => {
+        if (!data.roleIds || data.roleIds.length === 0) {
+            setError("At least one role must be assigned.");
+            setStep(2);
+            return;
+        }
+        if (!ALLOWED_STATUS.includes(data.status)) {
+            setError("Invalid account status.");
+            setStep(3);
+            return;
+        }
+        if (data.inviteMode === "temp" && data.tempPassword.length < 8) {
+            setError("Temporary password must be at least 8 characters.");
+            setStep(2);
+            return;
+        }
+        setError("");
         const selectedRoles = roles
             .filter(r => data.roleIds.includes(r.id))
             .map(r => r.role_name);
@@ -79,7 +135,6 @@ export default function AddUserModal({ open, onClose, onSubmit }) {
         onSubmit({
             username: data.username,
             email: data.email,
-            phone: data.phone,
             name: fullName,
             givenName: data.givenName,
             middleName: data.middleName,
@@ -118,9 +173,8 @@ export default function AddUserModal({ open, onClose, onSubmit }) {
                     </div>
                 </div>
 
-                <div className="flex-1 overflow-y-auto p-6 bg-white space-y-4">
-                    <ModalSteps
-                        currentStep={step}
+                <div className="flex-1 overflow-y-auto p-6 bg-white space-y-3">
+                    <ModalSteps currentStep={step}
                         steps={[
                             <>
                                 <span className="step-icon">
@@ -145,122 +199,88 @@ export default function AddUserModal({ open, onClose, onSubmit }) {
                             </>,
                         ]}
                     />
+                    <ErrorAlert message={error} onClose={() => setError("")} />
                     <FadeWrapper isVisible={step === 1}>
-                        <>
-                            <div className="mb-5">
-                                <label className="block font-medium mb-1 text-black text-base">Username</label>
-                                <label className="input rounded-lg flex items-center gap-2 bg-transparent border border-gray-300 text-gray-700 w-full focus-within:ring-2 focus-within:ring-[#991b1b] focus-within:border-[#991b1b]">
-                                    <span className="pr-3 border-r border-gray-300 text-gray-500">
-                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="size-6">
-                                            <path fillRule="evenodd" d="M18.685 19.097A9.723 9.723 0 0 0 21.75 12c0-5.385-4.365-9.75-9.75-9.75S2.25 6.615 2.25 12a9.723 9.723 0 0 0 3.065 7.097A9.716 9.716 0 0 0 12 21.75a9.716 9.716 0 0 0 6.685-2.653Zm-12.54-1.285A7.486 7.486 0 0 1 12 15a7.486 7.486 0 0 1 5.855 2.812A8.224 8.224 0 0 1 12 20.25a8.224 8.224 0 0 1-5.855-2.438ZM15.75 9a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z" clipRule="evenodd" />
-                                        </svg>
-                                    </span>
-                                    <input
-                                        type="text"
-                                        name="username"
-                                        value={data.username}
-                                        onChange={handleChange}
-                                        placeholder="Enter username"
-                                        className="grow bg-transparent"
-                                    />
-                                    <span className="badge badge-neutral badge-xs">Optional</span>
-                                </label>
+                          <form id="step1-form" onSubmit={(e) => e.preventDefault()}>
+                            <div className="space-y-1 mb-1">
+                                <label className="block font-medium mb-1 text-black text-base">Username <span className="text-red-500">*</span></label>
+                                <div className="validator w-full">
+                                    <label className="input validator rounded-lg flex items-center gap-2 bg-transparent border border-gray-200 text-gray-700 w-full">
+                                        <span className="pr-3 border-r border-gray-300 text-gray-500">
+                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="size-6">
+                                                <path fillRule="evenodd" d="M18.685 19.097A9.723 9.723 0 0 0 21.75 12c0-5.385-4.365-9.75-9.75-9.75S2.25 6.615 2.25 12a9.723 9.723 0 0 0 3.065 7.097A9.716 9.716 0 0 0 12 21.75a9.716 9.716 0 0 0 6.685-2.653Zm-12.54-1.285A7.486 7.486 0 0 1 12 15a7.486 7.486 0 0 1 5.855 2.812A8.224 8.224 0 0 1 12 20.25a8.224 8.224 0 0 1-5.855-2.438ZM15.75 9a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z" clipRule="evenodd" />
+                                            </svg>
+                                        </span>
+                                        <input type="text" name="username" value={data.username} onChange={handleChange} required minLength={4} placeholder="Enter username" className="grow bg-transparent"/>
+                                    </label>
+                                    <div className="validator-hint">Username is required (minimum 4 characters)</div>
+                                </div>
                             </div>
-                            <div className="mb-5">
+                            <div className="space-y-1 mb-1">
                                 <label className="block font-medium mb-1 text-black text-base">Email Address <span className="text-red-500">*</span></label>
-                                <label className="input flex items-center gap-2 rounded-lg bg-transparent border border-gray-300 text-gray-700 w-full focus-within:ring-2 focus-within:ring-[#991b1b] focus-within:border-[#991b1b]">
-                                    <span className="pr-3 border-r border-gray-300 text-gray-500">
-                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="size-6">
-                                            <path d="M1.5 8.67v8.58a3 3 0 0 0 3 3h15a3 3 0 0 0 3-3V8.67l-8.928 5.493a3 3 0 0 1-3.144 0L1.5 8.67Z" />
-                                            <path d="M22.5 6.908V6.75a3 3 0 0 0-3-3h-15a3 3 0 0 0-3 3v.158l9.714 5.978a1.5 1.5 0 0 0 1.572 0L22.5 6.908Z" />
-                                        </svg>
-                                    </span>
-                                    <input
-                                        type="email"
-                                        name="email"
-                                        value={data.email}
-                                        onChange={handleChange}
-                                        required
-                                        placeholder="Enter email"
-                                        className="grow bg-transparent"
-                                    />
-                                </label>
+                                <div className="validator w-full">
+                                    <label className="input validator flex items-center gap-2 rounded-lg bg-transparent border border-gray-200 text-gray-700 w-full">
+                                        <span className="pr-3 border-r border-gray-300 text-gray-500">
+                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="size-6">
+                                                <path d="M1.5 8.67v8.58a3 3 0 0 0 3 3h15a3 3 0 0 0 3-3V8.67l-8.928 5.493a3 3 0 0 1-3.144 0L1.5 8.67Z" />
+                                                <path d="M22.5 6.908V6.75a3 3 0 0 0-3-3h-15a3 3 0 0 0-3 3v.158l9.714 5.978a1.5 1.5 0 0 0 1.572 0L22.5 6.908Z" />
+                                            </svg>
+                                        </span>
+                                        <input type="email" name="email" value={data.email} onChange={handleChange} required placeholder="Enter email" className="grow bg-transparent"/>
+                                    </label>
+                                    <div className="validator-hint">Enter a valid email address</div>
+                                </div>
                             </div>
-                            <div className="mb-5">
-                                <label className="block font-medium mb-1 text-black text-base">Phone Number</label>
-                                <label className="input flex items-center rounded-lg gap-2 bg-transparent border border-gray-300 text-gray-700 w-full focus-within:ring-2 focus-within:ring-[#991b1b] focus-within:border-[#991b1b]">
-                                    <span className="pr-3 border-r border-gray-300 text-gray-500">+63</span>
-                                    <input
-                                        type="tel"
-                                        name="phone"
-                                        value={data.phone}
-                                        onChange={handleChange}
-                                        placeholder="(123) 456 7890"
-                                        className="grow bg-transparent"
-                                    />
-                                    <span className="badge badge-neutral badge-xs">Optional</span>
-                                </label>
-                            </div>
-                            <div className="mb-5">
+                            <div className="space-y-1 mb-1">
                                 <label className="block font-medium mb-1 text-black text-base">First Name <span className="text-red-500">*</span></label>
-                                <input
-                                type="text"
-                                name="givenName"
-                                value={data.givenName}
-                                onChange={handleChange}
-                                required
-                                placeholder="Enter firstname"
-                                className="input bg-transparent border rounded-lg border-gray-300 text-gray-700 w-full focus-within:ring-2 focus-within:ring-[#991b1b] focus-within:border-[#991b1b]"
-                                />
+                                <div className="validator w-full">
+                                    <input type="text" name="givenName" value={data.givenName} onChange={handleChange} required placeholder="Enter firstname" className="input validator bg-transparent border rounded-lg border-gray-200 text-gray-700 w-full"/>
+                                    <div className="validator-hint">First name is required</div>
+                                </div>
                             </div>
-                            <div className="mb-5">
+                            <div className="mb-7">
                                 <label className="block font-medium mb-1 text-black text-base">Middle Name</label>
-                                <label className="input flex items-center rounded-lg gap-2 bg-transparent border border-gray-300 text-gray-700 w-full focus-within:ring-2 focus-within:ring-[#991b1b] focus-within:border-[#991b1b]">
-                                <input
-                                    type="text"
-                                    name="middleName"
-                                    value={data.middleName}
-                                    onChange={handleChange}
-                                    placeholder="Enter middlename"
-                                    className="grow bg-transparent"
-                                />
+                                <label className="input flex items-center rounded-lg gap-2 bg-transparent border border-gray-200 text-gray-700 w-full">
+                                <input type="text" name="middleName" value={data.middleName} onChange={handleChange} placeholder="Enter middlename" className="grow bg-transparent"/>
                                 <span className="badge badge-neutral badge-xs">Optional</span>
                                 </label>
                             </div>
-                            <div className="mb-5">
+                            <div className="space-y-1">
                                 <label className="block font-medium mb-1 text-black text-base">Last Name <span className="text-red-500">*</span></label>
-                                <input
-                                type="text"
-                                name="surname"
-                                value={data.surname}
-                                onChange={handleChange}
-                                required
-                                placeholder="Enter lastname"
-                                className="input bg-transparent border rounded-lg border-gray-300 text-gray-700 w-full focus-within:ring-2 focus-within:ring-[#991b1b] focus-within:border-[#991b1b]"
-                                />
+                                <div className="validator w-full">
+                                    <input type="text" name="surname" value={data.surname} onChange={handleChange} required placeholder="Enter lastname" className="input validator bg-transparent border rounded-lg border-gray-200 text-gray-700 w-full"/>
+                                    <div className="validator-hint">Last name is required</div>
+                                </div>
                             </div>
-                        </>
+                        </form>
                     </FadeWrapper>
                     <FadeWrapper isVisible={step === 2}>
-                        <>
+                        <form id="step2-form" onSubmit={(e) => {e.preventDefault(); nextStep();}}>
                             <div className="mb-5">
-                                <label className="block font-medium text-black text-base">
-                                    Role<span className="text-red-500"> *</span>
-                                </label>
-                                <p className="text-xs text-gray-500 italic mb-2">
-                                    Choose a role for the user
-                                </p>
-                                <MultiSelect
-                                    options={roles.map(r => ({
-                                        id: r.id,
-                                        role_name: r.role_name
-                                    }))}
-                                    selectedValues={data.roleIds || []}
-                                    onChange={(ids) =>
-                                        setData({ ...data, roleIds: ids })
-                                    }
-                                    placeholder="Select entity groups"
-                                />
+                                <label className="block font-medium text-black text-base">Role<span className="text-red-500"> *</span></label>
+                                <p className="text-xs text-gray-500 italic mb-2">Choose a role for the user</p>
+                                <div className="w-full">
+                                    <div className={`rounded-lg ${ rolesError ? "ring-2 ring-red-500" : "" }`}>
+                                        <MultiSelect
+                                            options={roles.map(r => ({
+                                                id: r.id,
+                                                role_name: r.role_name
+                                            }))}
+                                            selectedValues={data.roleIds || []}
+                                            onChange={(ids) => {
+                                                setData(prev => ({ ...prev, roleIds: ids }));
+                                                if (ids.length > 0) {
+                                                    setRolesError(false);
+                                                    setError("");
+                                                }
+                                            }}
+                                            placeholder="Select entity groups"
+                                        />
+                                    </div>
+                                    {rolesError && (
+                                        <p className="text-red-500 text-xs mt-1">At least one role is required</p>
+                                    )}
+                                </div>
                             </div>
                             <div className="mb-5">
                                 <label className="font-medium text-black text-base">
@@ -269,12 +289,7 @@ export default function AddUserModal({ open, onClose, onSubmit }) {
                                 <p className="text-xs text-gray-500 italic mb-2">
                                     Choose how the user will get access
                                 </p>
-                                <select
-                                    name="inviteMode"
-                                    value={data.inviteMode}
-                                    onChange={handleChange}
-                                    className="select bg-white border rounded-lg border-gray-300 text-gray-700 w-full focus:outline-none focus:ring-2 focus-within:ring-[#991b1b] focus-within:border-[#991b1b]"
-                                >
+                                <select name="inviteMode" value={data.inviteMode} onChange={handleChange} className="select bg-white border rounded-lg border-gray-200 text-gray-700 w-full">
                                     <option value="invite">Send an invitation to the user</option>
                                     <option value="temp">Set a temporary password</option>
                                 </select>
@@ -283,17 +298,10 @@ export default function AddUserModal({ open, onClose, onSubmit }) {
                                 <div className={`${data.inviteMode === "invite" ? "relative" : "absolute top-0 left-0 w-full opacity-0 pointer-events-none"}`}>
                                     <FadeWrapper isVisible={data.inviteMode === "invite"} keyId="delivery">
                                     <div>
-                                        <label className="block font-medium text-black text-base mb-2">
-                                        Delivery method
-                                        </label>
-                                        <select
-                                        name="delivery"
-                                        value={data.delivery}
-                                        onChange={handleChange}
-                                        className="select bg-white border rounded-lg border-gray-300 text-gray-700 w-full focus:ring-0 focus:border-blue-200"
-                                        >
-                                        <option value="email">Email</option>
-                                        <option value="sms">SMS</option>
+                                        <label className="block font-medium text-black text-base mb-2">Delivery method</label>
+                                        <select name="delivery" value={data.delivery} onChange={handleChange} className="select bg-white border rounded-lg border-gray-200 text-gray-700 w-full">
+                                            <option value="email">Email</option>
+                                            <option value="sms">SMS</option>
                                         </select>
                                     </div>
                                     </FadeWrapper>
@@ -325,52 +333,44 @@ export default function AddUserModal({ open, onClose, onSubmit }) {
                                     </FadeWrapper>
                                 </div>
                             </div>
-                        </>
+                        </form>
                     </FadeWrapper>
                     <FadeWrapper isVisible={step === 3}>
-                        <>
+                        <form id="step3-form" noValidate onSubmit={(e) => {e.preventDefault(); handleSubmit();}}>
                             <div className="mb-5">
-                                <label className="font-medium text-black text-base">
-                                    Account Status <span className="text-red-500">*</span>
-                                </label>
-                                <p className="text-xs text-gray-500 italic mb-2">
-                                    Set the user's account state
-                                </p>
-
-                                <select
-                                    name="status"
-                                    value={data.status || "active"}
-                                    onChange={handleChange}
-                                    className="select bg-white border rounded-lg border-gray-300 text-gray-700 w-full focus:outline-none focus:ring-2 focus:ring-[#991b1b] focus:border-[#991b1b]"
-                                >
-                                    <option value="active">Active</option>
-                                    <option value="inactive">Inactive</option>
-                                    <option value="suspended">Suspended</option>
-                                </select>
+                                <label className="font-medium text-black text-base">Account Status <span className="text-red-500">*</span></label>
+                                <p className="text-xs text-gray-500 italic mb-2">Set the user's account state</p>
+                                <div className="validator w-full">
+                                    <select name="status" value={data.status || ""} onChange={handleChange} required className="select validator bg-white border rounded-lg border-gray-300 text-gray-700 w-full">
+                                        <option disabled value="">Select status</option>
+                                        <option value="active">Active</option>
+                                        <option value="inactive">Inactive</option>
+                                    </select>
+                                    <p className="validator-hint">Status is required</p>
+                                </div>
                             </div>
-                        </>
+                        </form>
                     </FadeWrapper>
                 </div>
                 <div className="p-6 bg-gray-50 border-t border-gray-200 flex justify-end gap-3">
                     {step === 1 && (
-                        <>
-                            <button onClick={onClose} className="btn h-12 rounded-lg btn-outline text-[#991b1b] border-[#991b1b] hover:bg-[#ffd700] hover:border-[#ffd700] hover:text-[#991b1b]">Close</button>
-                        </>
+                        <button onClick={onClose} className="btn h-12 rounded-lg btn-outline text-[#991b1b] border-[#991b1b] hover:bg-[#ffd700] hover:border-[#ffd700] hover:text-[#991b1b]">Close</button>
                     )}
                     {step > 1 && (
-                        <>
-                            <button onClick={() => setStep(step - 1)} className="btn h-12 rounded-lg btn-outline text-[#991b1b] border-[#991b1b] hover:bg-[#ffd700] hover:border-[#ffd700] hover:text-[#991b1b]">Back</button>
-                        </>
+                        <button onClick={() => setStep(step - 1)} className="btn h-12 rounded-lg btn-outline text-[#991b1b] border-[#991b1b] hover:bg-[#ffd700] hover:border-[#ffd700] hover:text-[#991b1b]">Back</button>
                     )}
-                    {step < 3 && (
-                        <>
-                            <button onClick={nextStep} className="btn h-12 rounded-lg bg-[#991b1b] text-white border-[#991b1b] hover:bg-[#ffd700] hover:border-[#ffd700] hover:text-[#991b1b]">Next</button>
-                        </>
+                    {step === 1 && (
+                        <button type="button" onClick={nextStep} className="btn h-12 rounded-lg bg-[#991b1b] text-white border-[#991b1b] hover:bg-[#ffd700] hover:border-[#ffd700] hover:text-[#991b1b]">
+                            Next
+                        </button>
+                    )}
+                    {step === 2 && (
+                        <button type="submit" form="step2-form" className="btn h-12 rounded-lg bg-[#991b1b] text-white border-[#991b1b] hover:bg-[#ffd700] hover:border-[#ffd700] hover:text-[#991b1b]">
+                            Next
+                        </button>
                     )}
                     {step === 3 && (
-                        <>
-                            <button onClick={handleSubmit} className="btn h-12 rounded-lg bg-[#991b1b] text-white border-[#991b1b] hover:bg-[#ffd700] hover:border-[#ffd700] hover:text-[#991b1b]">Create User</button>
-                        </>
+                        <button type="submit" form="step3-form"className="btn h-12 rounded-lg bg-[#991b1b] text-white border-[#991b1b] hover:bg-[#ffd700] hover:border-[#ffd700] hover:text-[#991b1b]">Create User</button>
                     )}
                 </div>
             </div>
