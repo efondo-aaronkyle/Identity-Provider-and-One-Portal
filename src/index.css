@@ -1,6 +1,14 @@
 @import "tailwindcss";
 @plugin "daisyui";
 
+html,
+body,
+#root {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
 .steps .step-primary {
   color: #991b1b !important;
 }
