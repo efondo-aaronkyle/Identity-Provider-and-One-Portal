@@ -38,7 +38,12 @@ export default function ErrorAlert({ message, onClose }) {
       </svg>
       <span>{message}</span>
       {onClose && (
-        <button onClick={onClose} className="btn btn-xs btn-ghost ml-auto">✕</button>
+        <button  onClick={() => {
+            setIsVisible(false);
+            setTimeout(() => {
+              onClose?.();
+            }, 300);}} 
+          className="btn btn-xs btn-ghost ml-auto">✕</button>
       )}
     </div>
   );
