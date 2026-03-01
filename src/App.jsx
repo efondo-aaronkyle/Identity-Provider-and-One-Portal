@@ -1,5 +1,8 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Login from "./auth/pages/Login";
+import Callback from "./auth/pages/Callback";
+import Unauthorized from "./auth/pages/Unauthorized";
+import ProtectedRoute from "./auth/components/ProtectedRoute";
 import OnePortalHome from "./features/one-portal/pages/OnePortalHome";
 import OnePortalProfile from "./features/one-portal/pages/Profile";
 import AppClient from "./features/idp/pages/AppClient";
@@ -12,20 +15,43 @@ export default function App() {
   return (
     <Router>
       <Routes>
-        {/* Root redirect to Login */}
-        <Route path="/" element={<Login />} />
 
-        {/* IDP */}
-        <Route element={<IdpLayout />}>
+        {/* Public Routes */}
+        <Route path="/" element={<Login />} />
+        <Route path="/callback" element={<Callback />} />
+        <Route path="/401" element={<Unauthorized />} />
+
+        {/* Protected IDP Routes */}
+        <Route
+          element={
+            <ProtectedRoute>
+              <IdpLayout />
+            </ProtectedRoute>
+          }
+        >
           <Route path="/idp/app-client" element={<AppClient />} />
           <Route path="/idp/user-pool" element={<UserPool />} />
           <Route path="/idp/role" element={<Roles />} />
           <Route path="/idp/profile" element={<IdpProfile />} />
         </Route>
 
-        {/* One Portal */}
-        <Route path="/portal" element={<OnePortalHome />} />
-        <Route path="/profile" element={<OnePortalProfile />} />
+        {/* Protected Portal Routes */}
+        <Route
+          path="/portal"
+          element={
+            <ProtectedRoute>
+              <OnePortalHome />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/profile"
+          element={
+            <ProtectedRoute>
+              <OnePortalProfile />
+            </ProtectedRoute>
+          }
+        />
       </Routes>
     </Router>
   );

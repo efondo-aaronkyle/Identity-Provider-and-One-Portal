@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react";
 import MultiSelect from "./../MultiSelect";
-import { initialRoles } from "../../data/RolesData";
+import { useAllRoles } from "../../hooks/useAllRoles";
 
-export default function UserPoolModal({ open, mode, user, onClose, onSubmit }) {
+export default function UserPoolModal({ open, mode, user, onClose }) {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState("active");
   const [selectedUser, setSelectedUser] = useState(null);
+  const roles = useAllRoles();
 
   useEffect(() => {
     if (!user) return;
@@ -15,9 +16,9 @@ export default function UserPoolModal({ open, mode, user, onClose, onSubmit }) {
       ...user,
       roleIds:
         user.roleIds ??
-        initialRoles
-          .filter(r => user.roles?.includes(r.role_name))
-          .map(r => r.id),
+        roles
+        .filter(r => user.roles?.includes(r.role_name))
+        .map(r => r.id),
     });
   }, [user]);
 
@@ -28,35 +29,6 @@ export default function UserPoolModal({ open, mode, user, onClose, onSubmit }) {
     setEmail(user.email || "");
     setStatus((user.status || "active").toLowerCase());
   }, [user]);
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-
-    if (mode === "view") {
-      onClose();
-      return;
-    }
-
-    if (!selectedUser?.roleIds || selectedUser.roleIds.length === 0) {
-      alert("Please select at least one role");
-      return;
-    }
-
-    const fullName = `${selectedUser.givenName} ${selectedUser.middleName ? selectedUser.middleName + " " : ""}${selectedUser.surname}`;
-
-    onSubmit({
-      ...user,
-      username,
-      email,
-      name: fullName,
-      status,
-      roleIds: selectedUser?.roleIds || [],
-      roles: selectedUser?.roles || [],
-      givenName: selectedUser?.givenName,
-      middleName: selectedUser?.middleName,
-      surname: selectedUser?.surname,
-    });
-  };
 
   if (!open) return null;
 
@@ -80,7 +52,7 @@ export default function UserPoolModal({ open, mode, user, onClose, onSubmit }) {
             </button>
           </div>
         </div>
-        <form id="user-pool-form" onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-6 bg-white space-y-4">
+        <form id="user-pool-form" className="flex-1 overflow-y-auto p-6 bg-white space-y-4">
           {(mode === "view" || mode === "edit") && (
             <div className="space-y-0.5">
               <label className="block text-sm font-semibold text-gray-700">
@@ -190,13 +162,13 @@ export default function UserPoolModal({ open, mode, user, onClose, onSubmit }) {
                 </div>
               ) : (
                 <MultiSelect
-                  options={initialRoles}
+                  options={roles}
                   selectedValues={selectedUser?.roleIds || []}
                   onChange={(ids) =>
                     setSelectedUser({
                       ...selectedUser,
                       roleIds: ids,
-                      roles: initialRoles
+                      roles: roles
                         .filter(r => ids.includes(r.id))
                         .map(r => r.role_name),
                     })
@@ -220,6 +192,7 @@ export default function UserPoolModal({ open, mode, user, onClose, onSubmit }) {
             >
               <option value="active">Active</option>
               <option value="inactive">Inactive</option>
+              <option value="suspended">Suspended</option>
             </select>
           </div>
         </form>
@@ -230,12 +203,6 @@ export default function UserPoolModal({ open, mode, user, onClose, onSubmit }) {
             <button type="button" className="btn h-12 rounded-lg btn-outline text-[#991b1b] border-[#991b1b] hover:bg-[#ffd700] hover:border-[#ffd700] hover:text-[#991b1b]" onClick={onClose}>
               Close
             </button>
-
-            {mode === "edit" && (
-              <button type="submit" form="user-pool-form" className="btn h-12 rounded-lg bg-[#991b1b] text-white border-[#991b1b] hover:bg-[#ffd700] hover:border-[#ffd700] hover:text-[#991b1b]">
-                Save
-              </button>
-            )}
           </div>
         </div>
       </div>

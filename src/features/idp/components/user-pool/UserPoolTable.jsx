@@ -1,4 +1,5 @@
 import TableRowFade from "../../../../components/TableRowFade";
+import { shortenId } from "../../../../utils/shortenId";
 
 export default function UserPoolTable({ users = [], onView, onEdit, onDisable }) {
     return (
@@ -19,12 +20,16 @@ export default function UserPoolTable({ users = [], onView, onEdit, onDisable })
                 <tbody>
                     {users.length === 0 && (
                         <tr>
-                            <td colSpan={7} className="text-center py-10 text-gray-500">No users found</td>
+                            <td colSpan={8} className="text-center py-10 text-gray-500">No users found</td>
                         </tr>
                     )}
                     {users.map((u) => (
                         <TableRowFade key={u.id}>
-                            <td className="text-[#991b1b] text-center border-gray-200">{u.id}</td>
+                            <td className="text-[#991b1b] text-center border-gray-200">
+                                <div className="tooltip tooltip-right" data-tip={u.id}>
+                                    <span className="cursor-pointer font-medium">{shortenId(u.id)}</span>
+                                </div>
+                            </td>
                             <td className="text-[#991b1b] text-center border-gray-200">{u.username}</td>
                             <td className="text-[#991b1b] text-center border-gray-200">{u.email}</td>
                             <td className="text-[#991b1b] text-center border-gray-200">{`${u.givenName} ${u.middleName ? u.middleName + " " : ""}${u.surname}`}</td>
@@ -37,9 +42,17 @@ export default function UserPoolTable({ users = [], onView, onEdit, onDisable })
                             </td>
                             <td className="text-center border-gray-200">
                                 <div className="flex justify-center">
-                                    <span className={`flex justify-center badge badge-sm ${
-                                        u.status === "active" ? "badge-success" : "badge-ghost"
-                                    }`}>{u.status}</span>
+                                    <span
+                                        className={`badge badge-sm ${
+                                            u.status === "active"
+                                            ? "badge-success"
+                                            : u.status === "inactive"
+                                            ? "badge-warning"
+                                            : "badge-error"
+                                        }`}
+                                        >
+                                        {u.status}
+                                    </span>
                                 </div>
                             </td>
                             <td className="text-[#991b1b] text-center border-gray-200">{u.createdAt}</td>
